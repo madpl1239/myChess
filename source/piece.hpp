@@ -8,7 +8,7 @@
 
 enum class PieceType
 {
-	ROOK,
+	ROOK = 0,
 	KNIGHT,
 	BISHOP,
 	QUEEN,
@@ -22,11 +22,11 @@ struct Piece
 {
 public:
     Piece(PieceType t = PieceType::NONE, char c = ' '):
-		type(t),
-		color(c)
+		m_type(t),
+		m_color(c)
 	{}
     
 public:
-    PieceType type;
-    char color; // 'W' for white, 'B' for black
+    PieceType m_type;
+    char m_color; // 'W' for white, 'B' for black
 };

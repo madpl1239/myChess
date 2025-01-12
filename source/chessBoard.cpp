@@ -53,7 +53,7 @@ void ChessBoard::setInitialPositions()
 bool ChessBoard::isPieceAt(int x, int y) const 
 {
 	if(x < 8 and y < 8)
-		return board[y][x].type != PieceType::NONE;
+		return board[y][x].m_type != PieceType::NONE;
 	else
 	{
 		std::cout << "x, y is higher than 7!\n";
@@ -76,7 +76,7 @@ bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
 		return false;
 	
 	if(startX < 8 and startY < 8 and endX < 8 and endY < 8)
-		if(board[startY][startX].color == board[endY][endX].color)
+		if(board[startY][startX].m_color == board[endY][endX].m_color)
 			return false;
 
 	return true;
@@ -106,11 +106,11 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 		for(int x = 0; x < 8; ++x) 
 		{
 			Piece piece = board[y][x];
-			if(piece.type == PieceType::NONE)
+			if(piece.m_type == PieceType::NONE)
 				continue;
 			
-			int pieceIndex = static_cast<int>(piece.type);
-			int colorOffset = (piece.color == 'B') ? pieceHeight : 0;
+			int pieceIndex = static_cast<int>(piece.m_type);
+			int colorOffset = (piece.m_color == 'B') ? pieceHeight : 0;
 			
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, TILE_SIZE, TILE_SIZE));
 			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
