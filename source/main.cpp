@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "defines.hpp"
 #include "chessBoard.hpp"
 
@@ -52,8 +53,13 @@ int main(void)
 				if(event.mouseButton.button == sf::Mouse::Left)
 				{
 					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
-					int x = position.y / TILE_SIZE;
-					int y = position.x / TILE_SIZE;
+					
+					std::cout << "mouse(" << position.x << ", " << position.y << ")\n";
+					
+					int x = std::round(position.y / TILE_SIZE);
+					int y = std::round(position.x / TILE_SIZE);
+					
+					std::cout << "xy(" << x << ", " << y << ")\n";
 					
 					if(not isPieceSelected)
 					{
@@ -61,6 +67,8 @@ int main(void)
 						{
 							selectedPiece = sf::Vector2i(x, y);
 							isPieceSelected = true;
+							
+							std::cout << "piece selected\n";
 						}
 					}
 					else
