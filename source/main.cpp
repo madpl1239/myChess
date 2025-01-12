@@ -16,7 +16,7 @@ int main(void)
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Chess Game");
 
 	sf::Texture boardTexture;
-	if(!boardTexture.loadFromFile("board.png"))
+	if(!boardTexture.loadFromFile("./resources/board.png"))
 	{
 		std::cerr << "Failed to load board texture" << std::endl;
 
@@ -24,7 +24,7 @@ int main(void)
 	}
 
 	sf::Texture figuresTexture;
-	if(!figuresTexture.loadFromFile("figures.png"))
+	if(!figuresTexture.loadFromFile("./resources/figures.png"))
 	{
 		std::cerr << "Failed to load figures texture" << std::endl;
 
