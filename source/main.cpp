@@ -55,7 +55,7 @@ int main(void)
 					int x = position.y / TILE_SIZE;
 					int y = position.x / TILE_SIZE;
 					
-					if(!isPieceSelected)
+					if(not isPieceSelected)
 					{
 						if(board.isPieceAt(x, y))
 						{
@@ -72,6 +72,8 @@ int main(void)
 						
 						isPieceSelected = false;
 					}
+					
+					std::cout << "mouse clicked\n";
 				}
 			}
 		}

@@ -21,14 +21,14 @@ void ChessBoard::setInitialPositions()
 		for(int x = 0; x < 8; ++x) 
 		{
 			if(y == 1)
-				board[y][x] = Piece(PieceType::PAWN, 'B');
+				board[y][x] = Piece(PieceType::PAWN, 'W');
 			
 			else if(y == 6)
-				board[y][x] = Piece(PieceType::PAWN, 'W');
+				board[y][x] = Piece(PieceType::PAWN, 'B');
 			
 			else if(y == 0 || y == 7) 
 			{
-				char color = (y == 0) ? 'B' : 'W';
+				char color = (y == 0) ? 'W' : 'B';
 				
 				if(x == 0 || x == 7)
 					board[y][x] = Piece(PieceType::ROOK, color);
@@ -72,8 +72,8 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 			int pieceIndex = static_cast<int>(piece.type);
 			int colorOffset = (piece.color == 'B') ? pieceHeight : 0;
 			
-			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, pieceWidth, pieceHeight));
-			pieceSprite.setPosition(frameOffset + x * TILE_SIZE, frameOffset + y * TILE_SIZE);
+			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, TILE_SIZE, TILE_SIZE));
+			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
 			window.draw(pieceSprite);
 		}
 	}
