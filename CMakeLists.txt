@@ -8,7 +8,10 @@ add_definitions(-Os -march=native -std=c++17)
 
 file(GLOB_RECURSE SOURCE ./source/*)
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 set(SFML_DIR "C:/Progs/SFML2.5.1SEH/lib/cmake/SFML")
+endif()
+
 find_package(SFML 2.5 REQUIRED COMPONENTS
 	system window graphics)
 
