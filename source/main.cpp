@@ -54,12 +54,8 @@ int main(void)
 				{
 					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
 					
-					std::cout << "mouse(" << position.x << ", " << position.y << ")\n";
-					
 					int x = std::round(position.x / TILE_SIZE);
 					int y = std::round(position.y / TILE_SIZE);
-					
-					std::cout << "xy(" << x << ", " << y << ")\n";
 					
 					if(not isPieceSelected)
 					{
@@ -67,8 +63,6 @@ int main(void)
 						{
 							selectedPiece = sf::Vector2i(x, y);
 							isPieceSelected = true;
-							
-							std::cout << "piece selected\n";
 						}
 					}
 					else
@@ -80,8 +74,6 @@ int main(void)
 						
 						isPieceSelected = false;
 					}
-					
-					std::cout << "mouse clicked\n";
 				}
 			}
 		}
