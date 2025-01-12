@@ -3,8 +3,9 @@
  *
  * 12-01-2025 by madpl
  */
-#include "chessBoard.hpp"
 #include <iostream>
+#include "defines.hpp"
+#include "chessBoard.hpp"
 
 
 ChessBoard::ChessBoard() 
@@ -72,7 +73,7 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 			int colorOffset = (piece.color == 'B') ? pieceHeight : 0;
 			
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, pieceWidth, pieceHeight));
-			pieceSprite.setPosition(frameOffset + x * 56, frameOffset + y * 56);
+			pieceSprite.setPosition(frameOffset + x * TILE_SIZE, frameOffset + y * TILE_SIZE);
 			window.draw(pieceSprite);
 		}
 	}

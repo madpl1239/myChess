@@ -8,12 +8,13 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include "defines.hpp"
 #include "chessBoard.hpp"
 
 
 int main(void) 
 {
-	sf::RenderWindow window(sf::VideoMode(504, 504), "Chess Game");
+	sf::RenderWindow window(sf::VideoMode(SIZE, SIZE), "Chess Game");
 
 	sf::Texture boardTexture;
 	if(not boardTexture.loadFromFile("./resources/board.png"))
@@ -36,7 +37,7 @@ int main(void)
 
 	bool isPieceSelected = false;
 	sf::Vector2i selectedPiece;
-	const int frameOffset = 28;
+	const int frameOffset = OFFSET;
 
 	while(window.isOpen()) 
 	{
@@ -50,10 +51,10 @@ int main(void)
 			{
 				if(event.mouseButton.button == sf::Mouse::Left)
 				{
-					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(frameOffset, frameOffset);
-					int x = position.y / 56;
-					int y = position.x / 56;
-				
+					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
+					int x = position.y / TILE_SIZE;
+					int y = position.x / TILE_SIZE;
+					
 					if(!isPieceSelected)
 					{
 						if(board.isPieceAt(x, y))
