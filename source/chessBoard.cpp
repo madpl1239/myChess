@@ -82,17 +82,32 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 
 bool ChessBoard::isPieceAt(int x, int y) const 
 {
-	return board[y][x].type != PieceType::NONE;
+	if(x < 8 and y < 8)
+		return board[y][x].type != PieceType::NONE;
+	else
+	{
+		std::cout << "x, y is higher than 7!\n";
+		
+		return false;
+	}
 }
 
 
 bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const 
 {
+	if(startX > 7 or startY > 7 or endX > 7 or endY > 7)
+	{
+		std::cout << "x, y is higher than 7!\n";
+		
+		return false;
+	}
+	
 	if(startX == endX and startY == endY)
 		return false;
 	
-	if(board[startY][startX].color == board[endY][endX].color)
-		return false;
+	if(startX < 8 and startY < 8 and endX < 8 and endY < 8)
+		if(board[startY][startX].color == board[endY][endX].color)
+			return false;
 
 	return true;
 }
