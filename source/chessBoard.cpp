@@ -50,36 +50,6 @@ void ChessBoard::setInitialPositions()
 }
 
 
-void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset) 
-{
-	sf::Sprite boardSprite(boardTexture);
-	boardSprite.setPosition(0, 0);
-	window.draw(boardSprite);
-
-	int pieceWidth = figuresTexture.getSize().x / 6;
-	int pieceHeight = figuresTexture.getSize().y / 2;
-
-	sf::Sprite pieceSprite(figuresTexture);
-
-	for(int y = 0; y < 8; ++y) 
-	{
-		for(int x = 0; x < 8; ++x) 
-		{
-			Piece piece = board[y][x];
-			if(piece.type == PieceType::NONE)
-				continue;
-			
-			int pieceIndex = static_cast<int>(piece.type);
-			int colorOffset = (piece.color == 'B') ? pieceHeight : 0;
-			
-			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, TILE_SIZE, TILE_SIZE));
-			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
-			window.draw(pieceSprite);
-		}
-	}
-}
-
-
 bool ChessBoard::isPieceAt(int x, int y) const 
 {
 	if(x < 8 and y < 8)
@@ -117,4 +87,34 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
 	board[endY][endX] = board[startY][startX];
 	board[startY][startX] = Piece();
+}
+
+
+void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset) 
+{
+	sf::Sprite boardSprite(boardTexture);
+	boardSprite.setPosition(0, 0);
+	window.draw(boardSprite);
+
+	int pieceWidth = figuresTexture.getSize().x / 6;
+	int pieceHeight = figuresTexture.getSize().y / 2;
+
+	sf::Sprite pieceSprite(figuresTexture);
+
+	for(int y = 0; y < 8; ++y) 
+	{
+		for(int x = 0; x < 8; ++x) 
+		{
+			Piece piece = board[y][x];
+			if(piece.type == PieceType::NONE)
+				continue;
+			
+			int pieceIndex = static_cast<int>(piece.type);
+			int colorOffset = (piece.color == 'B') ? pieceHeight : 0;
+			
+			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, TILE_SIZE, TILE_SIZE));
+			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
+			window.draw(pieceSprite);
+		}
+	}
 }
