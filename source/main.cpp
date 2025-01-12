@@ -11,12 +11,12 @@
 #include "chessBoard.hpp"
 
 
-int main(void)
+int main(void) 
 {
-	sf::RenderWindow window(sf::VideoMode(600, 600), "Chess Game");
+	sf::RenderWindow window(sf::VideoMode(504, 504), "Chess Game");
 
 	sf::Texture boardTexture;
-	if(!boardTexture.loadFromFile("board.png"))
+	if(not boardTexture.loadFromFile("./resources/board.png"))
 	{
 		std::cerr << "Failed to load board texture" << std::endl;
 		
@@ -24,7 +24,7 @@ int main(void)
 	}
 
 	sf::Texture figuresTexture;
-	if(!figuresTexture.loadFromFile("figures.png"))
+	if(not figuresTexture.loadFromFile("./resources/figures.png"))
 	{
 		std::cerr << "Failed to load figures texture" << std::endl;
 		
@@ -34,14 +34,14 @@ int main(void)
 	ChessBoard board;
 	board.setInitialPositions();
 
-	const int offset = 48;
 	bool isPieceSelected = false;
 	sf::Vector2i selectedPiece;
+	const int frameOffset = 28;
 
-	while(window.isOpen())
+	while(window.isOpen()) 
 	{
 		sf::Event event;
-		while(window.pollEvent(event))
+		while(window.pollEvent(event)) 
 		{
 			if(event.type == sf::Event::Closed)
 				window.close();
@@ -50,11 +50,11 @@ int main(void)
 			{
 				if(event.mouseButton.button == sf::Mouse::Left)
 				{
-					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(offset, offset);
-					int x = position.y / (boardTexture.getSize().x / 8);
-					int y = position.x / (boardTexture.getSize().y / 8);
-					
-					if(not isPieceSelected)
+					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(frameOffset, frameOffset);
+					int x = position.y / 56;
+					int y = position.x / 56;
+				
+					if(!isPieceSelected)
 					{
 						if(board.isPieceAt(x, y))
 						{
@@ -66,6 +66,8 @@ int main(void)
 					{
 						if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
 							board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+						else
+							std::cout << "Invalid move!" << std::endl;
 						
 						isPieceSelected = false;
 					}
@@ -74,7 +76,7 @@ int main(void)
 		}
 		
 		window.clear();
-		board.draw(window, boardTexture, figuresTexture, offset);
+		board.draw(window, boardTexture, figuresTexture, frameOffset);
 		window.display();
 	}
 
