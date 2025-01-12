@@ -5,14 +5,15 @@
  */
 #pragma once
 
+
 enum class PieceType
 {
-	PAWN,
 	ROOK,
 	KNIGHT,
 	BISHOP,
 	QUEEN,
 	KING,
+	PAWN,
 	NONE
 };
 
@@ -20,14 +21,12 @@ enum class PieceType
 struct Piece
 {
 public:
-	Piece(PieceType t = PieceType::NONE, char c = ' '):
+    Piece(PieceType t = PieceType::NONE, char c = ' '):
 		type(t),
 		color(c)
-	{
-		// empty
-	}
-
+	{}
+    
 public:
-	PieceType type;
-	char color; // 'W' for white, 'B' for black
+    PieceType type;
+    char color; // 'W' for white, 'B' for black
 };

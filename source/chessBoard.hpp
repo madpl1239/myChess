@@ -6,21 +6,21 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "piece.hpp"
 
 
 class ChessBoard
 {
 public:
-	ChessBoard()
-	{
-		// Initialize an empty 8x8 board
-		board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
-	}
-
+	ChessBoard();
+	
 	void setInitialPositions();
 	void draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int offset);
-	
-public:
+	bool isPieceAt(int x, int y) const;
+	bool isValidMove(int startX, int startY, int endX, int endY) const;
+	void movePiece(int startX, int startY, int endX, int endY);
+
+private:
 	std::vector<std::vector<Piece>> board;
 };

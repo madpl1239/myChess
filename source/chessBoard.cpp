@@ -6,6 +6,12 @@
 #include "chessBoard.hpp"
 
 
+ChessBoard::ChessBoard()
+{
+	board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
+}
+
+
 void ChessBoard::setInitialPositions()
 {
 	// Place rooks
@@ -49,7 +55,9 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 	boardSprite.setPosition(offset, offset);
 	window.draw(boardSprite);
 
-	int pieceSize = figuresTexture.getSize().y / 2; // Assuming 2 rows (white, black)
+	int pieceWidth = figuresTexture.getSize().x / 6;
+	int pieceHeight = figuresTexture.getSize().y / 2;
+
 	sf::Sprite pieceSprite(figuresTexture);
 
 	for(int x = 0; x < 8; ++x)
@@ -57,15 +65,40 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 		for(int y = 0; y < 8; ++y)
 		{
 			Piece piece = board[x][y];
-			if(piece.type == PieceType::NONE)
-				continue;
-
+			if (piece.type == PieceType::NONE) continue;
+			
 			int pieceIndex = static_cast<int>(piece.type);
-			int colorOffset = (piece.color == 'B') ? pieceSize : 0;
-
-			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceSize, colorOffset, pieceSize, pieceSize));
-			pieceSprite.setPosition(offset + y * pieceSize, offset + x * pieceSize);
+			int colorOffset = (piece.color == 'B') ? pieceHeight : 0;
+			
+			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, pieceWidth, pieceHeight));
+			pieceSprite.setPosition(offset + y * pieceWidth, offset + x * pieceHeight);
 			window.draw(pieceSprite);
 		}
 	}
+}
+
+
+bool ChessBoard::isPieceAt(int x, int y) const
+{
+	return board[x][y].type != PieceType::NONE;
+}
+
+
+bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
+{
+	// Basic validation for demonstration, can be extended to include full chess rules
+	if(startX == endX and startY == endY)
+		return false; // No move
+		
+	if(board[startX][startY].color == board[endX][endY].color)
+		return false; // Can't capture same color
+	
+	return true;
+}
+
+
+void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
+{
+	board[endX][endY] = board[startX][startY];
+	board[startX][startY] = Piece();
 }
