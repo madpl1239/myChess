@@ -56,8 +56,8 @@ int main(void)
 					
 					std::cout << "mouse(" << position.x << ", " << position.y << ")\n";
 					
-					int x = std::round(position.y / TILE_SIZE);
-					int y = std::round(position.x / TILE_SIZE);
+					int x = std::round(position.x / TILE_SIZE);
+					int y = std::round(position.y / TILE_SIZE);
 					
 					std::cout << "xy(" << x << ", " << y << ")\n";
 					
