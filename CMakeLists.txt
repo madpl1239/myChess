@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(valChess)
 
-add_definitions(-Os -march=native std=c++17)
+add_definitions(-Os -march=native -std=c++17)
 
 file(GLOB_RECURSE SOURCE ./source/*)
 

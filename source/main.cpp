@@ -6,8 +6,9 @@
  * 12-01-2025 by madpl
  */
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
-#include "chessBoard.hpp" 
+#include "chessBoard.hpp"
 
 
 int main(void)
