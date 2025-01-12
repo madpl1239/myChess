@@ -1,7 +1,7 @@
 /*
  * chessBoard.hpp
  *
- * 12-01-2025 by madpl
+ * 12-01-2025 by madpl (aka madpl1239)
  */
 #pragma once
 
