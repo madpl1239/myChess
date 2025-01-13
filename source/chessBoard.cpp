@@ -8,17 +8,17 @@
 #include "chessBoard.hpp"
 
 
-ChessBoard::ChessBoard() 
+ChessBoard::ChessBoard()
 {
 	board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
 }
 
 
-void ChessBoard::setInitialPositions() 
+void ChessBoard::setInitialPositions()
 {
-	for(int y = 0; y < 8; ++y) 
+	for(int y = 0; y < 8; ++y)
 	{
-		for(int x = 0; x < 8; ++x) 
+		for(int x = 0; x < 8; ++x)
 		{
 			if(y == 1)
 				board[y][x] = Piece(PieceType::PAWN, 'W');
@@ -26,7 +26,7 @@ void ChessBoard::setInitialPositions()
 			else if(y == 6)
 				board[y][x] = Piece(PieceType::PAWN, 'B');
 			
-			else if(y == 0 || y == 7) 
+			else if(y == 0 || y == 7)
 			{
 				char color = (y == 0) ? 'W' : 'B';
 				
@@ -50,40 +50,111 @@ void ChessBoard::setInitialPositions()
 }
 
 
-bool ChessBoard::isPieceAt(int x, int y) const 
+bool ChessBoard::isPieceAt(int x, int y) const
 {
-	if(x < 8 and y < 8)
-		return board[y][x].m_type != PieceType::NONE;
-	else
-	{
-		std::cout << "x, y is higher than 7!\n";
-		
+	return board[y][x].m_type != PieceType::NONE;
+}
+
+
+bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
+{
+	if(startX == endX and startY == endY)
 		return false;
+	
+	if(board[startY][startX].m_color == board[endY][endX].m_color)
+		return false;
+
+	Piece piece = board[startY][startX];
+	int dx = abs(endX - startX);
+	int dy = abs(endY - startY);
+
+	switch(piece.m_type)
+	{
+		case PieceType::PAWN:
+			return validatePawnMove(piece, startX, startY, endX, endY, dx, dy);
+		
+		case PieceType::ROOK:
+			return dx == 0 || dy == 0 ? isPathClear(startX, startY, endX, endY) : false;
+		
+		case PieceType::KNIGHT:
+			return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+		
+		case PieceType::BISHOP:
+			return dx == dy ? isPathClear(startX, startY, endX, endY) : false;
+		
+		case PieceType::QUEEN:
+			return (dx == dy || dx == 0 || dy == 0) ? isPathClear(startX, startY, endX, endY) : false;
+		
+		case PieceType::KING:
+			return validateKingMove(piece, startX, startY, endX, endY, dx, dy);
+		
+		default:
+			return false;
 	}
 }
 
 
-bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const 
+bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int endX, int endY, int dx, int dy) const
 {
-	if(startX > 7 or startY > 7 or endX > 7 or endY > 7)
+	int direction = (pawn.m_color == 'W') ? 1 : -1;
+	
+	if(dy == 0 && dx == 1 && board[endY][endX].m_type == PieceType::NONE)
+		return startY + direction == endY;
+
+	if(dy == 1 && dx == 1 && board[endY][endX].m_type != PieceType::NONE)
+		return startY + direction == endY;
+
+	if(dy == 0 && dx == 2 && ((pawn.m_color == 'W' && startY == 1) || (pawn.m_color == 'B' && startY == 6)))
+		return board[startY + direction][startX].m_type == PieceType::NONE && board[endY][endX].m_type == PieceType::NONE;
+
+	return false;
+}
+
+
+bool ChessBoard::validateKingMove(const Piece& king, int startX, int startY, int endX, int endY, int dx, int dy) const
+{
+	if(dx <= 1 and dy <= 1)
+		return true;
+
+	// Example check for castling (not fully implemented here)
+	if(dx == 2 and dy == 0 and !isInCheck(king.m_color))
 	{
-		std::cout << "x, y is higher than 7!\n";
-		
-		return false;
+		// Add castling logic here
 	}
-	
-	if(startX == endX and startY == endY)
-		return false;
-	
-	if(startX < 8 and startY < 8 and endX < 8 and endY < 8)
-		if(board[startY][startX].m_color == board[endY][endX].m_color)
+
+	return false;
+}
+
+
+bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
+{
+	int xDir = (endX - startX) ? (endX - startX) / abs(endX - startX) : 0;
+	int yDir = (endY - startY) ? (endY - startY) / abs(endY - startY) : 0;
+
+	int x = startX + xDir;
+	int y = startY + yDir;
+
+	while(x != endX || y != endY)
+	{
+		if(board[y][x].m_type != PieceType::NONE)
 			return false;
+		
+		x += xDir;
+		y += yDir;
+	}
 
 	return true;
 }
 
 
-void ChessBoard::movePiece(int startX, int startY, int endX, int endY) 
+bool ChessBoard::isInCheck(char kingColor) const
+{
+	// Add logic to check if the king of the given color is in check
+	return false;
+}
+
+
+void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
 	board[endY][endX] = board[startY][startX];
 	board[startY][startX] = Piece();

@@ -19,6 +19,10 @@ public:
 	bool isPieceAt(int x, int y) const;
 	bool isValidMove(int startX, int startY, int endX, int endY) const;
 	void movePiece(int startX, int startY, int endX, int endY);
+	bool validatePawnMove(const Piece& pawn, int startX, int startY, int endX, int endY, int dx, int dy) const;
+	bool validateKingMove(const Piece& king, int startX, int startY, int endX, int endY, int dx, int dy) const;
+	bool isPathClear(int startX, int startY, int endX, int endY) const;
+	bool isInCheck(char kingColor) const;
 	
 	void draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset);
 
