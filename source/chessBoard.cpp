@@ -96,9 +96,6 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 	boardSprite.setPosition(0, 0);
 	window.draw(boardSprite);
 
-	int pieceWidth = figuresTexture.getSize().x / 6;
-	int pieceHeight = figuresTexture.getSize().y / 2;
-
 	sf::Sprite pieceSprite(figuresTexture);
 
 	for(int y = 0; y < 8; ++y) 
@@ -110,10 +107,11 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 				continue;
 			
 			int pieceIndex = static_cast<int>(piece.m_type);
-			int colorOffset = (piece.m_color == 'B') ? pieceHeight : 0;
+			int colorOffset = (piece.m_color == 'B') ? TILE_SIZE : 0;
 			
-			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * pieceWidth, colorOffset, TILE_SIZE, TILE_SIZE));
+			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * TILE_SIZE, colorOffset, TILE_SIZE, TILE_SIZE));
 			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
+			pieceSprite.setOrigin(0, 1);
 			window.draw(pieceSprite);
 		}
 	}
