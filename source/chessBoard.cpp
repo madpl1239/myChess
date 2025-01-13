@@ -4,6 +4,7 @@
  * 12-01-2025 by madpl
  */
 #include <iostream>
+#include <cmath> // For abs()
 #include "defines.hpp"
 #include "chessBoard.hpp"
 
@@ -74,16 +75,16 @@ bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
 			return validatePawnMove(piece, startX, startY, endX, endY, dx, dy);
 		
 		case PieceType::ROOK:
-			return dx == 0 || dy == 0 ? isPathClear(startX, startY, endX, endY) : false;
+			return (dx == 0 or dy == 0) and isPathClear(startX, startY, endX, endY);
 		
 		case PieceType::KNIGHT:
-			return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+			return (dx == 2 and dy == 1) or (dx == 1 and dy == 2);
 		
 		case PieceType::BISHOP:
-			return dx == dy ? isPathClear(startX, startY, endX, endY) : false;
+			return dx == dy and isPathClear(startX, startY, endX, endY);
 		
 		case PieceType::QUEEN:
-			return (dx == dy || dx == 0 || dy == 0) ? isPathClear(startX, startY, endX, endY) : false;
+			return (dx == dy or dx == 0 or dy == 0) and isPathClear(startX, startY, endX, endY);
 		
 		case PieceType::KING:
 			return validateKingMove(piece, startX, startY, endX, endY, dx, dy);
@@ -97,15 +98,22 @@ bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
 bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int endX, int endY, int dx, int dy) const
 {
 	int direction = (pawn.m_color == 'W') ? 1 : -1;
-	
-	if(dy == 0 && dx == 1 && board[endY][endX].m_type == PieceType::NONE)
-		return startY + direction == endY;
 
-	if(dy == 1 && dx == 1 && board[endY][endX].m_type != PieceType::NONE)
-		return startY + direction == endY;
+	// Normal move forward
+	if(dx == 0)
+	{
+		if(dy == 1 and board[endY][endX].m_type == PieceType::NONE)
+			return startY + direction == endY;
+		
+		if(dy == 2 and ((pawn.m_color == 'W' and startY == 1) or (pawn.m_color == 'B' and startY == 6)))
+			return (board[startY + direction][startX].m_type == PieceType::NONE and
+					board[endY][endX].m_type == PieceType::NONE);
+	}
 
-	if(dy == 0 && dx == 2 && ((pawn.m_color == 'W' && startY == 1) || (pawn.m_color == 'B' && startY == 6)))
-		return board[startY + direction][startX].m_type == PieceType::NONE && board[endY][endX].m_type == PieceType::NONE;
+	// Capture diagonally
+	if(dx == 1 and dy == 1)
+		return (board[endY][endX].m_type != PieceType::NONE and
+				board[endY][endX].m_color != pawn.m_color);
 
 	return false;
 }
@@ -116,10 +124,13 @@ bool ChessBoard::validateKingMove(const Piece& king, int startX, int startY, int
 	if(dx <= 1 and dy <= 1)
 		return true;
 
-	// Example check for castling (not fully implemented here)
+	// Castling check (basic version)
 	if(dx == 2 and dy == 0 and !isInCheck(king.m_color))
 	{
-		// Add castling logic here
+		int rookX = (endX > startX) ? 7 : 0;
+		
+		if(board[startY][rookX].m_type == PieceType::ROOK and board[startY][rookX].m_color == king.m_color)
+			return isPathClear(startX, startY, rookX, startY);
 	}
 
 	return false;
@@ -134,7 +145,7 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
 	int x = startX + xDir;
 	int y = startY + yDir;
 
-	while(x != endX || y != endY)
+	while(x != endX or y != endY)
 	{
 		if(board[y][x].m_type != PieceType::NONE)
 			return false;
@@ -149,7 +160,8 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
 
 bool ChessBoard::isInCheck(char kingColor) const
 {
-	// Add logic to check if the king of the given color is in check
+	// Basic implementation to check if the king is in check
+	
 	return false;
 }
 
@@ -183,6 +195,7 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * TILE_SIZE, colorOffset, TILE_SIZE, TILE_SIZE));
 			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
 			pieceSprite.setOrigin(0, 1);
+			
 			window.draw(pieceSprite);
 		}
 	}
