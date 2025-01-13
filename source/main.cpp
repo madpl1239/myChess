@@ -57,23 +57,28 @@ int main(void)
 					int x = std::round(position.x / TILE_SIZE);
 					int y = std::round(position.y / TILE_SIZE);
 					
-					if(not isPieceSelected)
+					if(x < 8 and y < 8)
 					{
-						if(board.isPieceAt(x, y))
+						if(not isPieceSelected)
 						{
-							selectedPiece = sf::Vector2i(x, y);
-							isPieceSelected = true;
+							if(board.isPieceAt(x, y))
+							{
+								selectedPiece = sf::Vector2i(x, y);
+								isPieceSelected = true;
+							}
+						}
+						else
+						{
+							if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
+								board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+							else
+								std::cout << "Invalid move!" << std::endl;
+							
+							isPieceSelected = false;
 						}
 					}
 					else
-					{
-						if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
-							board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
-						else
-							std::cout << "Invalid move!" << std::endl;
-						
-						isPieceSelected = false;
-					}
+						std::cout << "x, y out of range!\n";
 				}
 			}
 		}
