@@ -160,9 +160,42 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
 
 bool ChessBoard::isInCheck(char kingColor) const
 {
-	// Basic implementation to check if the king is in check
-	
-	return false;
+    // Find the king's position
+    int kingX = -1, kingY = -1;
+    for(int y = 0; y < 8; ++y)
+    {
+        for(int x = 0; x < 8; ++x)
+        {
+            if(board[y][x].m_type == PieceType::KING && board[y][x].m_color == kingColor)
+            {
+                kingX = x;
+                kingY = y;
+                break;
+            }
+        }
+        
+        if(kingX != -1)
+			break; // Exit loop if king is found
+    }
+
+    // Check if any opponent's piece attacks the king
+    for(int y = 0; y < 8; ++y)
+    {
+        for(int x = 0; x < 8; ++x)
+        {
+            if(board[y][x].m_color != kingColor and board[y][x].m_type != PieceType::NONE)
+            {
+                if(isValidMove(x, y, kingX, kingY))
+				{
+					std::cout << "King is in check!\n";
+					
+                    return true;
+				}
+            }
+        }
+    }
+
+    return false;
 }
 
 
