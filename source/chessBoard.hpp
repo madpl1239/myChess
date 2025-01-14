@@ -14,7 +14,7 @@ class ChessBoard
 {
 public:
 	ChessBoard();
-	
+
 	void setInitialPositions();
 	bool isPieceAt(int x, int y) const;
 	bool isValidMove(int startX, int startY, int endX, int endY) const;
@@ -23,7 +23,7 @@ public:
 	bool validateKingMove(const Piece& king, int startX, int startY, int endX, int endY, int dx, int dy) const;
 	bool isPathClear(int startX, int startY, int endX, int endY) const;
 	bool isInCheck(char kingColor) const;
-	
+
 	void draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset);
 
 private:
