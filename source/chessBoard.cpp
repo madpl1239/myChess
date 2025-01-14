@@ -161,12 +161,14 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
 bool ChessBoard::isInCheck(char kingColor) const
 {
     // Find the king's position
-    int kingX = -1, kingY = -1;
+    int kingX = -10;
+	int kingY = -10;
+
     for(int y = 0; y < 8; ++y)
     {
         for(int x = 0; x < 8; ++x)
         {
-            if(board[y][x].m_type == PieceType::KING && board[y][x].m_color == kingColor)
+            if(board[y][x].m_type == PieceType::KING and board[y][x].m_color == kingColor)
             {
                 kingX = x;
                 kingY = y;
