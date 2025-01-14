@@ -160,49 +160,100 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
 
 bool ChessBoard::isInCheck(char kingColor) const
 {
-    // Find the king's position
-    int kingX = -1, kingY = -1;
-    for(int y = 0; y < 8; ++y)
-    {
-        for(int x = 0; x < 8; ++x)
-        {
-            if(board[y][x].m_type == PieceType::KING && board[y][x].m_color == kingColor)
-            {
-                kingX = x;
-                kingY = y;
-                break;
-            }
-        }
-        
-        if(kingX != -1)
-			break; // Exit loop if king is found
-    }
+	// Find the king's position
+	int kingX = -1, kingY = -1;
 
-    // Check if any opponent's piece attacks the king
-    for(int y = 0; y < 8; ++y)
-    {
-        for(int x = 0; x < 8; ++x)
-        {
-            if(board[y][x].m_color != kingColor and board[y][x].m_type != PieceType::NONE)
-            {
-                if(isValidMove(x, y, kingX, kingY))
+	for(int y = 0; y < 8; ++y)
+	{
+		for(int x = 0; x < 8; ++x)
+		{
+			if(board[y][x].m_type == PieceType::KING && board[y][x].m_color == kingColor)
+			{
+				kingX = x;
+				kingY = y;
+				std::cout << "King (" << (kingColor == 'W' ? "White" : "Black") << ") found at position (" << kingX << ", " << kingY << ")\n";
+				break;
+			}
+		}
+
+		if(kingX != -1)
+			break;
+	}
+
+	if(kingX == -1 || kingY == -1)
+	{
+		std::cerr << "Error: King not found on the board!\n";
+
+		return false;
+	}
+
+	// Check if any opponent's piece can attack the king
+	for(int y = 0; y < 8; ++y)
+	{
+		for(int x = 0; x < 8; ++x)
+		{
+			if(board[y][x].m_color != kingColor and board[y][x].m_type != PieceType::NONE)
+			{
+				if(isValidMove(x, y, kingX, kingY))
 				{
-					std::cout << "King is in check!\n";
-					
-                    return true;
-				}
-            }
-        }
-    }
+					std::cout << "Piece (" << pieceTypeToString(board[y][x].m_type) << ") at (" << x << ", " << y << ") can attack the king!\n";
 
-    return false;
+					return true;
+				}
+			}
+		}
+	}
+
+	std::cout << "King (" << (kingColor == 'W' ? "White" : "Black") << ") is not in check.\n";
+
+	return false;
+}
+
+
+std::string ChessBoard::pieceTypeToString(PieceType type) const
+{
+	switch(type)
+	{
+		case PieceType::PAWN:
+			return "Pawn";
+
+		case PieceType::ROOK:
+			return "Rook";
+
+		case PieceType::KNIGHT:
+			return "Knight";
+
+		case PieceType::BISHOP:
+			return "Bishop";
+
+		case PieceType::QUEEN:
+			return "Queen";
+
+		case PieceType::KING:
+			return "King";
+
+		default:
+			return "Unknown";
+	}
 }
 
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
+	std::cout << "\nMoving piece from (" << startX << ", " << startY << ") to (" << endX << ", " << endY << ")\n";
+
 	board[endY][endX] = board[startY][startX];
 	board[startY][startX] = Piece();
+
+	char currentPlayerColor = board[endY][endX].m_color;
+	char opponentColor = (currentPlayerColor == 'W') ? 'B' : 'W';
+
+	std::cout << "Checking if the " << (opponentColor == 'W' ? "white" : "black") << " king is in check...\n";
+
+	if(isInCheck(opponentColor))
+		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is in check!\n";
+	else
+		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is not in check.\n";
 }
 
 
