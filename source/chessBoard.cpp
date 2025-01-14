@@ -160,18 +160,20 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const
 
 bool ChessBoard::isInCheck(char kingColor) const
 {
-	// Find the king's position
 	int kingX = -1, kingY = -1;
 
 	for(int y = 0; y < 8; ++y)
 	{
 		for(int x = 0; x < 8; ++x)
 		{
-			if(board[y][x].m_type == PieceType::KING && board[y][x].m_color == kingColor)
+			if(board[y][x].m_type == PieceType::KING and board[y][x].m_color == kingColor)
 			{
 				kingX = x;
 				kingY = y;
-				std::cout << "King (" << (kingColor == 'W' ? "White" : "Black") << ") found at position (" << kingX << ", " << kingY << ")\n";
+				
+				std::cout << "King (" << (kingColor == 'W' ? "White" : "Black") 
+							<< ") found at position (" << kingX << ", " << kingY << ")\n";
+				
 				break;
 			}
 		}
@@ -180,9 +182,9 @@ bool ChessBoard::isInCheck(char kingColor) const
 			break;
 	}
 
-	if(kingX == -1 || kingY == -1)
+	if(kingX == -1 or kingY == -1)
 	{
-		std::cerr << "Error: King not found on the board!\n";
+		std::cerr << "Error: King not found on board!\n";
 
 		return false;
 	}
@@ -196,7 +198,8 @@ bool ChessBoard::isInCheck(char kingColor) const
 			{
 				if(isValidMove(x, y, kingX, kingY))
 				{
-					std::cout << "Piece (" << pieceTypeToString(board[y][x].m_type) << ") at (" << x << ", " << y << ") can attack the king!\n";
+					std::cout << "Piece (" << pieceTypeToString(board[y][x].m_type) 
+								<< ") at (" << x << ", " << y << ") attack king!\n";
 
 					return true;
 				}
@@ -240,7 +243,8 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
-	std::cout << "\nMoving piece from (" << startX << ", " << startY << ") to (" << endX << ", " << endY << ")\n";
+	std::cout << "\nMoving piece from (" << startX << ", " << startY << ") to (" 
+										<< endX << ", " << endY << ")\n";
 
 	board[endY][endX] = board[startY][startX];
 	board[startY][startX] = Piece();
@@ -248,7 +252,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	char currentPlayerColor = board[endY][endX].m_color;
 	char opponentColor = (currentPlayerColor == 'W') ? 'B' : 'W';
 
-	std::cout << "Checking if the " << (opponentColor == 'W' ? "white" : "black") << " king is in check...\n";
+	std::cout << "Checking if " << (opponentColor == 'W' ? "white" : "black") << " king is in check...\n";
 
 	if(isInCheck(opponentColor))
 		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is in check!\n";

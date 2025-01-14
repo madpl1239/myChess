@@ -23,12 +23,7 @@ public:
 	bool validateKingMove(const Piece& king, int startX, int startY, int endX, int endY, int dx, int dy) const;
 	bool isPathClear(int startX, int startY, int endX, int endY) const;
 	bool isInCheck(char kingColor) const;
-<<<<<<< HEAD
-
-=======
 	std::string pieceTypeToString(PieceType type) const;
-	
->>>>>>> 0b52ab79325bf704d8ee98ca395ed0feaf426a51
 	void draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset);
 
 private:
