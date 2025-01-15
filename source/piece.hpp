@@ -26,7 +26,6 @@ public:
 		m_color(c)
 	{}
     
-public:
     PieceType m_type;
     char m_color; // 'W' for white, 'B' for black
 };
