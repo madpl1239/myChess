@@ -57,6 +57,16 @@ bool ChessBoard::isPieceAt(int x, int y) const
 }
 
 
+bool ChessBoard::atBoard(sf::Vector2i Start, sf::Vector2i End)
+{
+	if((Start.x >= 0 and Start.x < 8) and (Start.y >= 0 and Start.y < 8) and
+	   (End.x >= 0 and End.x < 8) and (End.y >= 0 and End.y < 8))
+		return true;
+	
+	return false;
+}
+
+
 bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
 {
 	if(startX == endX and startY == endY)
@@ -258,6 +268,26 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 
 	if(isInCheck(opponentColor))
 		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is in check!\n";
+}
+
+
+std::string ChessBoard::toChess(int x, int y)
+{
+	std::string str;
+		
+	str += static_cast<char>(97 + x);
+	str += static_cast<char>(7 - y + 49);
+		
+	return str;
+}
+
+
+sf::Vector2i ChessBoard::toCoords(char col, char row)
+{
+	int x = static_cast<int>(col - 'a');
+	int y = 7 - static_cast<int>(row - '1') - 1;
+		
+	return sf::Vector2i(x, y);
 }
 
 

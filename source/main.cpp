@@ -14,6 +14,28 @@
 #include "stockHandle.hpp"
 
 
+std::string getNextMove(Stockfish& engine, std::string& position)
+{
+	std::string command = "position startpos moves" + position;
+	
+	engine.sendCommand(command);
+	engine.sendCommand("go depth 2");
+	
+	std::string response = engine.getResponse();
+		
+	size_t bestmoveIdx = response.find("bestmove");
+	if(bestmoveIdx != std::string::npos)
+	{
+		size_t endIdx = response.find(' ', bestmoveIdx + 9);
+		
+		return (endIdx != std::string::npos) ? response.substr(bestmoveIdx + 9, endIdx - (bestmoveIdx + 9))
+												: response.substr(bestmoveIdx + 9);
+	}
+	
+	return "no response";
+}
+
+	
 int main(void) 
 {
 	try
@@ -51,12 +73,43 @@ int main(void)
 			return -1;
 		}
 		
+		engine.sendCommand("uci");
+		engine.sendCommand("setoption name Skill Level value 1");
+		std::cout << engine.getResponse();
+		
+		engine.sendCommand("isready");
+		if(engine.getResponse().find("readyok") != std::string::npos)
+			std::cout << "readyok\n";
+		else
+		{
+			engine.sendCommand("quit");
+			std::cerr << "not readyok!\n";
+			
+			return -1;
+		}
+		
+		engine.sendCommand("ucinewgame");
+		engine.sendCommand("isready");
+		
+		std::string resp = engine.getResponse();
+		if(resp.find("readyok") == std::string::npos)
+			throw std::runtime_error("response error");
+		
+		#ifdef DEBUG
+		std::cout << "[DEBUG] ucinewgame\n";
+		std::cout << "[DEBUG] readyok\n";
+		#endif
+		
 		ChessBoard board;
 		board.setInitialPositions();
 		
-		bool isPieceSelected = false;
-		sf::Vector2i selectedPiece;
+		std::string position = "";
+		std::string commPlayer = "";
+		std::string commStockfish = "";
+		
 		const int frameOffset = OFFSET;
+		sf::Vector2i selectedPiece;
+		bool isPieceSelected = false;
 		
 		while(window.isOpen()) 
 		{
@@ -70,10 +123,10 @@ int main(void)
 				{
 					if(event.mouseButton.button == sf::Mouse::Left)
 					{
-						sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
+						sf::Vector2i pos = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
 						
-						int x = std::round(position.x / TILE_SIZE);
-						int y = std::round(position.y / TILE_SIZE);
+						int x = std::round(pos.x / TILE_SIZE);
+						int y = std::round(pos.y / TILE_SIZE);
 						
 						if(x < 8 and y < 8)
 						{
@@ -81,6 +134,8 @@ int main(void)
 							{
 								if(board.isPieceAt(x, y))
 								{
+									commPlayer = board.toChess(x, y);
+									
 									selectedPiece = sf::Vector2i(x, y);
 									isPieceSelected = true;
 								}
@@ -88,11 +143,33 @@ int main(void)
 							else
 							{
 								if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
+								{
+									commPlayer += board.toChess(x, y);
+									position += " " + commPlayer;
+									
+									#ifdef DEBUG
+									std::cout << "[DEBUG] commPlayer = " << commPlayer << "\n";
+									#endif
+									
+									commPlayer.clear();
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+								}
 								else
-									std::cout << "Invalid move!" << std::endl;
+									std::cout << "Invalid move!\n";
 								
 								isPieceSelected = false;
+								
+								// engine response
+								commStockfish.clear();
+								commStockfish = getNextMove(engine, position);
+								position += " " + commStockfish;
+								sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
+								sf::Vector2i posEnd = board.toCoords(commStockfish[2], commStockfish[3]);
+								
+								if(board.atBoard(posStart, posEnd))
+									board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
+								else
+									std::cout << "Invalid move from engine!\n";
 							}
 						}
 						else
