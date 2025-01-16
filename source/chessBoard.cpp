@@ -171,8 +171,10 @@ bool ChessBoard::isInCheck(char kingColor) const
 				kingX = x;
 				kingY = y;
 				
-				std::cout << "King (" << (kingColor == 'W' ? "White" : "Black") 
+				#ifdef DEBUG
+				std::cout << "[DEBUG] King (" << (kingColor == 'W' ? "White" : "Black") 
 							<< ") found at position (" << kingX << ", " << kingY << ")\n";
+				#endif
 				
 				break;
 			}
@@ -198,8 +200,10 @@ bool ChessBoard::isInCheck(char kingColor) const
 			{
 				if(isValidMove(x, y, kingX, kingY))
 				{
-					std::cout << "Piece (" << pieceTypeToString(m_board[y][x].m_type) 
+					#ifdef DEBUG
+					std::cout << "[DEBUG] Piece (" << pieceTypeToString(m_board[y][x].m_type) 
 								<< ") at (" << x << ", " << y << ") attack king!\n";
+					#endif
 					
 					return true;
 				}
@@ -207,7 +211,10 @@ bool ChessBoard::isInCheck(char kingColor) const
 		}
 	}
 
-	std::cout << "King (" << (kingColor == 'W' ? "White" : "Black") << ") is not in check.\n";
+	#ifdef DEBUG
+	std::cout << "[DEBUG] King (" << (kingColor == 'W' ? "White" : "Black") 
+									<< ") is not in check.\n";
+	#endif
 
 	return false;
 }

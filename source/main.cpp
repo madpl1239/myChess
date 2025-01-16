@@ -11,81 +11,107 @@
 #include <cmath>
 #include "defines.hpp"
 #include "chessBoard.hpp"
+#include "stockHandle.hpp"
 
 
 int main(void) 
 {
-	sf::RenderWindow window(sf::VideoMode(SIZE, SIZE), "Chess Game");
-
-	sf::Texture boardTexture;
-	if(not boardTexture.loadFromFile("./resources/board.png"))
+	try
 	{
-		std::cerr << "Failed to load board texture" << std::endl;
+		// logo
+		std::cout << "guiChess v0.5 - by madpl 2025\n";
 		
-		return -1;
-	}
-
-	sf::Texture figuresTexture;
-	if(not figuresTexture.loadFromFile("./resources/figures.png"))
-	{
-		std::cerr << "Failed to load figures texture" << std::endl;
+		sf::RenderWindow window(sf::VideoMode(SIZE, SIZE), "guiChess by madpl 2025");
+		window.setPosition(sf::Vector2i(600, 200));
+		window.setFramerateLimit(60);
+		window.setKeyRepeatEnabled(false);
 		
-		return -1;
-	}
-
-	ChessBoard board;
-	board.setInitialPositions();
-
-	bool isPieceSelected = false;
-	sf::Vector2i selectedPiece;
-	const int frameOffset = OFFSET;
-
-	while(window.isOpen()) 
-	{
-		sf::Event event;
-		while(window.pollEvent(event)) 
+		sf::Texture boardTexture;
+		if(not boardTexture.loadFromFile("./resources/board.png"))
+			throw std::runtime_error("Could not load board.png");
+		
+		sf::Texture figuresTexture;
+		if(not figuresTexture.loadFromFile("./resources/figures.png"))
+			throw std::runtime_error("Could not load figures.png");
+		
+		#ifdef LINUX
+		Stockfish engine("./stockfish");
+		#endif
+		
+		#ifdef WINDOWS
+		Stockfish engine("./stockfish.exe");
+		#endif
+		
+		engine.sendCommand("uci");
+		if(engine.getResponse().find("uciok") == std::string::npos)
 		{
-			if(event.type == sf::Event::Closed)
-				window.close();
+			engine.sendCommand("quit");
+			std::cerr << "engine: not uciok!\n";
 			
-			if(event.type == sf::Event::MouseButtonPressed)
+			return -1;
+		}
+		
+		ChessBoard board;
+		board.setInitialPositions();
+		
+		bool isPieceSelected = false;
+		sf::Vector2i selectedPiece;
+		const int frameOffset = OFFSET;
+		
+		while(window.isOpen()) 
+		{
+			sf::Event event;
+			while(window.pollEvent(event)) 
 			{
-				if(event.mouseButton.button == sf::Mouse::Left)
+				if(event.type == sf::Event::Closed)
+					window.close();
+				
+				if(event.type == sf::Event::MouseButtonPressed)
 				{
-					sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
-					
-					int x = std::round(position.x / TILE_SIZE);
-					int y = std::round(position.y / TILE_SIZE);
-					
-					if(x < 8 and y < 8)
+					if(event.mouseButton.button == sf::Mouse::Left)
 					{
-						if(not isPieceSelected)
+						sf::Vector2i position = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
+						
+						int x = std::round(position.x / TILE_SIZE);
+						int y = std::round(position.y / TILE_SIZE);
+						
+						if(x < 8 and y < 8)
 						{
-							if(board.isPieceAt(x, y))
+							if(not isPieceSelected)
 							{
-								selectedPiece = sf::Vector2i(x, y);
-								isPieceSelected = true;
+								if(board.isPieceAt(x, y))
+								{
+									selectedPiece = sf::Vector2i(x, y);
+									isPieceSelected = true;
+								}
+							}
+							else
+							{
+								if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
+									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+								else
+									std::cout << "Invalid move!" << std::endl;
+								
+								isPieceSelected = false;
 							}
 						}
 						else
-						{
-							if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
-								board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
-							else
-								std::cout << "Invalid move!" << std::endl;
-							
-							isPieceSelected = false;
-						}
+							std::cout << "x, y out of range!\n";
 					}
-					else
-						std::cout << "x, y out of range!\n";
 				}
 			}
+			
+			window.clear();
+			board.draw(window, boardTexture, figuresTexture, frameOffset);
+			window.display();
 		}
+	}
+	
+	catch(std::exception& e)
+	{
+		std::cerr << "throw exception: " << e.what() << "\n";
 		
-		window.clear();
-		board.draw(window, boardTexture, figuresTexture, frameOffset);
-		window.display();
+		return -1;
 	}
 
 	return 0;
