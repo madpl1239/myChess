@@ -4,7 +4,7 @@
  * 12-01-2025 by madpl
  */
 #include <iostream>
-#include <cmath> // For abs()
+#include <cmath>
 #include "defines.hpp"
 #include "chessBoard.hpp"
 
@@ -54,16 +54,6 @@ void ChessBoard::setInitialPositions()
 bool ChessBoard::isPieceAt(int x, int y) const
 {
 	return m_board[y][x].m_type != PieceType::NONE;
-}
-
-
-bool ChessBoard::atBoard(sf::Vector2i Start, sf::Vector2i End)
-{
-	if((Start.x >= 0 and Start.x < 8) and (Start.y >= 0 and Start.y < 8) and
-	   (End.x >= 0 and End.x < 8) and (End.y >= 0 and End.y < 8))
-		return true;
-	
-	return false;
 }
 
 
@@ -288,6 +278,16 @@ sf::Vector2i ChessBoard::toCoords(char col, char row)
 	int y = 7 - static_cast<int>(row - '1') - 1;
 		
 	return sf::Vector2i(x, y);
+}
+
+
+bool ChessBoard::atBoard(sf::Vector2i Start, sf::Vector2i End)
+{
+	if((Start.x >= 0 and Start.x < 8) and (Start.y >= 0 and Start.y < 8) and
+	   (End.x >= 0 and End.x < 8) and (End.y >= 0 and End.y < 8))
+		return true;
+	
+	return false;
 }
 
 
