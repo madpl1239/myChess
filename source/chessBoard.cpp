@@ -272,23 +272,11 @@ std::string ChessBoard::toChess(int x, int y)
 }
 
 
-/*
 sf::Vector2i ChessBoard::toCoords(char col, char row)
 {
 	int x = static_cast<int>(col - 'a');
 	int y = 7 - static_cast<int>(row - '1') - 1;
 		
-	return sf::Vector2i(x, y);
-}
-*/
-
-
-sf::Vector2i ChessBoard::toCoords(char col, char row)
-{
-	int x = static_cast<int>(col - 'a');    // 'a' to 'h'
-	int y = 8 - static_cast<int>(row - '0'); // '1' → 7, '2' → 6, ..., '8' → 0
-	y -= 1; // Dostosowanie do indeksów tablicy (0-7)
-	
 	return sf::Vector2i(x, y);
 }
 
