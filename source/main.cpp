@@ -36,32 +36,48 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 }
 
 
-void moveRook(std::string str)
+bool castling(ChessBoard& board, std::string& str, std::string& position, sf::Vector2i& rookStart, sf::Vector2i& rookEnd)
 {
-#ifdef DEBUG
-	std::cout << "[DEBUG] castling --> move rook\n";
-#endif
-}
-
-
-void castling(std::string& str, std::string& position)
-{
+	bool result = false;
+	
 	// castling if the king has not yet moved
 	if(str == "e1g1") // king's move
-		if(position.find("e1") == -1) 
-			moveRook("h1f1"); // ruch wieży
-		
+		if(position.find("e1") == -1)
+		{
+			// h1f1
+			rookStart = board.toCoords('h', '1');
+			rookEnd = board.toCoords('f', '1');
+			result = true;
+		}
+
 	if(str == "e8g8")
 		if(position.find("e8") == -1)
-			moveRook("h8f8");
-		
+		{
+			// h8f8
+			rookStart = board.toCoords('h', '8');
+			rookEnd = board.toCoords('f', '8');
+			result = true;
+		}
+
 	if(str == "e1c1")
-		if(position.find("e1") == -1) 
-			moveRook("a1d1");
-		
+		if(position.find("e1") == -1)
+		{
+			// a1d1
+			rookStart = board.toCoords('a', '1');
+			rookEnd = board.toCoords('d', '1');
+			result = true;
+		}
+
 	if(str == "e8c8") 
 		if(position.find("e8") == -1)
-			moveRook("a8d8");
+		{
+			// a8d8
+			rookStart = board.toCoords('a', '8');
+			rookEnd = board.toCoords('d', '8');
+			result = true;
+		}
+		
+	return result;
 }
 
 	
@@ -179,10 +195,16 @@ int main(void)
 									std::cout << "[DEBUG] commPlayer = " << commPlayer << "\n";
 									#endif
 									
-									castling(commPlayer, position);
+									sf::Vector2i rStart;
+									sf::Vector2i rEnd;
+									bool isCastling = castling(board, commPlayer, position, rStart, rEnd);
+									
 									position += " " + commPlayer;
 									commPlayer.clear();
+									
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+									if(isCastling)
+										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 								}
 								else
 									std::cout << "Invalid move!\n";
@@ -197,7 +219,10 @@ int main(void)
 								std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
 								#endif
 								
-								castling(commStockfish, position);
+								sf::Vector2i rStart;
+								sf::Vector2i rEnd;
+								bool isCastling = castling(board, commStockfish, position, rStart, rEnd);
+								
 								position += " " + commStockfish;
 								sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
 								sf::Vector2i posEnd = board.toCoords(commStockfish[2], commStockfish[3]);
@@ -206,6 +231,9 @@ int main(void)
 									board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
 								else
 									std::cout << "Invalid move from engine!\n";
+								
+								if(isCastling)
+									board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 							}
 						}
 						else
