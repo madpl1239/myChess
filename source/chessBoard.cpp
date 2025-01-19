@@ -275,17 +275,8 @@ std::string ChessBoard::toChess(int x, int y)
 sf::Vector2i ChessBoard::toCoords(char col, char row)
 {
 	int x = static_cast<int>(col - 'a');
-	
-	#ifdef DEBUG
-	std::cout << "[DEBUG] toCoords()::x = " << x << "\n";
-	#endif
-	
 	int y = 7 - static_cast<int>(row - '1');
 	
-	#ifdef DEBUG
-	std::cout << "[DEBUG] toCoords()::y = " << y << "\n";
-	#endif
-		
 	return sf::Vector2i(x, y);
 }
 
