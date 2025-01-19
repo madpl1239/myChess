@@ -36,51 +36,6 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 }
 
 
-bool castling(ChessBoard& board, std::string& str, std::string& position, sf::Vector2i& rookStart, sf::Vector2i& rookEnd)
-{
-	bool result = false;
-	
-	// castling if the king has not yet moved
-	if(str == "e1g1") // king's move
-		if(position.find("e1") == -1)
-		{
-			// h1f1
-			rookStart = board.toCoords('h', '1');
-			rookEnd = board.toCoords('f', '1');
-			result = true;
-		}
-
-	if(str == "e8g8")
-		if(position.find("e8") == -1)
-		{
-			// h8f8
-			rookStart = board.toCoords('h', '8');
-			rookEnd = board.toCoords('f', '8');
-			result = true;
-		}
-
-	if(str == "e1c1")
-		if(position.find("e1") == -1)
-		{
-			// a1d1
-			rookStart = board.toCoords('a', '1');
-			rookEnd = board.toCoords('d', '1');
-			result = true;
-		}
-
-	if(str == "e8c8") 
-		if(position.find("e8") == -1)
-		{
-			// a8d8
-			rookStart = board.toCoords('a', '8');
-			rookEnd = board.toCoords('d', '8');
-			result = true;
-		}
-		
-	return result;
-}
-
-	
 int main(void) 
 {
 	try
@@ -197,7 +152,7 @@ int main(void)
 									
 									sf::Vector2i rStart;
 									sf::Vector2i rEnd;
-									bool isCastling = castling(board, commPlayer, position, rStart, rEnd);
+									bool isCastling = board.castling(commPlayer, position, rStart, rEnd);
 									
 									position += " " + commPlayer;
 									commPlayer.clear();
@@ -221,7 +176,7 @@ int main(void)
 								
 								sf::Vector2i rStart;
 								sf::Vector2i rEnd;
-								bool isCastling = castling(board, commStockfish, position, rStart, rEnd);
+								bool isCastling = board.castling(commStockfish, position, rStart, rEnd);
 								
 								position += " " + commStockfish;
 								sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
@@ -247,7 +202,7 @@ int main(void)
 			window.display();
 		}
 	}
-	
+
 	catch(std::exception& e)
 	{
 		std::cerr << "throw exception: " << e.what() << "\n";

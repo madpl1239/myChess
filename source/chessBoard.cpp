@@ -291,6 +291,51 @@ bool ChessBoard::atBoard(sf::Vector2i Start, sf::Vector2i End)
 }
 
 
+bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i& rookStart, sf::Vector2i& rookEnd)
+{
+	bool result = false;
+	
+	// castling if the king has not yet moved
+	if(str == "e1g1") // king's move
+		if(position.find("e1") == -1)
+		{
+			// h1f1
+			rookStart = toCoords('h', '1');
+			rookEnd = toCoords('f', '1');
+			result = true;
+		}
+
+	if(str == "e8g8")
+		if(position.find("e8") == -1)
+		{
+			// h8f8
+			rookStart = toCoords('h', '8');
+			rookEnd = toCoords('f', '8');
+			result = true;
+		}
+
+	if(str == "e1c1")
+		if(position.find("e1") == -1)
+		{
+			// a1d1
+			rookStart = toCoords('a', '1');
+			rookEnd = toCoords('d', '1');
+			result = true;
+		}
+
+	if(str == "e8c8") 
+		if(position.find("e8") == -1)
+		{
+			// a8d8
+			rookStart = toCoords('a', '8');
+			rookEnd = toCoords('d', '8');
+			result = true;
+		}
+	
+	return result;
+}
+
+
 void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset) 
 {
 	sf::Sprite boardSprite(boardTexture);
