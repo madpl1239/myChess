@@ -151,6 +151,9 @@ int main(void)
 									std::cout << "[DEBUG] commPlayer = " << commPlayer << "\n";
 									#endif
 									
+									sf::Vector2i posStart = board.toCoords(commPlayer[0], commPlayer[1]);
+									sf::Vector2i posEnd = board.toCoords(commPlayer[2], commPlayer[3]);
+									
 									commPlayer.clear();
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
 								}
@@ -162,6 +165,11 @@ int main(void)
 								// engine response
 								commStockfish.clear();
 								commStockfish = getNextMove(engine, position);
+								
+								#ifdef DEBUG
+								std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
+								#endif
+								
 								position += " " + commStockfish;
 								sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
 								sf::Vector2i posEnd = board.toCoords(commStockfish[2], commStockfish[3]);
