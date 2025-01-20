@@ -88,16 +88,23 @@ int main(void)
 		
 		sf::Vector2i selectedPiece;
 		bool isPieceSelected = false;
+		bool quit = false;
 		
-		while(window.isOpen()) 
+		while(window.isOpen() and !quit) 
 		{
 			sf::Event event;
 			while(window.pollEvent(event)) 
 			{
 				if(event.type == sf::Event::Closed)
-					window.close();
+					quit = true;
 				
-				if(event.type == sf::Event::MouseButtonPressed)
+				else if(event.type == sf::Event::KeyPressed)
+				{
+					if(event.key.code == sf::Keyboard::Escape)
+						quit = true;
+				}
+				
+				else if(event.type == sf::Event::MouseButtonPressed)
 				{
 					if(event.mouseButton.button == sf::Mouse::Left)
 					{
@@ -180,6 +187,8 @@ int main(void)
 			board.draw(boardTexture, figuresTexture);
 			window.display();
 		}
+		
+		window.close();
 	}
 
 	catch(std::exception& e)

@@ -14,6 +14,7 @@ class ChessBoard
 {
 public:
 	ChessBoard(sf::RenderWindow& window);
+	~ChessBoard();
 
 	void setInitialPositions();
 	bool isPieceAt(int x, int y) const;

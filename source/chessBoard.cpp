@@ -12,7 +12,28 @@
 ChessBoard::ChessBoard(sf::RenderWindow& window):
 	m_window(window)
 {
+	#ifdef DEBUG
+	std::cout << "[DEBUG] ctor ChessBoard\n";
+	#endif
+	
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
+}
+
+
+ChessBoard::~ChessBoard()
+{
+	#ifdef DEBUG
+	std::cout << "[DEBUG] dtor ChessBoard\n";
+	#endif
+	
+	if(not m_board.empty())
+	{
+		for(int y = 0; y < 8; ++y)
+			if(not m_board[y].empty())
+				m_board[y].clear();
+		
+		m_board.clear();
+	}
 }
 
 
