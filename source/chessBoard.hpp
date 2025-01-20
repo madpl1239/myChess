@@ -13,7 +13,7 @@
 class ChessBoard 
 {
 public:
-	ChessBoard();
+	ChessBoard(sf::RenderWindow& window);
 
 	void setInitialPositions();
 	bool isPieceAt(int x, int y) const;
@@ -23,9 +23,9 @@ public:
 	sf::Vector2i toCoords(char col, char row);
 	bool atBoard(sf::Vector2i Start, sf::Vector2i End);
 	bool castling(std::string& str, std::string& position, sf::Vector2i& rookStart, sf::Vector2i& rookEnd);
-	
-	void draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset);
-	
+
+	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
+
 private:
 	bool validatePawnMove(const Piece& pawn, int startX, int startY, int endX, int endY, int dx, int dy) const;
 	bool validateKingMove(const Piece& king, int startX, int startY, int endX, int endY, int dx, int dy) const;
@@ -34,4 +34,5 @@ private:
 	std::string pieceTypeToString(PieceType type) const;
 
 	std::vector<std::vector<Piece>> m_board;
+	sf::RenderWindow& m_window;
 };

@@ -43,7 +43,7 @@ int main(void)
 		// logo
 		std::cout << "guiChess v0.5 - by madpl 2025\n";
 		
-		sf::RenderWindow window(sf::VideoMode(SIZE, SIZE), "guiChess by madpl 2025");
+		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "guiChess by madpl 2025");
 		window.setPosition(sf::Vector2i(600, 200));
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
@@ -74,7 +74,7 @@ int main(void)
 		}
 		
 		engine.sendCommand("uci");
-		engine.sendCommand("setoption name Skill Level value 1");
+		// engine.sendCommand("setoption name Skill Level value 1");
 		std::cout << engine.getResponse();
 		
 		engine.sendCommand("isready");
@@ -100,14 +100,13 @@ int main(void)
 		std::cout << "[DEBUG] readyok\n";
 		#endif
 		
-		ChessBoard board;
+		ChessBoard board(window);
 		board.setInitialPositions();
 		
 		std::string position = "";
 		std::string commPlayer = "";
 		std::string commStockfish = "";
 		
-		const int frameOffset = OFFSET;
 		sf::Vector2i selectedPiece;
 		bool isPieceSelected = false;
 		
@@ -158,7 +157,7 @@ int main(void)
 									commPlayer.clear();
 									
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
-									if(isCastling)
+									if(isCastling and board.atBoard(rStart, rEnd))
 										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 								}
 								else
@@ -187,7 +186,7 @@ int main(void)
 								else
 									std::cout << "Invalid move from engine!\n";
 								
-								if(isCastling)
+								if(isCastling and board.atBoard(rStart, rEnd))
 									board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 							}
 						}
@@ -197,8 +196,9 @@ int main(void)
 				}
 			}
 			
-			window.clear();
-			board.draw(window, boardTexture, figuresTexture, frameOffset);
+			// color dark sea green - 8FBC8F
+			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
+			board.draw(boardTexture, figuresTexture);
 			window.display();
 		}
 	}

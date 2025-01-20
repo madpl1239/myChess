@@ -9,7 +9,8 @@
 #include "chessBoard.hpp"
 
 
-ChessBoard::ChessBoard()
+ChessBoard::ChessBoard(sf::RenderWindow& window):
+	m_window(window)
 {
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
 }
@@ -61,7 +62,7 @@ bool ChessBoard::isValidMove(int startX, int startY, int endX, int endY) const
 {
 	if(startX == endX and startY == endY)
 		return false;
-	
+
 	if(m_board[startY][startX].m_color == m_board[endY][endX].m_color)
 		return false;
 
@@ -264,10 +265,10 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 std::string ChessBoard::toChess(int x, int y)
 {
 	std::string str;
-		
+
 	str += static_cast<char>(97 + x);
 	str += static_cast<char>(7 - y + 49);
-		
+
 	return str;
 }
 
@@ -299,7 +300,7 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 	if(str == "e1g1") // king's move
 		if(position.find("e1") == -1)
 		{
-			// h1f1
+			// "h1f1"
 			rookStart = toCoords('h', '1');
 			rookEnd = toCoords('f', '1');
 			result = true;
@@ -308,7 +309,7 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 	if(str == "e8g8")
 		if(position.find("e8") == -1)
 		{
-			// h8f8
+			// "h8f8"
 			rookStart = toCoords('h', '8');
 			rookEnd = toCoords('f', '8');
 			result = true;
@@ -317,7 +318,7 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 	if(str == "e1c1")
 		if(position.find("e1") == -1)
 		{
-			// a1d1
+			// "a1d1"
 			rookStart = toCoords('a', '1');
 			rookEnd = toCoords('d', '1');
 			result = true;
@@ -326,7 +327,7 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 	if(str == "e8c8") 
 		if(position.find("e8") == -1)
 		{
-			// a8d8
+			// "a8d8"
 			rookStart = toCoords('a', '8');
 			rookEnd = toCoords('d', '8');
 			result = true;
@@ -336,13 +337,13 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 }
 
 
-void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::Texture& figuresTexture, int frameOffset) 
+void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture) 
 {
 	sf::Sprite boardSprite(boardTexture);
 	sf::Sprite pieceSprite(figuresTexture);
 	
 	boardSprite.setPosition(0, 0);
-	window.draw(boardSprite);
+	m_window.draw(boardSprite);
 	
 	for(int y = 0; y < 8; ++y) 
 	{
@@ -356,10 +357,10 @@ void ChessBoard::draw(sf::RenderWindow& window, sf::Texture& boardTexture, sf::T
 			int colorOffset = (piece.m_color == 'B') ? TILE_SIZE : 0;
 			
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * TILE_SIZE, colorOffset, TILE_SIZE, TILE_SIZE));
-			pieceSprite.setPosition((x * TILE_SIZE) + frameOffset, (y * TILE_SIZE) + frameOffset);
+			pieceSprite.setPosition((x * TILE_SIZE) + OFFSET, (y * TILE_SIZE) + OFFSET);
 			pieceSprite.setOrigin(0, 1);
 			
-			window.draw(pieceSprite);
+			m_window.draw(pieceSprite);
 		}
 	}
 }
