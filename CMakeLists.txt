@@ -1,8 +1,8 @@
 # CMakeLists.txt for valChess
 # 12-01-2025 by madpl
 
-cmake_minimum_required(VERSION 3.22)
-set(CMAKE_CXX_STANDARD_REQUIRED 17)
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD_REQUIRED 23)
 project(valChess)
 
 add_definitions(-Os -march=native)

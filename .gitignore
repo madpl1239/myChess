@@ -1,4 +1,5 @@
 /build
+/.directory
 valChess
 valChess.exe
 stockfish
