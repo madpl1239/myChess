@@ -23,7 +23,7 @@ int main(void)
 		std::cout << "guiChess v0.5 - by madpl 2025\n";
 		
 		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "guiChess by madpl 2025");
-		window.setPosition(sf::Vector2i(600, 200));
+		window.setPosition(sf::Vector2i(200, 200));
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
 		
