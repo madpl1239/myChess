@@ -1,7 +1,10 @@
+# folders
 /build
 /.directory
-valChess
-valChess.exe
+
+# files
+myChess
+myChess.exe
 stockfish
 stockfish.exe
 toCoord

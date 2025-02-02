@@ -1,9 +1,9 @@
-# CMakeLists.txt for valChess
+# CMakeLists.txt for myChess
 # 12-01-2025 by madpl
 
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
-project(valChess)
+project(myChess)
 
 add_definitions(-Os -march=native)
 file(GLOB_RECURSE SOURCE ./source/*)
