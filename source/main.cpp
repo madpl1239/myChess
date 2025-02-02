@@ -13,6 +13,7 @@
 #include "chessBoard.hpp"
 #include "stockHandle.hpp"
 #include "utils.hpp"
+#include "moveLogger.hpp"
 
 
 int main(void) 
@@ -26,6 +27,8 @@ int main(void)
 		window.setPosition(sf::Vector2i(200, 200));
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
+		
+		MoveLogger moveLogger(SIZE + 50, 50, 300, SIZE - 100);
 		
 		sf::Texture boardTexture;
 		if(not boardTexture.loadFromFile("./resources/board.png"))
@@ -135,6 +138,8 @@ int main(void)
 									std::cout << "[DEBUG] commPlayer = " << commPlayer << "\n";
 									#endif
 									
+									moveLogger.addMove("Player: " + commPlayer);
+									
 									sf::Vector2i rStart;
 									sf::Vector2i rEnd;
 									bool isCastling = board.castling(commPlayer, position, rStart, rEnd);
@@ -158,6 +163,8 @@ int main(void)
 								#ifdef DEBUG
 								std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
 								#endif
+								
+								moveLogger.addMove("Engine: " + commStockfish);
 								
 								sf::Vector2i rStart;
 								sf::Vector2i rEnd;
@@ -185,6 +192,7 @@ int main(void)
 			// color dark sea green - 8FBC8F
 			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
+			moveLogger.draw(window);
 			window.display();
 		}
 		
