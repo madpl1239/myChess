@@ -35,6 +35,8 @@ private:
 	bool isInCheck(char kingColor) const;
 	std::string pieceTypeToString(PieceType type) const;
 
+	sf::Vector2i m_selectedTile = {-1, -1};		// last click location of the player
+	sf::Vector2i m_targetTile = {-1, -1};		// target location
 	std::vector<std::vector<Piece>> m_board;
 	MoveLogger& m_moveLogger;
 	sf::RenderWindow& m_window;

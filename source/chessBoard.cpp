@@ -274,6 +274,12 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
+	// first click highlight
+	m_selectedTile = {startX, startY};
+	
+	// target highlight
+    m_targetTile = {endX, endY};
+	
 	m_board[endY][endX] = m_board[startY][startX];
 	m_board[startY][startX] = Piece();
 
@@ -372,6 +378,24 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 	
 	boardSprite.setPosition(0, 0);
 	m_window.draw(boardSprite);
+	
+	// Podświetlenie wybranego pola (jeśli jest aktywne)
+    if(m_selectedTile.x != -1 and m_selectedTile.y != -1)
+	{
+        sf::RectangleShape highlight(sf::Vector2f(TILE_SIZE, TILE_SIZE));
+        highlight.setPosition(m_selectedTile.x * TILE_SIZE, m_selectedTile.y * TILE_SIZE);
+        highlight.setFillColor(sf::Color(255, 255, 0, 100)); // Żółte półprzezroczyste podświetlenie
+        m_window.draw(highlight);
+    }
+
+    // Podświetlenie celu (jeśli jest aktywne)
+    if(m_targetTile.x != -1 and m_targetTile.y != -1)
+	{
+        sf::RectangleShape highlight(sf::Vector2f(TILE_SIZE, TILE_SIZE));
+        highlight.setPosition(m_targetTile.x * TILE_SIZE, m_targetTile.y * TILE_SIZE);
+        highlight.setFillColor(sf::Color(0, 255, 0, 100)); // Zielone półprzezroczyste podświetlenie
+        m_window.draw(highlight);
+    }
 	
 	for(int y = 0; y < 8; ++y) 
 	{
