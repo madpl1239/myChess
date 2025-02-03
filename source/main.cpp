@@ -1,7 +1,7 @@
 /*
  * main.cpp
  *
- * Validating of chess moves.
+ * Chess GUI for stockfish (any version).
  *
  * 12-01-2025 by madpl
  */
@@ -20,9 +20,6 @@ int main(void)
 {
 	try
 	{
-		sf::Clock engineMoveTimer;
-		bool engineMovePending = false;
-		
 		// Logo
 		std::cout << "myChess v1.0\n";
 		
@@ -31,7 +28,10 @@ int main(void)
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
 		
-		MoveLogger moveLogger(SIZE + 10, 10, 300, SIZE - 100);
+		sf::Clock engineMoveTimer;
+		bool engineMovePending = false;
+		
+		MoveLogger moveLogger(SIZE + 10, 10);
 		
 		sf::Texture boardTexture;
 		if(not boardTexture.loadFromFile("./resources/board.png"))
@@ -49,35 +49,8 @@ int main(void)
 		Stockfish engine("./stockfish.exe");
 		#endif
 		
-		engine.sendCommand("uci");
-		if(engine.getResponse().find("uciok") == std::string::npos)
-		{
-			engine.sendCommand("quit");
-			std::cout << "engine: not uciok!\n";
-			
-			return -1;
-		}
-		
-		engine.sendCommand("uci");
-		std::cout << engine.getResponse();
-		
-		engine.sendCommand("isready");
-		if(engine.getResponse().find("readyok") != std::string::npos)
-			std::cout << "readyok\n";
-		else
-		{
-			engine.sendCommand("quit");
-			std::cout << "not readyok!\n";
-			
-			return -1;
-		}
-		
-		engine.sendCommand("ucinewgame");
-		engine.sendCommand("isready");
-		
-		std::string resp = engine.getResponse();
-		if(resp.find("readyok") == std::string::npos)
-			throw std::runtime_error("response error");
+		if(initialCommand(engine) == -1)
+			throw std::runtime_error("engine error!");
 		
 		ChessBoard board(window, moveLogger);
 		board.setInitialPositions();
@@ -90,7 +63,7 @@ int main(void)
 		bool isPieceSelected = false;
 		bool quit = false;
 		
-		while(window.isOpen() && !quit) 
+		while(window.isOpen() and !quit) 
 		{
 			sf::Event event;
 			while(window.pollEvent(event)) 
@@ -112,7 +85,7 @@ int main(void)
 						int x = std::round(pos.x / TILE_SIZE);
 						int y = std::round(pos.y / TILE_SIZE);
 						
-						if(x < 8 && y < 8)
+						if(x < 8 and y < 8)
 						{
 							if(!isPieceSelected)
 							{

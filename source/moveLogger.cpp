@@ -7,14 +7,13 @@
 #include "moveLogger.hpp"
 
 
-MoveLogger::MoveLogger(float x, float y, float width, float height):
+MoveLogger::MoveLogger(int x, int y):
 	m_posX(x),
 	m_posY(y)
 {
 	if(not m_font.loadFromFile("./resources/Vera.ttf"))
 		std::cout << "Error loading font!\n";
 
-	// Inicjalizacja napisów statycznych
 	sf::Text title;
 	title.setFont(m_font);
 	title.setString("myChess v1.0 - GUI for chess by madpl (2025)");
@@ -73,10 +72,4 @@ void MoveLogger::draw(sf::RenderWindow& window)
 		window.draw(text);
 	
 	window.draw(m_checkText);
-}
-
-
-void MoveLogger::applyEngineDelay()
-{
-	sf::sleep(sf::seconds(2));
 }
