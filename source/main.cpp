@@ -21,14 +21,14 @@ int main(void)
 	try
 	{
 		// logo
-		std::cout << "guiChess v0.5 - by madpl 2025\n";
+		std::cout << "myChess v1.0\n";
 		
-		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "guiChess by madpl 2025");
+		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess v1.0");
 		window.setPosition(sf::Vector2i(200, 200));
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
 		
-		MoveLogger moveLogger(SIZE + 50, 50, 300, SIZE - 100);
+		MoveLogger moveLogger(SIZE + 10, 10, 300, SIZE - 100);
 		
 		sf::Texture boardTexture;
 		if(not boardTexture.loadFromFile("./resources/board.png"))
@@ -82,7 +82,7 @@ int main(void)
 		std::cout << "[DEBUG] readyok\n";
 		#endif
 		
-		ChessBoard board(window);
+		ChessBoard board(window, moveLogger);
 		board.setInitialPositions();
 		
 		std::string position = "";
@@ -138,7 +138,7 @@ int main(void)
 									std::cout << "[DEBUG] commPlayer = " << commPlayer << "\n";
 									#endif
 									
-									moveLogger.addMove("Player: " + commPlayer);
+									moveLogger.updateMove(true, commPlayer);
 									
 									sf::Vector2i rStart;
 									sf::Vector2i rEnd;
@@ -164,7 +164,7 @@ int main(void)
 								std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
 								#endif
 								
-								moveLogger.addMove("Engine: " + commStockfish);
+								moveLogger.updateMove(false, commStockfish);
 								
 								sf::Vector2i rStart;
 								sf::Vector2i rEnd;

@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
+#include "defines.hpp"
 
 
 class MoveLogger
@@ -15,12 +16,14 @@ class MoveLogger
 public:
 	MoveLogger(float x, float y, float width, float height);
 	
-	void addMove(const std::string& move);
+	void updateMove(bool side, const std::string& move);
+	void updateCheckStatus(const std::string& checkMessage);
+	
 	void draw(sf::RenderWindow& window);
 	
 private:
-	sf::RectangleShape m_background;
-	std::vector<sf::Text> m_moveTexts;
-	sf::Font m_font;
 	float m_posX, m_posY;
+	sf::Font m_font;
+	std::vector<sf::Text> m_staticTexts; 
+	sf::Text m_checkText;
 };

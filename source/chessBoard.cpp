@@ -7,10 +7,12 @@
 #include <cmath>
 #include "defines.hpp"
 #include "chessBoard.hpp"
+#include "moveLogger.hpp"
 
 
-ChessBoard::ChessBoard(sf::RenderWindow& window):
-	m_window(window)
+ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger):
+	m_window(window),
+	m_moveLogger(logger)
 {
 	#ifdef DEBUG
 	std::cout << "[DEBUG] ctor ChessBoard\n";
@@ -279,7 +281,12 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	char opponentColor = (currentPlayerColor == 'W') ? 'B' : 'W';
 
 	if(isInCheck(opponentColor))
+	{
+		m_moveLogger.updateCheckStatus("king is check!");
 		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is in check!\n";
+	}
+	else
+		m_moveLogger.updateCheckStatus("");
 }
 
 

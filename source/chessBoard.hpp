@@ -8,12 +8,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "piece.hpp"
+#include "moveLogger.hpp"
 
 
 class ChessBoard 
 {
 public:
-	ChessBoard(sf::RenderWindow& window);
+	ChessBoard(sf::RenderWindow& window, MoveLogger& logger);
 	~ChessBoard();
 
 	void setInitialPositions();
@@ -35,5 +36,6 @@ private:
 	std::string pieceTypeToString(PieceType type) const;
 
 	std::vector<std::vector<Piece>> m_board;
+	MoveLogger& m_moveLogger;
 	sf::RenderWindow& m_window;
 };
