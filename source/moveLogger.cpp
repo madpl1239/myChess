@@ -74,3 +74,9 @@ void MoveLogger::draw(sf::RenderWindow& window)
 	
 	window.draw(m_checkText);
 }
+
+
+void MoveLogger::applyEngineDelay()
+{
+	sf::sleep(sf::seconds(2));
+}

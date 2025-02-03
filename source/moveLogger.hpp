@@ -18,6 +18,7 @@ public:
 	
 	void updateMove(bool side, const std::string& move);
 	void updateCheckStatus(const std::string& checkMessage);
+	void applyEngineDelay();
 	
 	void draw(sf::RenderWindow& window);
 	

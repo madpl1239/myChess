@@ -20,7 +20,10 @@ int main(void)
 {
 	try
 	{
-		// logo
+		sf::Clock engineMoveTimer;
+		bool engineMovePending = false;
+		
+		// Logo
 		std::cout << "myChess v1.0\n";
 		
 		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess v1.0");
@@ -31,11 +34,11 @@ int main(void)
 		MoveLogger moveLogger(SIZE + 10, 10, 300, SIZE - 100);
 		
 		sf::Texture boardTexture;
-		if(not boardTexture.loadFromFile("./resources/board.png"))
+		if (!boardTexture.loadFromFile("./resources/board.png"))
 			throw std::runtime_error("Could not load board.png");
 		
 		sf::Texture figuresTexture;
-		if(not figuresTexture.loadFromFile("./resources/figures.png"))
+		if (!figuresTexture.loadFromFile("./resources/figures.png"))
 			throw std::runtime_error("Could not load figures.png");
 		
 		#ifdef LINUX
@@ -47,26 +50,23 @@ int main(void)
 		#endif
 		
 		engine.sendCommand("uci");
-		if(engine.getResponse().find("uciok") == std::string::npos)
+		if (engine.getResponse().find("uciok") == std::string::npos)
 		{
 			engine.sendCommand("quit");
 			std::cerr << "engine: not uciok!\n";
-			
 			return -1;
 		}
 		
 		engine.sendCommand("uci");
-		// engine.sendCommand("setoption name Skill Level value 1");
 		std::cout << engine.getResponse();
 		
 		engine.sendCommand("isready");
-		if(engine.getResponse().find("readyok") != std::string::npos)
+		if (engine.getResponse().find("readyok") != std::string::npos)
 			std::cout << "readyok\n";
 		else
 		{
 			engine.sendCommand("quit");
 			std::cerr << "not readyok!\n";
-			
 			return -1;
 		}
 		
@@ -74,13 +74,8 @@ int main(void)
 		engine.sendCommand("isready");
 		
 		std::string resp = engine.getResponse();
-		if(resp.find("readyok") == std::string::npos)
+		if (resp.find("readyok") == std::string::npos)
 			throw std::runtime_error("response error");
-		
-		#ifdef DEBUG
-		std::cout << "[DEBUG] ucinewgame\n";
-		std::cout << "[DEBUG] readyok\n";
-		#endif
 		
 		ChessBoard board(window, moveLogger);
 		board.setInitialPositions();
@@ -93,51 +88,44 @@ int main(void)
 		bool isPieceSelected = false;
 		bool quit = false;
 		
-		while(window.isOpen() and !quit) 
+		while (window.isOpen() && !quit) 
 		{
 			sf::Event event;
-			while(window.pollEvent(event)) 
+			while (window.pollEvent(event)) 
 			{
-				if(event.type == sf::Event::Closed)
+				if (event.type == sf::Event::Closed)
 					quit = true;
 				
-				else if(event.type == sf::Event::KeyPressed)
+				else if (event.type == sf::Event::KeyPressed)
 				{
-					if(event.key.code == sf::Keyboard::Escape)
+					if (event.key.code == sf::Keyboard::Escape)
 						quit = true;
 				}
 				
-				else if(event.type == sf::Event::MouseButtonPressed)
+				else if (event.type == sf::Event::MouseButtonPressed)
 				{
-					if(event.mouseButton.button == sf::Mouse::Left)
+					if (event.mouseButton.button == sf::Mouse::Left)
 					{
 						sf::Vector2i pos = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
-						
 						int x = std::round(pos.x / TILE_SIZE);
 						int y = std::round(pos.y / TILE_SIZE);
 						
-						if(x < 8 and y < 8)
+						if (x < 8 && y < 8)
 						{
-							if(not isPieceSelected)
+							if (!isPieceSelected)
 							{
-								if(board.isPieceAt(x, y))
+								if (board.isPieceAt(x, y))
 								{
 									commPlayer = board.toChess(x, y);
-									
 									selectedPiece = sf::Vector2i(x, y);
 									isPieceSelected = true;
 								}
 							}
 							else
 							{
-								if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
+								if (board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
 								{
 									commPlayer += board.toChess(x, y);
-									
-									#ifdef DEBUG
-									std::cout << "[DEBUG] commPlayer = " << commPlayer << "\n";
-									#endif
-									
 									moveLogger.updateMove(true, commPlayer);
 									
 									sf::Vector2i rStart;
@@ -146,41 +134,24 @@ int main(void)
 									
 									position += " " + commPlayer;
 									commPlayer.clear();
-									
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
-									if(isCastling and board.atBoard(rStart, rEnd))
+									
+									if (isCastling && board.atBoard(rStart, rEnd))
 										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+									
+									// Ustawienie opóźnienia dla ruchu silnika
+									commStockfish.clear();
+									commStockfish = getNextMove(engine, position);
+									moveLogger.updateMove(false, commStockfish);
+									
+									engineMovePending = true;
+									engineMoveTimer.restart();
 								}
 								else
+								{
 									std::cout << "Invalid move!\n";
-								
+								}
 								isPieceSelected = false;
-								
-								// engine response
-								commStockfish.clear();
-								commStockfish = getNextMove(engine, position);
-								
-								#ifdef DEBUG
-								std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
-								#endif
-								
-								moveLogger.updateMove(false, commStockfish);
-								
-								sf::Vector2i rStart;
-								sf::Vector2i rEnd;
-								bool isCastling = board.castling(commStockfish, position, rStart, rEnd);
-								
-								position += " " + commStockfish;
-								sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
-								sf::Vector2i posEnd = board.toCoords(commStockfish[2], commStockfish[3]);
-								
-								if(board.atBoard(posStart, posEnd))
-									board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
-								else
-									std::cout << "Invalid move from engine!\n";
-								
-								if(isCastling and board.atBoard(rStart, rEnd))
-									board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 							}
 						}
 						else
@@ -189,7 +160,35 @@ int main(void)
 				}
 			}
 			
-			// color dark sea green - 8FBC8F
+			// Sprawdzanie, czy minęło 2 sekundy przed wykonaniem ruchu silnika
+			if (engineMovePending && engineMoveTimer.getElapsedTime().asSeconds() >= 2)
+			{
+				engineMovePending = false; // Resetujemy flagę, by silnik wykonał ruch
+				
+				sf::Vector2i rStart;
+				sf::Vector2i rEnd;
+				bool isCastling = board.castling(commStockfish, position, rStart, rEnd);
+				
+				position += " " + commStockfish;
+				sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
+				sf::Vector2i posEnd = board.toCoords(commStockfish[2], commStockfish[3]);
+				
+				if (board.atBoard(posStart, posEnd))
+				{
+					board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
+				}
+				else
+				{
+					std::cout << "Invalid move from engine!\n";
+				}
+				
+				if (isCastling && board.atBoard(rStart, rEnd))
+				{
+					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+				}
+			}
+			
+			// Kolor tła - ciemna zielona
 			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
 			moveLogger.draw(window);
@@ -198,13 +197,12 @@ int main(void)
 		
 		window.close();
 	}
-
-	catch(std::exception& e)
+	
+	catch (std::exception& e)
 	{
 		std::cerr << "throw exception: " << e.what() << "\n";
-		
 		return -1;
 	}
-
+	
 	return 0;
 }
