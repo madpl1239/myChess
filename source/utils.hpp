@@ -9,4 +9,5 @@
 #include "stockHandle.hpp"
 
 
+int initialCommand(Stockfish& engine);
 std::string getNextMove(Stockfish& engine, std::string& position);
