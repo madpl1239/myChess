@@ -14,6 +14,7 @@
 #include "stockHandle.hpp"
 #include "utils.hpp"
 #include "moveLogger.hpp"
+#include "highLighter.hpp"
 
 
 int main(void) 
@@ -55,6 +56,8 @@ int main(void)
 		ChessBoard board(window, moveLogger);
 		board.setInitialPositions();
 		
+		Highlighter highlighter;
+		
 		std::string position = "";
 		std::string commPlayer = "";
 		std::string commStockfish = "";
@@ -93,6 +96,7 @@ int main(void)
 								{
 									commPlayer = board.toChess(x, y);
 									selectedPiece = sf::Vector2i(x, y);
+									highlighter.setSelection(x, y);
 									isPieceSelected = true;
 								}
 							}
@@ -124,6 +128,7 @@ int main(void)
 								else
 									std::cout << "Invalid move!\n";
 								
+								highlighter.setDestination(x, y);
 								isPieceSelected = false;
 							}
 						}
@@ -155,8 +160,12 @@ int main(void)
 					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 			}
 			
+			if(engineMovePending == false)
+				highlighter.clear();
+			
 			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
+			highlighter.draw(window);
 			moveLogger.draw(window);
 			window.display();
 		}
