@@ -3,6 +3,7 @@
  * 
  * 04-02-2025 by madpl
  */
+#include <iostream>
 #include "defines.hpp"
 #include "highLighter.hpp"
 
@@ -12,10 +13,10 @@ Highlighter::Highlighter():
 	m_destinationActive(false)
 {
 	m_selection.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-	m_selection.setFillColor(sf::Color(255, 255, 0, 100));
+	m_selection.setFillColor(sf::Color(255, 255, 0, 60));
 
 	m_destination.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-	m_destination.setFillColor(sf::Color(0, 255, 0, 100));
+	m_destination.setFillColor(sf::Color(0, 255, 0, 60));
 }
 
 
@@ -23,6 +24,12 @@ void Highlighter::setSelection(int x, int y)
 {
 	m_selection.setPosition(x * TILE_SIZE + OFFSET, y * TILE_SIZE + OFFSET);
 	m_selectionActive = true;
+}
+
+
+void Highlighter::setSelectionActive(bool _switch)
+{
+	m_selectionActive = _switch;
 }
 
 

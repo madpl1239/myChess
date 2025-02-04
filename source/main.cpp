@@ -129,6 +129,7 @@ int main(void)
 									std::cout << "Invalid move!\n";
 								
 								highlighter.setDestination(x, y);
+								highlighter.setSelectionActive(false);
 								isPieceSelected = false;
 							}
 						}
@@ -160,9 +161,9 @@ int main(void)
 					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 			}
 			
-			if(engineMovePending == false)
-				highlighter.clear();
-			
+			if(not engineMovePending)
+				highlighter.setDestination(-10, -10);
+				
 			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
 			highlighter.draw(window);

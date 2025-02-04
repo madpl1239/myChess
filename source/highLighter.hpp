@@ -14,6 +14,7 @@ public:
     Highlighter();
     
 	void setSelection(int x, int y);
+	void setSelectionActive(bool _switch);
     void setDestination(int x, int y);
 	void clear();
 	
