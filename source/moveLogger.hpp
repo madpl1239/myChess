@@ -18,6 +18,7 @@ public:
 	
 	void updateMove(bool side, const std::string& move);
 	void updateCheckStatus(const std::string& checkMessage);
+	void updateInvalidStatus(const std::string& checkMessage);
 	
 	void draw(sf::RenderWindow& window);
 	
@@ -26,4 +27,5 @@ private:
 	sf::Font m_font;
 	std::vector<sf::Text> m_staticTexts; 
 	sf::Text m_checkText;
+	sf::Text m_invalidText;
 };

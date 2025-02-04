@@ -98,6 +98,7 @@ int main(void)
 									selectedPiece = sf::Vector2i(x, y);
 									highlighter.setSelection(x, y);
 									isPieceSelected = true;
+									moveLogger.updateInvalidStatus("");
 								}
 							}
 							else
@@ -126,7 +127,13 @@ int main(void)
 									engineMoveTimer.restart();
 								}
 								else
-									std::cout << "Invalid move!\n";
+								{
+									#ifdef DEBUG
+									std::cout << "[DEBUG] Invalid move!\n";
+									#endif
+									
+									moveLogger.updateInvalidStatus("Invalid Move!");
+								}
 								
 								highlighter.setDestination(x, y);
 								highlighter.setSelectionActive(false);
@@ -134,13 +141,17 @@ int main(void)
 							}
 						}
 						else
-							std::cout << "x, y out of range!\n";
+						{
+							#ifdef DEBUG
+							std::cout << "[DEBUG] x, y out of range!\n";
+							#endif
+						}
 					}
 				}
 			}
 			
 			// checking for 2 seconds
-			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 2)
+			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 3)
 			{
 				engineMovePending = false;
 				
@@ -155,7 +166,11 @@ int main(void)
 				if(board.atBoard(posStart, posEnd))
 					board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
 				else
-					std::cout << "Invalid move from engine!\n";
+				{
+					#ifdef DEBUG
+					std::cout << "[DEBUG] Invalid move from engine!\n";
+					#endif
+				}
 				
 				if(isCastling and board.atBoard(rStart, rEnd))
 					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);

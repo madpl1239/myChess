@@ -210,7 +210,9 @@ bool ChessBoard::isInCheck(char kingColor) const
 
 	if(kingX == -1 or kingY == -1)
 	{
-		std::cerr << "Error: King not found on m_board!\n";
+		#ifdef DEBUG
+		std::cout << "[DEBUG] Error: King not found on m_board!\n";
+		#endif
 		
 		return false;
 	}
@@ -285,7 +287,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 		m_moveLogger.updateCheckStatus("King is check!");
 		
 		#ifdef DEBUG
-		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is in check!\n";
+		std::cout << (opponentColor == 'W' ? "[DEBUG] black" : "[DEBUG] white") << " king is in check!\n";
 		#endif
 	}
 	else

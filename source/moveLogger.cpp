@@ -49,6 +49,15 @@ MoveLogger::MoveLogger(int x, int y):
 	checkInfo.setStyle(sf::Text::Italic | sf::Text::Bold);
 	checkInfo.setPosition(m_posX + 10, m_posY + 430);
 	m_checkText = checkInfo;
+	
+	sf::Text invalidInfo;
+	invalidInfo.setFont(m_font);
+	invalidInfo.setString("");
+	invalidInfo.setCharacterSize(TEXTCHECK_HEIGHT);
+	invalidInfo.setFillColor(sf::Color::Red);
+	invalidInfo.setStyle(sf::Text::Italic | sf::Text::Bold);
+	invalidInfo.setPosition(m_posX + 10, m_posY + 430);
+	m_invalidText = invalidInfo;
 }
 
 
@@ -67,10 +76,17 @@ void MoveLogger::updateCheckStatus(const std::string& checkMessage)
 }
 
 
+void MoveLogger::updateInvalidStatus(const std::string& checkMessage)
+{
+	m_invalidText.setString(checkMessage);
+}
+
+
 void MoveLogger::draw(sf::RenderWindow& window)
 {
 	for(const auto& text : m_staticTexts)
 		window.draw(text);
 	
 	window.draw(m_checkText);
+	window.draw(m_invalidText);
 }
