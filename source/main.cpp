@@ -90,7 +90,7 @@ int main(void)
 						
 						if(x < 8 and y < 8)
 						{
-							if(!isPieceSelected)
+							if(not isPieceSelected)
 							{
 								if(board.isPieceAt(x, y))
 								{
@@ -115,7 +115,7 @@ int main(void)
 									commPlayer.clear();
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
 									
-									if(isCastling && board.atBoard(rStart, rEnd))
+									if(isCastling and board.atBoard(rStart, rEnd))
 										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 									
 									commStockfish.clear();
