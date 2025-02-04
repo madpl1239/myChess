@@ -14,6 +14,7 @@
 #include "stockHandle.hpp"
 #include "utils.hpp"
 #include "moveLogger.hpp"
+#include "highLighter.hpp"
 
 
 int main(void) 
@@ -55,6 +56,8 @@ int main(void)
 		ChessBoard board(window, moveLogger);
 		board.setInitialPositions();
 		
+		Highlighter highlighter;
+		
 		std::string position = "";
 		std::string commPlayer = "";
 		std::string commStockfish = "";
@@ -87,12 +90,13 @@ int main(void)
 						
 						if(x < 8 and y < 8)
 						{
-							if(!isPieceSelected)
+							if(not isPieceSelected)
 							{
 								if(board.isPieceAt(x, y))
 								{
 									commPlayer = board.toChess(x, y);
 									selectedPiece = sf::Vector2i(x, y);
+									highlighter.setSelection(x, y);
 									isPieceSelected = true;
 								}
 							}
@@ -111,7 +115,7 @@ int main(void)
 									commPlayer.clear();
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
 									
-									if(isCastling && board.atBoard(rStart, rEnd))
+									if(isCastling and board.atBoard(rStart, rEnd))
 										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 									
 									commStockfish.clear();
@@ -124,6 +128,8 @@ int main(void)
 								else
 									std::cout << "Invalid move!\n";
 								
+								highlighter.setDestination(x, y);
+								highlighter.setSelectionActive(false);
 								isPieceSelected = false;
 							}
 						}
@@ -155,8 +161,12 @@ int main(void)
 					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 			}
 			
+			if(not engineMovePending)
+				highlighter.setDestination(-10, -10);
+				
 			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
+			highlighter.draw(window);
 			moveLogger.draw(window);
 			window.display();
 		}
