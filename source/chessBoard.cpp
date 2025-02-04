@@ -385,7 +385,7 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 			int colorOffset = (piece.m_color == 'B') ? TILE_SIZE : 0;
 			
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * TILE_SIZE, colorOffset, TILE_SIZE, TILE_SIZE));
-			pieceSprite.setPosition((x * TILE_SIZE) + OFFSET, (y * TILE_SIZE) + OFFSET);
+			pieceSprite.setPosition(x * TILE_SIZE + OFFSET, y * TILE_SIZE + OFFSET);
 			pieceSprite.setOrigin(0, 1);
 			
 			m_window.draw(pieceSprite);
