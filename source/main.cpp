@@ -162,9 +162,9 @@ int main(void)
 			}
 			
 			if(not engineMovePending)
-				highlighter.setDestination(-100, -100);
+				highlighter.setDestination(-5, -5);
 				
-			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
+			window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
 			highlighter.draw(window);
 			moveLogger.draw(window);

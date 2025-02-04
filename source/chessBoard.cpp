@@ -282,8 +282,11 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 
 	if(isInCheck(opponentColor))
 	{
-		m_moveLogger.updateCheckStatus("king is check!");
+		m_moveLogger.updateCheckStatus("King is check!");
+		
+		#ifdef DEBUG
 		std::cout << (opponentColor == 'W' ? "black" : "white") << " king is in check!\n";
+		#endif
 	}
 	else
 		m_moveLogger.updateCheckStatus("");
