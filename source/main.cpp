@@ -162,7 +162,7 @@ int main(void)
 			}
 			
 			if(not engineMovePending)
-				highlighter.setDestination(-10, -10);
+				highlighter.setDestination(-100, -100);
 				
 			window.clear(sf::Color(0x8F, 0xBC, 0x8F, 0xFF));
 			board.draw(boardTexture, figuresTexture);
