@@ -21,5 +21,5 @@ const int TILE_SIZE = 56;	// chess square size
 const int OFFSET = 28;		// offset for piece
 
 const int TEXTLOGO_HEIGHT = 16;
-const int TEXTMOVE_HEIGHT = 42;
+const int TEXTMOVE_HEIGHT = 26;
 const int TEXTCHECK_HEIGHT = 32;
