@@ -49,6 +49,26 @@ int initialCommand(Stockfish& engine)
 }
 
 
+bool initialSounds(SoundManager& sndManager)
+{
+	bool result = true;
+	
+	if(not sndManager.load("move", "./resources/move.ogg"))
+		result = false;
+	
+	if(not sndManager.load("invalid", "./resources/invalid.ogg"))
+		result = false;
+	
+	if(not sndManager.load("capture", "./resources/capture.ogg"))
+		result = false;
+	
+	if(not sndManager.load("check", "./resources/check.ogg"))
+		result = false;
+	
+	return result;
+}
+
+
 std::string getNextMove(Stockfish& engine, std::string& position)
 {
 	std::string command = "position startpos moves" + position;

@@ -10,9 +10,10 @@
 #include "moveLogger.hpp"
 
 
-ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger):
+ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager):
 	m_window(window),
-	m_moveLogger(logger)
+	m_moveLogger(logger),
+	m_sndManager(sndManager)
 {
 	#ifdef DEBUG
 	std::cout << "[DEBUG] ctor ChessBoard\n";
@@ -285,6 +286,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	if(isInCheck(opponentColor))
 	{
 		m_moveLogger.updateCheckStatus("King is check!");
+		m_sndManager.play("check");
 		
 		#ifdef DEBUG
 		std::cout << (opponentColor == 'W' ? "[DEBUG] black" : "[DEBUG] white") << " king is in check!\n";

@@ -9,12 +9,13 @@
 #include <vector>
 #include "piece.hpp"
 #include "moveLogger.hpp"
+#include "sndManager.hpp"
 
 
 class ChessBoard 
 {
 public:
-	ChessBoard(sf::RenderWindow& window, MoveLogger& logger);
+	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager);
 	~ChessBoard();
 
 	void setInitialPositions();
@@ -37,5 +38,6 @@ private:
 
 	std::vector<std::vector<Piece>> m_board;
 	MoveLogger& m_moveLogger;
+	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;
 };

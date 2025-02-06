@@ -12,11 +12,11 @@ option(WINDOWS "build for windows?" OFF)
 if(WINDOWS)
 	set(SFML_DIR "C:/Progs/SFML2.5.1SEH/lib/cmake/SFML")
 else()
-	find_package(SFML 2.5 REQUIRED COMPONENTS system window graphics)
+	find_package(SFML 2.5 REQUIRED COMPONENTS system window graphics audio)
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE})
 target_link_libraries(${CMAKE_PROJECT_NAME}
-	-lpthread sfml-system sfml-window sfml-graphics)
+	-lpthread sfml-system sfml-window sfml-graphics sfml-audio)

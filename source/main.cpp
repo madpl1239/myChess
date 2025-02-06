@@ -15,6 +15,7 @@
 #include "utils.hpp"
 #include "moveLogger.hpp"
 #include "highLighter.hpp"
+#include "sndManager.hpp"
 
 
 int main(void) 
@@ -33,6 +34,9 @@ int main(void)
 		bool engineMovePending = false;
 		
 		MoveLogger moveLogger(SIZE + 10, 10);
+		SoundManager sndManager;
+		if(not initialSounds(sndManager))
+			throw std::runtime_error("load sounds error!");
 		
 		sf::Texture boardTexture;
 		if(not boardTexture.loadFromFile("./resources/board.png"))
@@ -53,7 +57,7 @@ int main(void)
 		if(initialCommand(engine) == -1)
 			throw std::runtime_error("engine error!");
 		
-		ChessBoard board(window, moveLogger);
+		ChessBoard board(window, moveLogger, sndManager);
 		board.setInitialPositions();
 		
 		Highlighter highlighter;
@@ -125,6 +129,8 @@ int main(void)
 									
 									engineMovePending = true;
 									engineMoveTimer.restart();
+									
+									sndManager.play("move");
 								}
 								else
 								{
@@ -133,6 +139,7 @@ int main(void)
 									#endif
 									
 									moveLogger.updateInvalidStatus("Invalid Move!");
+									sndManager.play("invalid");
 								}
 								
 								highlighter.setDestination(x, y);
@@ -174,6 +181,8 @@ int main(void)
 				
 				if(isCastling and board.atBoard(rStart, rEnd))
 					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+				
+				sndManager.play("move");
 			}
 			
 			if(not engineMovePending)
