@@ -196,11 +196,6 @@ bool ChessBoard::isInCheck(char kingColor) const
 				kingX = x;
 				kingY = y;
 				
-				#ifdef DEBUG
-				std::cout << "[DEBUG] King (" << (kingColor == 'W' ? "White" : "Black") 
-							<< ") found at position (" << kingX << ", " << kingY << ")\n";
-				#endif
-				
 				break;
 			}
 		}
@@ -237,11 +232,6 @@ bool ChessBoard::isInCheck(char kingColor) const
 			}
 		}
 	}
-
-	#ifdef DEBUG
-	std::cout << "[DEBUG] King (" << (kingColor == 'W' ? "White" : "Black") 
-									<< ") is not in check.\n";
-	#endif
 
 	return false;
 }
