@@ -72,12 +72,14 @@ void MoveLogger::updateMove(bool side, const std::string& move)
 
 void MoveLogger::updateCheckStatus(const std::string& checkMessage)
 {
+	m_invalidText.setString("");
 	m_checkText.setString(checkMessage);
 }
 
 
 void MoveLogger::updateInvalidStatus(const std::string& checkMessage)
 {
+	m_checkText.setString("");
 	m_invalidText.setString(checkMessage);
 }
 
