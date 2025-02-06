@@ -150,7 +150,7 @@ int main(void)
 				}
 			}
 			
-			// checking for 2 seconds
+			// checking for 3 seconds
 			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 3)
 			{
 				engineMovePending = false;
