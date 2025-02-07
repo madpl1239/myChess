@@ -13,7 +13,8 @@
 ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager):
 	m_window(window),
 	m_moveLogger(logger),
-	m_sndManager(sndManager)
+	m_sndManager(sndManager),
+	m_enPassantTarget(-1, -1)
 {
 	#ifdef DEBUG
 	std::cout << "[DEBUG] ctor ChessBoard\n";
@@ -135,10 +136,29 @@ bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int
 					m_board[endY][endX].m_type == PieceType::NONE);
 	}
 
-	// Capture diagonally
 	if(dx == 1 and dy == 1)
-		return (m_board[endY][endX].m_type != PieceType::NONE and
-				m_board[endY][endX].m_color != pawn.m_color);
+	{
+		// if the target square contains an opponent's piece - standard capture
+		if(m_board[endY][endX].m_type != PieceType::NONE)
+			return (m_board[endY][endX].m_color != pawn.m_color);
+		else
+		{
+			// try beating test en passant:
+			// we check if the target field corresponds to the saved en passant position.
+			if(sf::Vector2i(endX, endY) == m_enPassantTarget)
+			{
+				// position of a pawn that could have been captured en passant is "behind" the target square,
+				// i.e. towards the opponent – ​​we calculate his Y coordinate.
+				int capturedPawnY = endY - direction;
+				if(capturedPawnY >= 0 and capturedPawnY < 8)
+				{
+					if(m_board[capturedPawnY][endX].m_type == PieceType::PAWN and
+					   m_board[capturedPawnY][endX].m_color != pawn.m_color)
+						return true;
+				}
+			}
+		}
+	}
 
 	return false;
 }
@@ -267,8 +287,40 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
-	m_board[endY][endX] = m_board[startY][startX];
+	Piece movingPiece = m_board[startY][startX];
+	int dx = abs(endX - startX);
+	int dy = abs(endY - startY);
+	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
+	bool enPassantCapture = false;
+
+	// detection of strike en passant:
+	// if a pawn moves diagonally (dx == 1 && dy == 1) to an empty square
+	// and the target field corresponds to the saved en passant position, then we have en passant.
+	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and m_board[endY][endX].m_type == PieceType::NONE)
+	{
+		if(sf::Vector2i(endX, endY) == m_enPassantTarget)
+			enPassantCapture = true;
+	}
+
+	// making a move – we move a pawn
+	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
+
+	// Jeśli ruch był biciem en passant, usuwamy pionka przeciwnika
+	// if move was capture en passant, then we remove opponent pawn
+	if(enPassantCapture)
+	{
+		int capturedPawnY = endY - direction;
+		m_board[capturedPawnY][endX] = Piece();
+	}
+
+	// setting the en passant possibilities:
+	// if a pawn has moved two squares, we set the square through which it "jumped"
+	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
+		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
+	else
+		// otherwise we clear the possibility en passant
+		m_enPassantTarget = sf::Vector2i(-1, -1);
 
 	char currentPlayerColor = m_board[endY][endX].m_color;
 	char opponentColor = (currentPlayerColor == 'W') ? 'B' : 'W';
@@ -279,7 +331,8 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 		m_sndManager.play("check");
 		
 		#ifdef DEBUG
-		std::cout << (opponentColor == 'W' ? "[DEBUG] black" : "[DEBUG] white") << " king is in check!\n";
+		std::cout << (opponentColor == 'W' ? "[DEBUG] black" : "[DEBUG] white") 
+					<< " king is in check!\n";
 		#endif
 	}
 	else
