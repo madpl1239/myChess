@@ -14,11 +14,15 @@ void testSaveLoadGame()
 {
 	std::cout << "Running test: Save & Load Game\n";
 
-	ChessBoard board(sf::RenderWindow(), MoveLogger(), SoundManager());
+	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
+	MoveLogger logger(SIZE + 10, 10);
+	SoundManager sndManager;
+	
+	ChessBoard board{window, logger, sndManager};
 	board.setInitialPositions();
 	board.saveGame("test_save.txt");
 
-	ChessBoard loadedBoard(sf::RenderWindow(), MoveLogger(), SoundManager());
+	ChessBoard loadedBoard{window, logger, sndManager};
 	loadedBoard.loadGame("test_save.txt");
 
 	for(int y = 0; y < 8; ++y)
