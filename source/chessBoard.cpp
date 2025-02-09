@@ -415,6 +415,68 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 }
 
 
+void ChessBoard::saveGame(const std::string& filename)
+{
+    std::ofstream file(filename);
+    
+	if(not file)
+	{
+        std::cerr << "Error: Unable to open file for saving!\n";
+        
+		return;
+    }
+    
+    for(int y = 0; y < 8; ++y)
+	{
+        for(int x = 0; x < 8; ++x)
+		{
+            const Piece& piece = m_board[y][x];
+            
+			file << static_cast<int>(piece.m_type) << " " << piece.m_color << " " << x << " " << y << "\n";
+        }
+    }
+    
+    file << "ENPASSANT " << m_enPassantTarget.x << " " << m_enPassantTarget.y << "\n";
+    
+	file.close();
+}
+
+
+void ChessBoard::loadGame(const std::string& filename)
+{
+    std::ifstream file(filename);
+    
+	if(not file)
+	{
+        std::cerr << "Error: Unable to open file for loading!\n";
+		
+		return;
+    }
+    
+    m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
+    std::string type;
+    int x, y;
+    char color;
+    
+    while(file >> type)
+	{
+        if(type == "ENPASSANT")
+		{
+            file >> x >> y;
+            m_enPassantTarget = sf::Vector2i(x, y);
+        }
+        else
+		{
+            int pieceType = std::stoi(type);
+            file >> color >> x >> y;
+            m_board[y][x] = Piece(static_cast<PieceType>(pieceType), color);
+        }
+    }
+    
+    file.close();
+}
+
+
 void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture) 
 {
 	sf::Sprite boardSprite(boardTexture);
