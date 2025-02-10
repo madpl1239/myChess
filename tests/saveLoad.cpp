@@ -16,7 +16,7 @@ void testSaveLoadGame()
 	
 	sf::RenderWindow win(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SOundManager sndManager;
+	SoundManager sndManager;
 	
 	ChessBoard board(win, logger, sndManager);
 	board.setInitialPositions();
@@ -34,7 +34,7 @@ void testSaveLoadGame()
 		}
 	}
 	
-	assert(board.m_enPassantTarget == loadedBoard.m_enPassantTarget);
+	assert(board.getEnPassantTarget() == loadedBoard.getEnPassantTarget());
 	std::cout << "Test passed: Save and Load Game\n";
 }
 
