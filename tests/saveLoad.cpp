@@ -35,7 +35,8 @@ void testSaveLoadGame()
 	}
 	
 	assert(board.getEnPassantTarget() == loadedBoard.getEnPassantTarget());
-	std::cout << "Test passed: Save and Load Game\n";
+	
+	std::cout << "Test passed: Save and Load Game \xE2\x9C\x94\n";
 }
 
 
