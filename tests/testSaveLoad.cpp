@@ -18,23 +18,23 @@ void testSaveLoadGame()
 	MoveLogger logger(SIZE + 10, 10);
 	SoundManager sndManager;
 	
-	ChessBoard board{window, logger, sndManager};
+	ChessBoard board(window, logger, sndManager);
 	board.setInitialPositions();
 	board.saveGame("test_save.txt");
 
-	ChessBoard loadedBoard{window, logger, sndManager};
+	ChessBoard loadedBoard(window, logger, sndManager);
 	loadedBoard.loadGame("test_save.txt");
 
 	for(int y = 0; y < 8; ++y)
 	{
 		for(int x = 0; x < 8; ++x)
 		{
-			assert(board.m_board[y][x].m_type == loadedBoard.m_board[y][x].m_type);
-			assert(board.m_board[y][x].m_color == loadedBoard.m_board[y][x].m_color);
+			assert(board.getPiece(y, x).m_type == loadedBoard.getPiece(y, x).m_type);
+			assert(board.getPiece(y, x).m_color == loadedBoard.getPiece(y, x).m_color);
 		}
 	}
 	
-	assert(board.m_enPassantTarget == loadedBoard.m_enPassantTarget);
+	assert(board.getEnPassantTarget() == loadedBoard.getEnPassantTarget());
 
 	std::cout << "Test passed: Save & Load Game ✅\n";
 }
