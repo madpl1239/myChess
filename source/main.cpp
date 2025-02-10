@@ -87,7 +87,16 @@ int main(void)
 						board.saveGame("./save_game.txt");
 					
 					if(event.key.code == sf::Keyboard::L)
+					{
 						board.loadGame("./save_game.txt");
+						
+						// transferring the new layout to Stockfish
+						// you could add a variable to store the current color
+						std::string fen = board.generateFEN('W');
+						
+						engine.sendCommand("ucinewgame");
+						engine.sendCommand("position fen " + fen);
+					}
 				}
 				
 				else if(event.type == sf::Event::MouseButtonPressed)

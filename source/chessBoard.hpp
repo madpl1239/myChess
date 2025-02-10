@@ -28,9 +28,11 @@ public:
 	sf::Vector2i toCoords(char col, char row);
 	bool atBoard(sf::Vector2i Start, sf::Vector2i End);
 	bool castling(std::string& str, std::string& position, sf::Vector2i& rookStart, sf::Vector2i& rookEnd);
+	std::string generateFEN(char currentTurn);
 	void saveGame(const std::string& filename);
 	void loadGame(const std::string& filename);
 	
+	// getters
 	const Piece& getPiece(int x, int y) const;
 	const sf::Vector2i& getEnPassantTarget() const;
 	

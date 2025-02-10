@@ -415,6 +415,117 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 }
 
 
+std::string ChessBoard::generateFEN(char currentTurn)
+{
+	std::string fen = "";
+
+	// 1. pieces layout
+	for(int y = 7; y >= 0; --y)
+	{
+		int emptyCount = 0;
+		for(int x = 0; x < 8; ++x)
+		{
+			const Piece& piece = m_board[y][x];
+			
+			if(piece.m_type == PieceType::NONE)
+				emptyCount++;
+			else
+			{
+				if(emptyCount > 0)
+				{
+					fen += std::to_string(emptyCount);
+					emptyCount = 0;
+				}
+				
+				char pieceChar;
+				
+				switch(piece.m_type)
+				{
+					case PieceType::PAWN:
+						pieceChar = 'p';
+						break;
+						
+					case PieceType::KNIGHT:
+						pieceChar = 'n';
+						break;
+						
+					case PieceType::BISHOP:
+						pieceChar = 'b';
+						break;
+						
+					case PieceType::ROOK:
+						pieceChar = 'r';
+						break;
+						
+					case PieceType::QUEEN:
+						pieceChar = 'q';
+						break;
+						
+					case PieceType::KING:
+						pieceChar = 'k';
+						break;
+						
+					default:
+						pieceChar = ' ';
+						break;
+				}
+				
+				if(piece.m_color == 'W') 
+					pieceChar = toupper(pieceChar);
+				
+				fen += pieceChar;
+			}
+		}
+		
+		if(emptyCount > 0)
+			fen += std::to_string(emptyCount);
+		
+		if(y > 0)
+			fen += "/";
+	}
+
+	// 2. Color on the move
+	fen += " ";
+	fen += (currentTurn == 'W') ? "w" : "b";
+
+	// 3. Castling status
+	std::string castling = "";
+	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'W')
+	{
+		if(m_board[7][7].m_type == PieceType::ROOK)
+			castling += "K";
+		
+		if(m_board[7][0].m_type == PieceType::ROOK)
+			castling += "Q";
+	}
+	
+	if(m_board[0][4].m_type == PieceType::KING and m_board[0][4].m_color == 'B')
+	{
+		if(m_board[0][7].m_type == PieceType::ROOK)
+			castling += "k";
+		
+		if(m_board[0][0].m_type == PieceType::ROOK)
+			castling += "q";
+	}
+	
+	fen += " " + (castling.empty() ? "-" : castling);
+
+	// 4. En passant
+	if(m_enPassantTarget.x >= 0 and m_enPassantTarget.y >= 0)
+		fen += " " + toChess(m_enPassantTarget.x, m_enPassantTarget.y);
+	else
+		fen += " -";
+
+	// 5. Half-Move Counter (currently set to 0)
+	fen += " 0";
+
+	// 6. Full move counter (can be downloaded from MoveLogger)
+	fen += " 1";  // Na razie ustawiony domyślnie
+
+	return fen;
+}
+
+
 void ChessBoard::saveGame(const std::string& filename)
 {
 	std::ofstream file(filename);
@@ -453,10 +564,11 @@ void ChessBoard::loadGame(const std::string& filename)
 		
 		return;
 	}
-	
+
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
 	std::string line;
-	
+	char currentTurn = 'W'; // White's move by default
+
 	while(std::getline(file, line))
 	{
 		std::istringstream iss(line);
@@ -470,6 +582,10 @@ void ChessBoard::loadGame(const std::string& filename)
 			iss >> x >> y;
 			m_enPassantTarget = sf::Vector2i(x, y);
 		}
+		
+		else if(type == "TURN") 
+			iss >> currentTurn;
+		
 		else
 		{
 			try
@@ -478,7 +594,7 @@ void ChessBoard::loadGame(const std::string& filename)
 				iss >> color >> x >> y;
 				
 				if(color == 'N')
-					continue;  // Ignorujemy puste pola
+					continue;
 				
 				if(x < 0 or x >= 8 or y < 0 or y >= 8)
 					continue;
@@ -492,7 +608,7 @@ void ChessBoard::loadGame(const std::string& filename)
 			}
 		}
 	}
-	
+
 	file.close();
 }
 
