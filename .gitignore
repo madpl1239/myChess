@@ -1,9 +1,9 @@
 # folders
-/build/
-/.directory/
-/tests/
+/build
+/tests
 
 # files
+.directory
 myChess
 myChess.exe
 stockfish
