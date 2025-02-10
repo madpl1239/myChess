@@ -1,0 +1,10 @@
+# folders
+/build/
+
+# files
+.directory
+myChess
+myChess.exe
+stockfish
+stockfish.exe
+toCoord
