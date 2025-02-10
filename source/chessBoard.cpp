@@ -418,7 +418,7 @@ bool ChessBoard::castling(std::string& str, std::string& position, sf::Vector2i&
 void ChessBoard::saveGame(const std::string& filename)
 {
 	std::ofstream file(filename);
-	
+
 	if(not file)
 	{
 		std::cerr << "Error: Unable to open file for saving!\n";
@@ -431,10 +431,9 @@ void ChessBoard::saveGame(const std::string& filename)
 		for(int x = 0; x < 8; ++x)
 		{
 			const Piece& piece = m_board[y][x];
+			char color = (piece.m_type == PieceType::NONE) ? 'N' : piece.m_color;
 			
-			file << static_cast<int>(piece.m_type) << " " 
-					<< piece.m_color << " " 
-					<< x << " " << y << "\n";
+			file << static_cast<int>(piece.m_type) << " " << color << " " << x << " " << y << "\n";
 		}
 	}
 	
@@ -470,32 +469,21 @@ void ChessBoard::loadGame(const std::string& filename)
 		{
 			iss >> x >> y;
 			m_enPassantTarget = sf::Vector2i(x, y);
-			std::cout << "Loaded En Passant: " << x << " " << y << std::endl;
 		}
 		else
 		{
 			try
 			{
 				int pieceType = std::stoi(type);
-				if(not (iss >> color >> x >> y))
-				{
-					std::cerr << "Error parsing line: " << line << std::endl;
-					
-					continue;
-				}
+				iss >> color >> x >> y;
+				
+				if(color == 'N')
+					continue;  // Ignorujemy puste pola
 				
 				if(x < 0 || x >= 8 || y < 0 || y >= 8)
-				{
-					std::cerr << "Error: Invalid piece position " << x << " " << y << std::endl;
-					
 					continue;
-				}
 				
 				m_board[y][x] = Piece(static_cast<PieceType>(pieceType), color);
-				
-				std::cout << "Loaded: " << pieceType 
-							<< " " << color << " " 
-							<< x << " " << y << std::endl;
 			}
 			catch(const std::exception& e)
 			{
