@@ -82,6 +82,12 @@ int main(void)
 				{
 					if(event.key.code == sf::Keyboard::Escape)
 						quit = true;
+					
+					if(event.key.code == sf::Keyboard::S)
+						board.saveGame("./save_game.txt");
+					
+					if(event.key.code == sf::Keyboard::L)
+						board.loadGame("./save_game.txt");
 				}
 				
 				else if(event.type == sf::Event::MouseButtonPressed)

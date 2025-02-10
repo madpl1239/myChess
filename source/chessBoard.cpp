@@ -480,11 +480,12 @@ void ChessBoard::loadGame(const std::string& filename)
 				if(color == 'N')
 					continue;  // Ignorujemy puste pola
 				
-				if(x < 0 || x >= 8 || y < 0 || y >= 8)
+				if(x < 0 or x >= 8 or y < 0 or y >= 8)
 					continue;
 				
 				m_board[y][x] = Piece(static_cast<PieceType>(pieceType), color);
 			}
+			
 			catch(const std::exception& e)
 			{
 				std::cerr << "Error parsing line: " << line << std::endl;
