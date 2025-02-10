@@ -93,9 +93,13 @@ int main(void)
 						// transferring the new layout to Stockfish
 						// you could add a variable to store the current color
 						std::string fen = board.generateFEN('W');
+						std::cout << "Generated FEN after loading game: " << fen << "\n";
 						
 						engine.sendCommand("ucinewgame");
 						engine.sendCommand("position fen " + fen);
+						
+						std::string response = engine.getResponse();
+						std::cout << "Stockfish response after position fen: " << response << std::endl;
 					}
 				}
 				
