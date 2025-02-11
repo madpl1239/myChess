@@ -4,7 +4,7 @@
  * Testing generateFEN() method.
  * 
  * compile options type: g++ -o testFEN testFEN.cpp ./source/chessBoard.cpp \
- * 		-lgtest -lpthread
+ * 		-lgtest -lgtest_main -lpthread
  * 
  * 11-02-2025 by madpl
  */
@@ -16,8 +16,8 @@
 // Test 1: check correctness of FEN for the starting position
 TEST(ChessBoardTest, InitialPosition)
 {
-	sf::RenderWindow window;
-	MoveLogger logger;
+	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
+	MoveLogger logger(SIZE + 10, 10);
 	SoundManager soundManager;
 	ChessBoard board(window, logger, soundManager);
 	board.setInitialPositions();
@@ -30,8 +30,8 @@ TEST(ChessBoardTest, InitialPosition)
 // Test 2: check correctness of FEN after the moves e2e4 and d7d5
 TEST(ChessBoardTest, AfterPawnMoves)
 {
-	sf::RenderWindow window;
-	MoveLogger logger;
+	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
+	MoveLogger logger(SIZE + 10, 10);
 	SoundManager soundManager;
 	ChessBoard board(window, logger, soundManager);
 	board.setInitialPositions();
@@ -49,8 +49,8 @@ TEST(ChessBoardTest, AfterPawnMoves)
 // Test 3: check white's kingside castling
 TEST(ChessBoardTest, CastlingKingSideWhite)
 {
-	sf::RenderWindow window;
-	MoveLogger logger;
+	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
+	MoveLogger logger(SIZE + 10, 10);
 	SoundManager soundManager;
 	ChessBoard board(window, logger, soundManager);
 	board.setInitialPositions();
@@ -68,8 +68,8 @@ TEST(ChessBoardTest, CastlingKingSideWhite)
 // Test 4: check the capture en passant
 TEST(ChessBoardTest, EnPassantCapture)
 {
-	sf::RenderWindow window;
-	MoveLogger logger;
+	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
+	MoveLogger logger(SIZE + 10, 10);
 	SoundManager soundManager;
 	ChessBoard board(window, logger, soundManager);
 	board.setInitialPositions();
@@ -88,8 +88,8 @@ TEST(ChessBoardTest, EnPassantCapture)
 // Test 5: check correctness of the FEN after capturing the figure
 TEST(ChessBoardTest, CapturePiece)
 {
-	sf::RenderWindow window;
-	MoveLogger logger;
+	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
+	MoveLogger logger(SIZE + 10, 10);
 	SoundManager soundManager;
 	ChessBoard board(window, logger, soundManager);
 	board.setInitialPositions();
