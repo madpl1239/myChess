@@ -344,7 +344,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	else
 		m_enPassantTarget = sf::Vector2i(-1, -1);
 
-	std::cout << "after move: " << generateFEN('W') << std::endl;
+	std::cout << "after move:  " << generateFEN('W') << std::endl;
 }
 
 
