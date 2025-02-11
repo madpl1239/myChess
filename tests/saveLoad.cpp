@@ -3,6 +3,10 @@
  * 
  * tests new possibility: save and load game.
  * 
+ * for compile type: g++ -o saveSL saveLoad.cpp ../source/chessBoard.cpp \
+ * 		../source/moveLogger.cpp -I../source -lsfml-system -lsfml-window \
+ *		-lsfml-graphics -lsfml-audio 
+ * 
  * 10-02-2025 by madpl
  */
 #include "chessBoard.hpp"
