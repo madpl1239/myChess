@@ -6,8 +6,8 @@
 #pragma once
 
 // for debugging
-#define DEBUG 1
-// #undef DEBUG
+// #define DEBUG 1
+#undef DEBUG
 
 // for Linux, Windows Systems
 #define LINUX

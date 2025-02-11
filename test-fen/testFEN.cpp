@@ -3,8 +3,10 @@
  * 
  * Testing generateFEN() method.
  * 
- * compile options type: g++ -o testFEN testFEN.cpp ./source/chessBoard.cpp \
- * 		-lgtest -lgtest_main -lpthread
+ * compilation:
+ * g++ -o testFEN testFEN.cpp ../source/chessBoard.cpp ../source/moveLogger.cpp \
+ * 		-lgtest -lgtest_main -lpthread -I../source -lsfml-system -lsfml-window \
+ * 		-lsfml-graphics -lsfml-audio
  * 
  * 11-02-2025 by madpl
  */
@@ -64,7 +66,6 @@ TEST(ChessBoardTest, CastlingKingSideWhite)
 }
 
 
-/*
 // Test 4: check the capture en passant
 TEST(ChessBoardTest, EnPassantCapture)
 {
@@ -82,7 +83,6 @@ TEST(ChessBoardTest, EnPassantCapture)
 	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b - - 0 3";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
 }
-*/
 
 
 // Test 5: check correctness of the FEN after capturing the figure

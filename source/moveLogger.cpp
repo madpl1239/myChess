@@ -11,7 +11,7 @@ MoveLogger::MoveLogger(int x, int y):
 	m_posX(x),
 	m_posY(y)
 {
-	if(not m_font.loadFromFile("./resources/digital-7mono.ttf"))
+	if(not m_font.loadFromFile("../resources/digital-7mono.ttf"))
 		std::cout << "Error loading font!\n";
 
 	sf::Text title;
