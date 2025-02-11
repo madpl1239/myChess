@@ -315,13 +315,14 @@ char ChessBoard::pieceTypeToChar(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
+	std::cout << "before move: " << generateFEN('W') << std::endl;
+
 	Piece movingPiece = m_board[startY][startX];
 	int dx = abs(endX - startX);
 	int dy = abs(endY - startY);
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
 	bool enPassantCapture = false;
 
-	// Sprawdzenie bicia en passant
 	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
 		m_board[endY][endX].m_type == PieceType::NONE)
 	{
@@ -329,27 +330,21 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 			enPassantCapture = true;
 	}
 
-	// Przesunięcie pionka
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
 
-	// Usunięcie pionka przeciwnika w przypadku bicia en passant
 	if(enPassantCapture)
 	{
 		int capturedPawnY = endY - direction;
-		
 		m_board[capturedPawnY][endX] = Piece();
 	}
 
-	// Aktualizacja en passant target
 	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
 		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
 	else
 		m_enPassantTarget = sf::Vector2i(-1, -1);
 
-	// Zwiększenie numeru ruchu po każdym ruchu czarnych
-	if(movingPiece.m_color == 'B')
-		m_moveLogger.incrementFullMoveNumber();
+	std::cout << "after move: " << generateFEN('W') << std::endl;
 }
 
 
