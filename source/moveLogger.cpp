@@ -84,6 +84,18 @@ void MoveLogger::updateInvalidStatus(const std::string& checkMessage)
 }
 
 
+void MoveLogger::incrementFullMoveNumber()
+{
+	m_fullMoveNumber++;
+}
+
+    
+int MoveLogger::getFullMoveNumber() const
+{
+	return m_fullMoveNumber;
+}
+
+    
 void MoveLogger::draw(sf::RenderWindow& window)
 {
 	for(const auto& text : m_staticTexts)

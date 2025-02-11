@@ -31,11 +31,11 @@ public:
 	std::string generateFEN(char currentTurn);
 	void saveGame(const std::string& filename);
 	void loadGame(const std::string& filename);
-	
+
 	// getters
 	const Piece& getPiece(int x, int y) const;
 	const sf::Vector2i& getEnPassantTarget() const;
-	
+
 	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
 
 private:
@@ -44,6 +44,7 @@ private:
 	bool isPathClear(int startX, int startY, int endX, int endY) const;
 	bool isInCheck(char kingColor) const;
 	std::string pieceTypeToString(PieceType type) const;
+	char pieceTypeToChar(PieceType type) const;
 
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;

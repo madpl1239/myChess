@@ -285,6 +285,34 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 }
 
 
+char ChessBoard::pieceTypeToChar(PieceType type) const
+{
+	switch(type)
+	{
+		case PieceType::PAWN:
+			return 'p';
+			
+		case PieceType::ROOK:
+			return 'r';
+			
+		case PieceType::KNIGHT:
+			return 'n';
+			
+		case PieceType::BISHOP:
+			return 'b';
+			
+		case PieceType::QUEEN:
+			return 'q';
+			
+		case PieceType::KING:
+			return 'k';
+			
+		default:
+			return ' ';
+	}
+}
+
+
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
 	Piece movingPiece = m_board[startY][startX];
@@ -293,50 +321,35 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
 	bool enPassantCapture = false;
 
-	// detection of strike en passant:
-	// if a pawn moves diagonally (dx == 1 && dy == 1) to an empty square
-	// and the target field corresponds to the saved en passant position, then we have en passant.
-	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and m_board[endY][endX].m_type == PieceType::NONE)
+	// Sprawdzenie bicia en passant
+	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
+		m_board[endY][endX].m_type == PieceType::NONE)
 	{
 		if(sf::Vector2i(endX, endY) == m_enPassantTarget)
 			enPassantCapture = true;
 	}
 
-	// making a move – we move a pawn
+	// Przesunięcie pionka
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
 
-	// Jeśli ruch był biciem en passant, usuwamy pionka przeciwnika
-	// if move was capture en passant, then we remove opponent pawn
+	// Usunięcie pionka przeciwnika w przypadku bicia en passant
 	if(enPassantCapture)
 	{
 		int capturedPawnY = endY - direction;
+		
 		m_board[capturedPawnY][endX] = Piece();
 	}
 
-	// setting the en passant possibilities:
-	// if a pawn has moved two squares, we set the square through which it "jumped"
+	// Aktualizacja en passant target
 	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
 		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
 	else
-		// otherwise we clear the possibility en passant
 		m_enPassantTarget = sf::Vector2i(-1, -1);
 
-	char currentPlayerColor = m_board[endY][endX].m_color;
-	char opponentColor = (currentPlayerColor == 'W') ? 'B' : 'W';
-
-	if(isInCheck(opponentColor))
-	{
-		m_moveLogger.updateCheckStatus("King is check!");
-		m_sndManager.play("check");
-		
-		#ifdef DEBUG
-		std::cout << (opponentColor == 'W' ? "[DEBUG] black" : "[DEBUG] white") 
-					<< " king is in check!\n";
-		#endif
-	}
-	else
-		m_moveLogger.updateCheckStatus("");
+	// Zwiększenie numeru ruchu po każdym ruchu czarnych
+	if(movingPiece.m_color == 'B')
+		m_moveLogger.incrementFullMoveNumber();
 }
 
 
@@ -419,7 +432,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 {
 	std::string fen = "";
 
-	// 1. pieces layout
+	// 1. Generowanie pozycji figur
 	for(int y = 7; y >= 0; --y)
 	{
 		int emptyCount = 0;
@@ -428,7 +441,9 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			const Piece& piece = m_board[y][x];
 			
 			if(piece.m_type == PieceType::NONE)
-				emptyCount++;
+			{
+				++emptyCount;
+			}
 			else
 			{
 				if(emptyCount > 0)
@@ -437,43 +452,8 @@ std::string ChessBoard::generateFEN(char currentTurn)
 					emptyCount = 0;
 				}
 				
-				char pieceChar;
-				
-				switch(piece.m_type)
-				{
-					case PieceType::PAWN:
-						pieceChar = 'p';
-						break;
-						
-					case PieceType::KNIGHT:
-						pieceChar = 'n';
-						break;
-						
-					case PieceType::BISHOP:
-						pieceChar = 'b';
-						break;
-						
-					case PieceType::ROOK:
-						pieceChar = 'r';
-						break;
-						
-					case PieceType::QUEEN:
-						pieceChar = 'q';
-						break;
-						
-					case PieceType::KING:
-						pieceChar = 'k';
-						break;
-						
-					default:
-						pieceChar = ' ';
-						break;
-				}
-				
-				if(piece.m_color == 'W') 
-					pieceChar = toupper(pieceChar);
-				
-				fen += pieceChar;
+				char pieceChar = pieceTypeToChar(piece.m_type);
+				fen += (piece.m_color == 'W') ? toupper(pieceChar) : tolower(pieceChar);
 			}
 		}
 		
@@ -484,11 +464,11 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			fen += "/";
 	}
 
-	// 2. Color on the move
+	// 2. Aktualny gracz
 	fen += " ";
 	fen += (currentTurn == 'W') ? "w" : "b";
 
-	// 3. Castling status
+	// 3. Roszada
 	std::string castling = "";
 	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'W')
 	{
@@ -499,7 +479,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			castling += "Q";
 	}
 	
-	if(m_board[0][4].m_type == PieceType::KING and m_board[0][4].m_color == 'B')
+	if(m_board[0][4].m_type == PieceType::KING && m_board[0][4].m_color == 'B')
 	{
 		if(m_board[0][7].m_type == PieceType::ROOK)
 			castling += "k";
@@ -510,17 +490,18 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	
 	fen += " " + (castling.empty() ? "-" : castling);
 
-	// 4. En passant
-	if(m_enPassantTarget.x >= 0 and m_enPassantTarget.y >= 0)
-		fen += " " + toChess(m_enPassantTarget.x, m_enPassantTarget.y);
+	// 4. En passant (poprawiony zapis)
+	fen += " ";
+	if(m_enPassantTarget.x != -1)
+		fen += toChess(m_enPassantTarget.x, m_enPassantTarget.y);
 	else
-		fen += " -";
+		fen += "-";
 
-	// 5. Half-Move Counter (currently set to 0)
+	// 5. Licznik ruchów bez bicia
 	fen += " 0";
 
-	// 6. Full move counter (can be downloaded from MoveLogger)
-	fen += " 1";  // Na razie ustawiony domyślnie
+	// 6. Pełny numer ruchu (pobierany z MoveLogger)
+	fen += " " + std::to_string(m_moveLogger.getFullMoveNumber());
 
 	return fen;
 }
