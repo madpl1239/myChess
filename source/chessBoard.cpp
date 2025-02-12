@@ -10,10 +10,9 @@
 #include "moveLogger.hpp"
 
 
-ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager):
+ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger):
 	m_window(window),
 	m_moveLogger(logger),
-	m_sndManager(sndManager),
 	m_enPassantTarget(-1, -1)
 {
 	#ifdef DEBUG
@@ -136,6 +135,7 @@ bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int
 					m_board[endY][endX].m_type == PieceType::NONE);
 	}
 
+	// diagonal move
 	if(dx == 1 and dy == 1)
 	{
 		// if the target square contains an opponent's piece - standard capture
@@ -144,7 +144,7 @@ bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int
 		else
 		{
 			// try beating test en passant:
-			// we check if the target field corresponds to the saved en passant position.
+			// we check if the target field corresponds to the en passant position.
 			if(sf::Vector2i(endX, endY) == m_enPassantTarget)
 			{
 				// position of a pawn that could have been captured en passant is "behind" the target square,
@@ -442,7 +442,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 {
 	std::string fen = "";
 
-	// 1. Generowanie pozycji figur
+	// 1. generation layout pieces
 	for(int y = 7; y >= 0; --y)
 	{
 		int emptyCount = 0;
@@ -474,11 +474,11 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			fen += "/";
 	}
 
-	// 2. Aktualny gracz
+	// 2. current player
 	fen += " ";
 	fen += (currentTurn == 'W') ? "w" : "b";
 
-	// 3. Roszada
+	// 3. castling
 	std::string castling = "";
 	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'W')
 	{
@@ -500,17 +500,17 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	
 	fen += " " + (castling.empty() ? "-" : castling);
 
-	// 4. En passant (poprawiony zapis)
+	// 4. En passant
 	fen += " ";
 	if(m_enPassantTarget.x != -1)
 		fen += toChess(m_enPassantTarget.x, m_enPassantTarget.y);
 	else
 		fen += "-";
 
-	// 5. Licznik ruchów bez bicia
+	// 5. half move counter without capture
 	fen += " 0";
 
-	// 6. Pełny numer ruchu (pobierany z MoveLogger)
+	// 6. move counter
 	fen += " " + std::to_string(m_moveLogger.getFullMoveNumber());
 
 	return fen;

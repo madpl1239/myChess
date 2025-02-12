@@ -20,8 +20,7 @@ TEST(ChessBoardTest, InitialPosition)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SoundManager soundManager;
-	ChessBoard board(window, logger, soundManager);
+	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
 	std::string expectedFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1";
@@ -34,8 +33,7 @@ TEST(ChessBoardTest, AfterPawnMoves)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SoundManager soundManager;
-	ChessBoard board(window, logger, soundManager);
+	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
 	// move e2e4
@@ -53,8 +51,7 @@ TEST(ChessBoardTest, CastlingKingSideWhite)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SoundManager soundManager;
-	ChessBoard board(window, logger, soundManager);
+	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
 	// manually setting up kingside castling for white
@@ -71,8 +68,7 @@ TEST(ChessBoardTest, EnPassantCapture)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SoundManager soundManager;
-	ChessBoard board(window, logger, soundManager);
+	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
 	// movements to set the en passant position
@@ -90,8 +86,7 @@ TEST(ChessBoardTest, CapturePiece)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SoundManager soundManager;
-	ChessBoard board(window, logger, soundManager);
+	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
 	// white pawn e2 -> e4
