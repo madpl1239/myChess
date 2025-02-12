@@ -315,15 +315,14 @@ char ChessBoard::pieceTypeToChar(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
-    std::cout << "before move: " << generateFEN('W') << std::endl;
-
     Piece movingPiece = m_board[startY][startX];
-    int dx = abs(endX - startX);
+    
+	int dx = abs(endX - startX);
     int dy = abs(endY - startY);
     int direction = (movingPiece.m_color == 'W') ? 1 : -1;
     bool enPassantCapture = false;
 
-    // Sprawdzenie bicia en passant
+    // check en passant capture
     if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
         m_board[endY][endX].m_type == PieceType::NONE)
 	{
@@ -331,35 +330,33 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
             enPassantCapture = true;
     }
 
-    // Przesunięcie pionka
+    // move figure
     m_board[endY][endX] = movingPiece;
     m_board[startY][startX] = Piece();
 
-    // Usunięcie pionka przeciwnika w przypadku bicia en passant
+	// remove opponent's pawn in en passant capture case 
     if(enPassantCapture)
 	{
         int capturedPawnY = endY - direction;
         m_board[capturedPawnY][endX] = Piece();
     }
 
-    // Jeśli zbito figurę, usuwamy ją
+    // if figure was captured, remove it
     if(m_board[endY][endX].m_type != PieceType::NONE and
         m_board[endY][endX].m_color != movingPiece.m_color)
 	{
         m_board[endY][endX] = movingPiece;
     }
 
-    // Aktualizacja en passant target
+    // update en passant target
     if(movingPiece.m_type == PieceType::PAWN and dy == 2)
         m_enPassantTarget = sf::Vector2i(startX, startY + direction);
     else
         m_enPassantTarget = sf::Vector2i(-1, -1);
 
-    // Zwiększenie numeru ruchu po każdym ruchu czarnych
+	// increment number of move after black side move
     if(movingPiece.m_color == 'B')
         m_moveLogger.incrementFullMoveNumber();
-
-    std::cout << "after move:  " << generateFEN('W') << std::endl;
 }
 
 
@@ -451,9 +448,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			const Piece& piece = m_board[y][x];
 			
 			if(piece.m_type == PieceType::NONE)
-			{
 				++emptyCount;
-			}
 			else
 			{
 				if(emptyCount > 0)
@@ -500,7 +495,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	
 	fen += " " + (castling.empty() ? "-" : castling);
 
-	// 4. En passant
+	// 4. en passant
 	fen += " ";
 	if(m_enPassantTarget.x != -1)
 		fen += toChess(m_enPassantTarget.x, m_enPassantTarget.y);

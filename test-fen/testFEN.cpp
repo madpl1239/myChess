@@ -37,9 +37,9 @@ TEST(ChessBoardTest, AfterPawnMoves)
 	board.setInitialPositions();
 	
 	// move e2e4
-	board.movePiece(4, 6, 4, 4);
+	board.movePiece(4, 1, 4, 3);
 	// move d7d5
-	board.movePiece(3, 1, 3, 3);
+	board.movePiece(3, 6, 3, 4);
 	
 	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w - d6 0 2";
 	EXPECT_EQ(board.generateFEN('W'), expectedFEN);
@@ -55,8 +55,8 @@ TEST(ChessBoardTest, CastlingKingSideWhite)
 	board.setInitialPositions();
 	
 	// manually setting up kingside castling for white
-	board.movePiece(4, 7, 6, 7); // king e1 -> g1
-	board.movePiece(7, 7, 5, 7); // rook h1 -> f1
+	board.movePiece(4, 0, 6, 0); // king e1 -> g1
+	board.movePiece(7, 0, 5, 0); // rook h1 -> f1
 	
 	std::string expectedFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1RK1 b - - 0 1";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
