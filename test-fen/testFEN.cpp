@@ -72,11 +72,11 @@ TEST(ChessBoardTest, EnPassantCapture)
 	board.setInitialPositions();
 	
 	// movements to set the en passant position
-	board.movePiece(4, 6, 4, 4); // e2 -> e4
-	board.movePiece(3, 1, 3, 3); // d7 -> d5
-	board.movePiece(4, 4, 3, 3); // e4 bije d5 en passant
+	board.movePiece(4, 1, 4, 3); // e2 -> e4
+	board.movePiece(3, 6, 3, 4); // d7 -> d5
+	board.movePiece(4, 3, 3, 4); // e4 bije d5 en passant
 	
-	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b - - 0 3";
+	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b - - 0 2";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
 }
 
