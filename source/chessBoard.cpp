@@ -315,43 +315,45 @@ char ChessBoard::pieceTypeToChar(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
+	m_enPassantTarget = sf::Vector2i(-1, -1);
+	
 	Piece movingPiece = m_board[startY][startX];
 	int dx = abs(endX - startX);
 	int dy = abs(endY - startY);
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
 	bool enPassantCapture = false;
-	
-	// Update en passant target before moving the piece
-	if (movingPiece.m_type == PieceType::PAWN && dy == 2)
+
+	// update en passant target before moving the piece
+	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
 		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
 	else
 		m_enPassantTarget = sf::Vector2i(-1, -1);
-	
-	// Check en passant capture validity
-	if (movingPiece.m_type == PieceType::PAWN && dx == 1 && dy == 1 &&
+
+	// check en passant capture validity
+	if(movingPiece.m_type == PieceType::PAWN && dx == 1 && dy == 1 &&
 		sf::Vector2i(endX, endY) == m_enPassantTarget)
 	{
-		int capturedPawnY = endY /* - direction */;
-		if (m_board[capturedPawnY][endX].m_type == PieceType::PAWN &&
+		int capturedPawnY = endY - direction;
+		if(m_board[capturedPawnY][endX].m_type == PieceType::PAWN &&
 			m_board[capturedPawnY][endX].m_color != movingPiece.m_color)
 		{
 			enPassantCapture = true;
 		}
 	}
-	
-	// Move piece to new position
+
+	// move piece to new position
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
-	
-	// Remove opponent's pawn if en passant occurred
-	if (enPassantCapture)
+
+	// remove opponent's pawn if en passant occurred
+	if(enPassantCapture)
 	{
 		int capturedPawnY = endY - direction;
 		m_board[capturedPawnY][endX] = Piece();
 	}
-	
-	// Increment full move number after Black's move
-	if (movingPiece.m_color == 'B')
+
+	// increment full move number after Black's move
+	if(movingPiece.m_color == 'B')
 		m_moveLogger.incrementFullMoveNumber();
 }
 
@@ -370,7 +372,8 @@ std::string ChessBoard::toChess(int x, int y)
 	std::string str;
 
 	str += static_cast<char>(97 + x);
-	str += static_cast<char>(7 - y + 49);
+	// str += static_cast<char>(7 - y + 49);
+	str += static_cast<char>(y + 49);
 
 	return str;
 }
@@ -488,7 +491,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 		if(m_board[7][0].m_type == PieceType::ROOK)
 			castling += "Q";
 	}
-	
+
 	if(m_board[0][4].m_type == PieceType::KING && m_board[0][4].m_color == 'B')
 	{
 		if(m_board[0][7].m_type == PieceType::ROOK)

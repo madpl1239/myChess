@@ -36,10 +36,8 @@ TEST(ChessBoardTest, AfterPawnMoves)
 	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
-	// move e2e4
-	board.movePiece(4, 1, 4, 3);
-	// move d7d5
-	board.movePiece(3, 6, 3, 4);
+	board.movePiece(4, 1, 4, 3); // e2 -> e4
+	board.movePiece(3, 6, 3, 4); // d7 -> d5
 	
 	// en passant is d6
 	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w - d6 0 2";
@@ -75,7 +73,7 @@ TEST(ChessBoardTest, EnPassantCapture)
 	// movements to set the en passant position
 	board.movePiece(4, 1, 4, 3); // e2 -> e4
 	board.movePiece(3, 6, 3, 4); // d7 -> d5
-	board.movePiece(4, 3, 3, 4); // e4 bije d5 en passant
+	board.movePiece(4, 3, 3, 4); // e4 -> d5 capture en passant
 	
 	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b - - 0 2";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
@@ -90,12 +88,9 @@ TEST(ChessBoardTest, CapturePiece)
 	ChessBoard board(window, logger);
 	board.setInitialPositions();
 	
-	// white pawn e2 -> e4
-	board.movePiece(4, 1, 4, 3);
-	// black pawn d7 -> d5
-	board.movePiece(3, 6, 3, 4);
-	// white pawn e4 -> d5 taking the black pawn
-	board.movePiece(4, 3, 3, 4);
+	board.movePiece(4, 1, 4, 3); // e2 -> e4
+	board.movePiece(3, 6, 3, 4); // d7 -> d5
+	board.movePiece(4, 3, 3, 4); // e4 -> d5 capture black pawn
 	
 	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b - - 0 2";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
