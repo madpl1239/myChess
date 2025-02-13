@@ -360,6 +360,15 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 }
 
 
+void ChessBoard::movePieceForce(int startX, int startY, int endX, int endY)
+{
+	Piece movingPiece = m_board[startY][startX];
+	
+	m_board[endY][endX] = movingPiece;
+	m_board[startY][startX] = Piece();
+}
+
+
 std::string ChessBoard::toChess(int x, int y)
 {
 	std::string str;

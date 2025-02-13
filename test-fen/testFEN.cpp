@@ -55,8 +55,8 @@ TEST(ChessBoardTest, CastlingKingSideWhite)
 	board.setInitialPositions();
 	
 	// manually setting up kingside castling for white
-	board.movePiece(4, 0, 6, 0); // king e1 -> g1
-	board.movePiece(7, 0, 5, 0); // rook h1 -> f1
+	board.movePieceForce(4, 0, 6, 0); // king e1 -> g1
+	board.movePieceForce(7, 0, 5, 0); // rook h1 -> f1
 	
 	std::string expectedFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1RK1 b - - 0 1";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
@@ -90,13 +90,13 @@ TEST(ChessBoardTest, CapturePiece)
 	board.setInitialPositions();
 	
 	// white pawn e2 -> e4
-	board.movePiece(4, 6, 4, 4);
+	board.movePiece(4, 1, 4, 3);
 	// black pawn d7 -> d5
-	board.movePiece(3, 1, 3, 3);
+	board.movePiece(3, 6, 3, 4);
 	// white pawn e4 -> d5 taking the black pawn
-	board.movePiece(4, 4, 3, 3);
+	board.movePiece(4, 3, 3, 4);
 	
-	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPP1PPPP/RNBQKBNR b - - 0 3";
+	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b - - 0 2";
 	EXPECT_EQ(board.generateFEN('B'), expectedFEN);
 }
 

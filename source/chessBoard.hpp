@@ -26,6 +26,8 @@ public:
 	bool isValidMove(int startX, int startY, int endX, int endY) const;
 	
 	void movePiece(int startX, int startY, int endX, int endY);
+	void movePieceForce(int startX, int startY, int endX, int endY);
+	
 	std::string toChess(int x, int y);
 	sf::Vector2i toCoords(char col, char row);
 	bool atBoard(sf::Vector2i Start, sf::Vector2i End);
