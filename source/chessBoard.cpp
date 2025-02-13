@@ -288,6 +288,7 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
 	Piece movingPiece = m_board[startY][startX];
+	
 	int dx = abs(endX - startX);
 	int dy = abs(endY - startY);
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
@@ -296,7 +297,8 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	// detection of strike en passant:
 	// if a pawn moves diagonally (dx == 1 && dy == 1) to an empty square
 	// and the target field corresponds to the saved en passant position, then we have en passant.
-	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and m_board[endY][endX].m_type == PieceType::NONE)
+	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
+		m_board[endY][endX].m_type == PieceType::NONE)
 	{
 		if(sf::Vector2i(endX, endY) == m_enPassantTarget)
 			enPassantCapture = true;
@@ -315,11 +317,9 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	}
 
 	// setting the en passant possibilities:
-	// if a pawn has moved two squares, we set the square through which it "jumped"
 	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
 		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
 	else
-		// otherwise we clear the possibility en passant
 		m_enPassantTarget = sf::Vector2i(-1, -1);
 
 	char currentPlayerColor = m_board[endY][endX].m_color;
@@ -345,7 +345,7 @@ std::string ChessBoard::toChess(int x, int y)
 	std::string str;
 
 	str += static_cast<char>(97 + x);
-	str += static_cast<char>(7 - y + 49);
+	str += static_cast<char>(y + 49);
 
 	return str;
 }
