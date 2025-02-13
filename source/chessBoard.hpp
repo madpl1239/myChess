@@ -17,7 +17,7 @@
 class ChessBoard 
 {
 public:
-	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager);
+	ChessBoard(sf::RenderWindow& window, MoveLogger& logger);
 	~ChessBoard();
 
 	void setInitialPositions();
@@ -46,6 +46,5 @@ private:
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;
 	MoveLogger& m_moveLogger;
-	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;
 };

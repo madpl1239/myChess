@@ -10,10 +10,9 @@
 #include "moveLogger.hpp"
 
 
-ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager):
+ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger):
 	m_window(window),
 	m_moveLogger(logger),
-	m_sndManager(sndManager),
 	m_enPassantTarget(-1, -1)
 {
 	#ifdef DEBUG

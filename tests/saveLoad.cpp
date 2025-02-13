@@ -20,13 +20,12 @@ void testSaveLoadGame()
 	
 	sf::RenderWindow win(sf::VideoMode(SIZE + 400, SIZE), "");
 	MoveLogger logger(SIZE + 10, 10);
-	SoundManager sndManager;
 	
-	ChessBoard board(win, logger, sndManager);
+	ChessBoard board(win, logger);
 	board.setInitialPositions();
 	board.saveGame("test_save.txt");
 	
-	ChessBoard loadedBoard(win, logger, sndManager);
+	ChessBoard loadedBoard(win, logger);
 	loadedBoard.loadGame("test_save.txt");
 	
 	for(int y = 0; y < 8; ++y)
