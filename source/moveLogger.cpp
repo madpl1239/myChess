@@ -11,7 +11,7 @@ MoveLogger::MoveLogger(int x, int y):
 	m_posX(x),
 	m_posY(y)
 {
-	if(not m_font.loadFromFile("./resources/digital-7mono.ttf"))
+	if(not m_font.loadFromFile("../resources/digital-7mono.ttf"))
 		std::cout << "Error loading font!\n";
 
 	sf::Text title;
@@ -84,6 +84,18 @@ void MoveLogger::updateInvalidStatus(const std::string& checkMessage)
 }
 
 
+void MoveLogger::incrementFullMoveNumber()
+{
+	m_fullMoveNumber++;
+}
+
+    
+int MoveLogger::getFullMoveNumber() const
+{
+	return m_fullMoveNumber;
+}
+
+    
 void MoveLogger::draw(sf::RenderWindow& window)
 {
 	for(const auto& text : m_staticTexts)

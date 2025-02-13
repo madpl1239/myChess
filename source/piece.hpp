@@ -21,7 +21,7 @@ enum class PieceType
 struct Piece
 {
 public:
-    Piece(PieceType t = PieceType::NONE, char c = ' '):
+    Piece(PieceType t = PieceType::NONE, char c = 'N'):
 		m_type(t),
 		m_color(c)
 	{}

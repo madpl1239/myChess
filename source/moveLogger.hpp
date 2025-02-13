@@ -19,10 +19,13 @@ public:
 	void updateMove(bool side, const std::string& move);
 	void updateCheckStatus(const std::string& checkMessage);
 	void updateInvalidStatus(const std::string& checkMessage);
+	void incrementFullMoveNumber();
+	int getFullMoveNumber() const;
 	
 	void draw(sf::RenderWindow& window);
 	
 private:
+	int m_fullMoveNumber = 1; 
 	int m_posX, m_posY;
 	sf::Font m_font;
 	std::vector<sf::Text> m_staticTexts; 

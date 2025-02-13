@@ -1,6 +1,11 @@
 # folders
+<<<<<<< HEAD
 /build/
 /test-fen/
+=======
+/build
+/tests
+>>>>>>> test-fen
 
 # files
 .directory

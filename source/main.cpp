@@ -82,6 +82,25 @@ int main(void)
 				{
 					if(event.key.code == sf::Keyboard::Escape)
 						quit = true;
+					
+					if(event.key.code == sf::Keyboard::S)
+						board.saveGame("./save_game.txt");
+					
+					if(event.key.code == sf::Keyboard::L)
+					{
+						board.loadGame("./save_game.txt");
+						
+						// transferring the new layout to Stockfish
+						// you could add a variable to store the current color
+						std::string fen = board.generateFEN('W');
+						std::cout << "Generated FEN after loading game: " << fen << "\n";
+						
+						engine.sendCommand("ucinewgame");
+						engine.sendCommand("position fen " + fen);
+						
+						std::string response = engine.getResponse();
+						std::cout << "Stockfish response after position fen: " << response << std::endl;
+					}
 				}
 				
 				else if(event.type == sf::Event::MouseButtonPressed)
