@@ -354,7 +354,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 
 	// increment full move number after Black's move
 	if(movingPiece.m_color == 'B')
-		m_moveLogger.incrementFullMoveNumber();
+		++m_fullMoveNumber;
 }
 
 
@@ -513,7 +513,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	fen += " 0";
 
 	// 6. move counter
-	fen += " " + std::to_string(m_moveLogger.getFullMoveNumber());
+	fen += " " + std::to_string(m_fullMoveNumber);
 
 	return fen;
 }

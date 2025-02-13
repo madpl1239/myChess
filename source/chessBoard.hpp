@@ -54,6 +54,7 @@ private:
 
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;
+	int m_fullMoveNumber = 1;
 	MoveLogger& m_moveLogger;
 	sf::RenderWindow& m_window;
 };
