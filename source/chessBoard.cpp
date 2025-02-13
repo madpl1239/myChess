@@ -315,48 +315,44 @@ char ChessBoard::pieceTypeToChar(PieceType type) const
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
-    Piece movingPiece = m_board[startY][startX];
-    
+	Piece movingPiece = m_board[startY][startX];
 	int dx = abs(endX - startX);
-    int dy = abs(endY - startY);
-    int direction = (movingPiece.m_color == 'W') ? 1 : -1;
-    bool enPassantCapture = false;
-
-    // check en passant capture
-    if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
-        m_board[endY][endX].m_type == PieceType::NONE)
+	int dy = abs(endY - startY);
+	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
+	bool enPassantCapture = false;
+	
+	// Update en passant target before moving the piece
+	if (movingPiece.m_type == PieceType::PAWN && dy == 2)
+		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
+	else
+		m_enPassantTarget = sf::Vector2i(-1, -1);
+	
+	// Check en passant capture validity
+	if (movingPiece.m_type == PieceType::PAWN && dx == 1 && dy == 1 &&
+		sf::Vector2i(endX, endY) == m_enPassantTarget)
 	{
-        if(sf::Vector2i(endX, endY) == m_enPassantTarget)
-            enPassantCapture = true;
-    }
-
-    // move figure
-    m_board[endY][endX] = movingPiece;
-    m_board[startY][startX] = Piece();
-
-	// remove opponent's pawn in en passant capture case 
-    if(enPassantCapture)
+		int capturedPawnY = endY /* - direction */;
+		if (m_board[capturedPawnY][endX].m_type == PieceType::PAWN &&
+			m_board[capturedPawnY][endX].m_color != movingPiece.m_color)
+		{
+			enPassantCapture = true;
+		}
+	}
+	
+	// Move piece to new position
+	m_board[endY][endX] = movingPiece;
+	m_board[startY][startX] = Piece();
+	
+	// Remove opponent's pawn if en passant occurred
+	if (enPassantCapture)
 	{
-        int capturedPawnY = endY - direction;
-        m_board[capturedPawnY][endX] = Piece();
-    }
-
-    // if figure was captured, remove it
-    if(m_board[endY][endX].m_type != PieceType::NONE and
-        m_board[endY][endX].m_color != movingPiece.m_color)
-	{
-        m_board[endY][endX] = movingPiece;
-    }
-
-    // update en passant target
-    if(movingPiece.m_type == PieceType::PAWN and dy == 2)
-        m_enPassantTarget = sf::Vector2i(startX, startY + direction);
-    else
-        m_enPassantTarget = sf::Vector2i(-1, -1);
-
-	// increment number of move after black side move
-    if(movingPiece.m_color == 'B')
-        m_moveLogger.incrementFullMoveNumber();
+		int capturedPawnY = endY - direction;
+		m_board[capturedPawnY][endX] = Piece();
+	}
+	
+	// Increment full move number after Black's move
+	if (movingPiece.m_color == 'B')
+		m_moveLogger.incrementFullMoveNumber();
 }
 
 

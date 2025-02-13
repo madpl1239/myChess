@@ -15,7 +15,7 @@
 #include "moveLogger.hpp"
 
 
-// Test 1: check correctness of FEN for the starting position
+// test 1: check correctness of FEN for the starting position
 TEST(ChessBoardTest, InitialPosition)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
@@ -28,7 +28,7 @@ TEST(ChessBoardTest, InitialPosition)
 }
 
 
-// Test 2: check correctness of FEN after the moves e2e4 and d7d5
+// test 2: check correctness of FEN after the moves e2e4 and d7d5
 TEST(ChessBoardTest, AfterPawnMoves)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
@@ -41,12 +41,13 @@ TEST(ChessBoardTest, AfterPawnMoves)
 	// move d7d5
 	board.movePiece(3, 6, 3, 4);
 	
+	// en passant is d6
 	std::string expectedFEN = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w - d6 0 2";
 	EXPECT_EQ(board.generateFEN('W'), expectedFEN);
 }
 
 
-// Test 3: check white's kingside castling
+// test 3: check white's kingside castling
 TEST(ChessBoardTest, CastlingKingSideWhite)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
@@ -63,7 +64,7 @@ TEST(ChessBoardTest, CastlingKingSideWhite)
 }
 
 
-// Test 4: check the capture en passant
+// test 4: check the capture en passant
 TEST(ChessBoardTest, EnPassantCapture)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
@@ -81,7 +82,7 @@ TEST(ChessBoardTest, EnPassantCapture)
 }
 
 
-// Test 5: check correctness of the FEN after capturing the figure
+// test 5: check correctness of the FEN after capturing the figure
 TEST(ChessBoardTest, CapturePiece)
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "");
