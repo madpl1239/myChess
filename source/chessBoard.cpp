@@ -367,7 +367,27 @@ void ChessBoard::movePieceForce(int startX, int startY, int endX, int endY)
 }
 
 
-std::string ChessBoard::toChess(int x, int y)
+std::string ChessBoard::toChess(int x, int y) const
+{
+	std::string str;
+
+	str += static_cast<char>(97 + x);
+	str += static_cast<char>(7 - y + 49);
+
+	return str;
+}
+
+
+sf::Vector2i ChessBoard::toCoords(char col, char row) const
+{
+	int x = static_cast<int>(col - 'a');
+	int y = 7 - static_cast<int>(row - '1');
+	
+	return sf::Vector2i(x, y);
+}
+
+
+std::string ChessBoard::boardToString(int x, int y) const
 {
 	std::string str;
 
@@ -375,15 +395,6 @@ std::string ChessBoard::toChess(int x, int y)
 	str += static_cast<char>(y + 49);
 
 	return str;
-}
-
-
-sf::Vector2i ChessBoard::toCoords(char col, char row)
-{
-	int x = static_cast<int>(col - 'a');
-	int y = 7 - static_cast<int>(row - '1');
-	
-	return sf::Vector2i(x, y);
 }
 
 
@@ -505,7 +516,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	// 4. en passant
 	fen += " ";
 	if(m_enPassantTarget.x != -1)
-		fen += toChess(m_enPassantTarget.x, m_enPassantTarget.y);
+		fen += boardToString(m_enPassantTarget.x, m_enPassantTarget.y);
 	else
 		fen += "-";
 
