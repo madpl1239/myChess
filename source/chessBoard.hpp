@@ -54,6 +54,7 @@ private:
 	char pieceTypeToChar(PieceType type) const;
 
 	std::vector<std::vector<Piece>> m_board;
+	int m_fullMoveNumber;
 	sf::Vector2i m_enPassantTarget;
 	MoveLogger& m_moveLogger;
 	sf::RenderWindow& m_window;
