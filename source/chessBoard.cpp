@@ -345,8 +345,19 @@ std::string ChessBoard::toChess(int x, int y)
 	std::string str;
 
 	str += static_cast<char>(97 + x);
-	str += static_cast<char>(y + 49);
+	str += static_cast<char>(7 - y + 49);
 
+	return str;
+}
+
+
+std::string ChessBoard::boardToString(int x, int y)
+{
+	std::string str;
+	
+	str += static_cast<char>(97 + x);
+	str += static_cast<char>(y + 49);
+	
 	return str;
 }
 
