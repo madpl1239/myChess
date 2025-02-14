@@ -340,7 +340,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 }
 
 
-std::string ChessBoard::toChess(int x, int y)
+std::string ChessBoard::toChess(int x, int y) const
 {
 	std::string str;
 
@@ -351,7 +351,7 @@ std::string ChessBoard::toChess(int x, int y)
 }
 
 
-std::string ChessBoard::boardToString(int x, int y)
+std::string ChessBoard::boardToString(int x, int y) const
 {
 	std::string str;
 	
@@ -362,7 +362,7 @@ std::string ChessBoard::boardToString(int x, int y)
 }
 
 
-sf::Vector2i ChessBoard::toCoords(char col, char row)
+sf::Vector2i ChessBoard::toCoords(char col, char row) const
 {
 	int x = static_cast<int>(col - 'a');
 	int y = 7 - static_cast<int>(row - '1');
