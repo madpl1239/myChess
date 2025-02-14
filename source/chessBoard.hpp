@@ -28,8 +28,9 @@ public:
 	void movePiece(int startX, int startY, int endX, int endY);
 	void movePieceForce(int startX, int startY, int endX, int endY);
 	
-	std::string toChess(int x, int y);
-	sf::Vector2i toCoords(char col, char row);
+	std::string toChess(int x, int y) const;
+	sf::Vector2i toCoords(char col, char row) const;
+	std::string boardToString(int x, int y) const;
 	bool atBoard(sf::Vector2i Start, sf::Vector2i End);
 	
 	bool castling(std::string& str, std::string& position, sf::Vector2i& rookStart, sf::Vector2i& rookEnd);
@@ -54,7 +55,7 @@ private:
 
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;
-	int m_fullMoveNumber = 1;
+	int m_fullMoveNumber;
 	MoveLogger& m_moveLogger;
 	sf::RenderWindow& m_window;
 };
