@@ -308,7 +308,6 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
 
-	// Jeśli ruch był biciem en passant, usuwamy pionka przeciwnika
 	// if move was capture en passant, then we remove opponent pawn
 	if(enPassantCapture)
 	{
@@ -523,7 +522,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 
 	// 4. En passant
 	if(m_enPassantTarget.x >= 0 and m_enPassantTarget.y >= 0)
-		fen += " " + toChess(m_enPassantTarget.x, m_enPassantTarget.y);
+		fen += " " + boardToString(m_enPassantTarget.x, m_enPassantTarget.y);
 	else
 		fen += " -";
 
