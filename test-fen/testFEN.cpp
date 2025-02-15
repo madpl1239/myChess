@@ -8,7 +8,7 @@
  * 		-lgtest -lgtest_main -lpthread -I../source -lsfml-system -lsfml-window \
  * 		-lsfml-graphics -lsfml-audio
  * 
- * 11-02-2025 by madpl
+ * 11-02-2025 by madpl (aka Bogdan Kułaga)
  */
 #include <gtest/gtest.h>
 #include "chessBoard.hpp"
