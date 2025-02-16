@@ -11,7 +11,7 @@ MoveLogger::MoveLogger(int x, int y):
 	m_posX(x),
 	m_posY(y)
 {
-	if(not m_font.loadFromFile("../resources/digital-7mono.ttf"))
+	if(not m_font.loadFromFile(ARIAL))
 		std::cout << "Error loading font!\n";
 
 	sf::Text title;
@@ -19,13 +19,13 @@ MoveLogger::MoveLogger(int x, int y):
 	title.setString("myChess v1.0 - GUI for chess by madpl (2025)");
 	title.setCharacterSize(TEXTLOGO_HEIGHT);
 	title.setFillColor(sf::Color::Black);
-	title.setStyle(sf::Text::Italic);
+	// title.setStyle(sf::Text::Italic);
 	title.setPosition(m_posX + 10, m_posY + 10);
 	m_staticTexts.push_back(title);
 
 	sf::Text player;
 	player.setFont(m_font);
-	player.setString("Player  : ");
+	player.setString("Player   : ");
 	player.setCharacterSize(TEXTMOVE_HEIGHT);
 	player.setFillColor(sf::Color(20, 28, 102, 255));
 	player.setStyle(sf::Text::Bold);
@@ -38,7 +38,7 @@ MoveLogger::MoveLogger(int x, int y):
 	engine.setCharacterSize(TEXTMOVE_HEIGHT);
 	engine.setFillColor(sf::Color(20, 28, 102, 255));
 	engine.setStyle(sf::Text::Bold);
-	engine.setPosition(m_posX + 10, m_posY + 82);
+	engine.setPosition(m_posX + 10, m_posY + 84);
 	m_staticTexts.push_back(engine);
 
 	sf::Text checkInfo;
@@ -64,7 +64,7 @@ MoveLogger::MoveLogger(int x, int y):
 void MoveLogger::updateMove(bool side, const std::string& move)
 {
 	if(side)
-		m_staticTexts[1].setString("Player  : " + move);
+		m_staticTexts[1].setString("Player   : " + move);
 	else
 		m_staticTexts[2].setString("Engine  : " + move);
 }
