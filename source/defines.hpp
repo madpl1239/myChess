@@ -6,8 +6,8 @@
 #pragma once
 
 // for debugging
-// #define DEBUG 1
-#undef DEBUG
+#define DEBUG 1
+// #undef DEBUG
 
 // for Linux, Windows Systems
 #define LINUX
@@ -15,6 +15,9 @@
 
 #define READ 0
 #define WRITE 1
+
+#define ARIAL "./resources/arial.ttf"
+#define DIGITAL "./resources/digital-7mono.ttf"
 
 const int SIZE = 504;		// size of chessBoard (504x504 pikseli)
 const int TILE_SIZE = 56;	// chess square size
