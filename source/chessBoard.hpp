@@ -52,6 +52,7 @@ private:
 	bool isPathClear(int startX, int startY, int endX, int endY) const;
 	bool isInCheck(char kingColor) const;
 	std::string pieceTypeToString(PieceType type) const;
+	char pieceTypeToChar(PieceType type) const;
 
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;
