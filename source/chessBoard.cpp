@@ -291,40 +291,44 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 
 char ChessBoard::pieceTypeToChar(PieceType type) const
 {
+	char result = ' ';
+	
 	switch(type)
 	{
 		case PieceType::PAWN:
-			return 'p';
+			result = 'p';
 			
 		case PieceType::ROOK:
-			return 'r';
+			result = 'r';
 			
 		case PieceType::KNIGHT:
-			return 'n';
+			result = 'n';
 			
 		case PieceType::BISHOP:
-			return 'b';
+			result = 'b';
 			
 		case PieceType::QUEEN:
-			return 'q';
+			result = 'q';
 			
 		case PieceType::KING:
-			return 'k';
+			result = 'k';
 			
 		default:
-			return ' ';
+			result = ' ';
 	}
+	
+	return result;
 }
 
 
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
-	m_enPassantTarget = sf::Vector2i(-1, -1);
-	
 	Piece movingPiece = m_board[startY][startX];
 	int dx = abs(endX - startX);
 	int dy = abs(endY - startY);
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
+	
+	m_enPassantTarget = sf::Vector2i(-1, -1);
 	bool enPassantCapture = false;
 
 	// update en passant target before moving the piece
@@ -334,11 +338,12 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 		m_enPassantTarget = sf::Vector2i(-1, -1);
 
 	// check en passant capture validity
-	if(movingPiece.m_type == PieceType::PAWN && dx == 1 && dy == 1 &&
+	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
 		sf::Vector2i(endX, endY) == m_enPassantTarget)
 	{
 		int capturedPawnY = endY - direction;
-		if(m_board[capturedPawnY][endX].m_type == PieceType::PAWN &&
+		
+		if(m_board[capturedPawnY][endX].m_type == PieceType::PAWN and
 			m_board[capturedPawnY][endX].m_color != movingPiece.m_color)
 		{
 			enPassantCapture = true;
@@ -559,7 +564,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 void ChessBoard::saveGame(const std::string& filename)
 {
 	std::ofstream file(filename);
-
+	
 	if(not file)
 	{
 		std::cerr << "Error: Unable to open file for saving!\n";
