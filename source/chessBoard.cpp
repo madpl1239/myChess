@@ -21,6 +21,7 @@ ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManage
 	#endif
 	
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
+	m_fullMoveNumber = 1;
 }
 
 
@@ -38,6 +39,8 @@ ChessBoard::~ChessBoard()
 		
 		m_board.clear();
 	}
+	
+	m_fullMoveNumber = 0;
 }
 
 
@@ -136,6 +139,7 @@ bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int
 					m_board[endY][endX].m_type == PieceType::NONE);
 	}
 
+	// diagonal move
 	if(dx == 1 and dy == 1)
 	{
 		// if the target square contains an opponent's piece - standard capture
@@ -144,7 +148,7 @@ bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int
 		else
 		{
 			// try beating test en passant:
-			// we check if the target field corresponds to the saved en passant position.
+			// we check if the target field corresponds to the en passant position.
 			if(sf::Vector2i(endX, endY) == m_enPassantTarget)
 			{
 				// position of a pawn that could have been captured en passant is "behind" the target square,
@@ -285,30 +289,67 @@ std::string ChessBoard::pieceTypeToString(PieceType type) const
 }
 
 
+char ChessBoard::pieceTypeToChar(PieceType type) const
+{
+	switch(type)
+	{
+		case PieceType::PAWN:
+			return 'p';
+			
+		case PieceType::ROOK:
+			return 'r';
+			
+		case PieceType::KNIGHT:
+			return 'n';
+			
+		case PieceType::BISHOP:
+			return 'b';
+			
+		case PieceType::QUEEN:
+			return 'q';
+			
+		case PieceType::KING:
+			return 'k';
+			
+		default:
+			return ' ';
+	}
+}
+
+
 void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 {
-	Piece movingPiece = m_board[startY][startX];
+	m_enPassantTarget = sf::Vector2i(-1, -1);
 	
+	Piece movingPiece = m_board[startY][startX];
 	int dx = abs(endX - startX);
 	int dy = abs(endY - startY);
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
 	bool enPassantCapture = false;
 
-	// detection of strike en passant:
-	// if a pawn moves diagonally (dx == 1 && dy == 1) to an empty square
-	// and the target field corresponds to the saved en passant position, then we have en passant.
-	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
-		m_board[endY][endX].m_type == PieceType::NONE)
+	// update en passant target before moving the piece
+	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
+		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
+	else
+		m_enPassantTarget = sf::Vector2i(-1, -1);
+
+	// check en passant capture validity
+	if(movingPiece.m_type == PieceType::PAWN && dx == 1 && dy == 1 &&
+		sf::Vector2i(endX, endY) == m_enPassantTarget)
 	{
-		if(sf::Vector2i(endX, endY) == m_enPassantTarget)
+		int capturedPawnY = endY - direction;
+		if(m_board[capturedPawnY][endX].m_type == PieceType::PAWN &&
+			m_board[capturedPawnY][endX].m_color != movingPiece.m_color)
+		{
 			enPassantCapture = true;
+		}
 	}
 
-	// making a move – we move a pawn
+	// move piece to new position
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
 
-	// if move was capture en passant, then we remove opponent pawn
+	// remove opponent's pawn if en passant occurred
 	if(enPassantCapture)
 	{
 		int capturedPawnY = endY - direction;
@@ -336,6 +377,19 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	}
 	else
 		m_moveLogger.updateCheckStatus("");
+
+	// increment full move number after Black's move
+	if(movingPiece.m_color == 'B')
+		++m_fullMoveNumber;
+}
+
+
+void ChessBoard::movePieceForce(int startX, int startY, int endX, int endY)
+{
+	Piece movingPiece = m_board[startY][startX];
+	
+	m_board[endY][endX] = movingPiece;
+	m_board[startY][startX] = Piece();
 }
 
 
@@ -350,23 +404,23 @@ std::string ChessBoard::toChess(int x, int y) const
 }
 
 
-std::string ChessBoard::boardToString(int x, int y) const
-{
-	std::string str;
-	
-	str += static_cast<char>(97 + x);
-	str += static_cast<char>(y + 49);
-	
-	return str;
-}
-
-
 sf::Vector2i ChessBoard::toCoords(char col, char row) const
 {
 	int x = static_cast<int>(col - 'a');
 	int y = 7 - static_cast<int>(row - '1');
 	
 	return sf::Vector2i(x, y);
+}
+
+
+std::string ChessBoard::boardToString(int x, int y) const
+{
+	std::string str;
+
+	str += static_cast<char>(97 + x);
+	str += static_cast<char>(y + 49);
+
+	return str;
 }
 
 
@@ -429,7 +483,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 {
 	std::string fen = "";
 
-	// 1. pieces layout
+	// 1. generation layout pieces
 	for(int y = 7; y >= 0; --y)
 	{
 		int emptyCount = 0;
@@ -438,7 +492,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			const Piece& piece = m_board[y][x];
 			
 			if(piece.m_type == PieceType::NONE)
-				emptyCount++;
+				++emptyCount;
 			else
 			{
 				if(emptyCount > 0)
@@ -447,43 +501,8 @@ std::string ChessBoard::generateFEN(char currentTurn)
 					emptyCount = 0;
 				}
 				
-				char pieceChar;
-				
-				switch(piece.m_type)
-				{
-					case PieceType::PAWN:
-						pieceChar = 'p';
-						break;
-						
-					case PieceType::KNIGHT:
-						pieceChar = 'n';
-						break;
-						
-					case PieceType::BISHOP:
-						pieceChar = 'b';
-						break;
-						
-					case PieceType::ROOK:
-						pieceChar = 'r';
-						break;
-						
-					case PieceType::QUEEN:
-						pieceChar = 'q';
-						break;
-						
-					case PieceType::KING:
-						pieceChar = 'k';
-						break;
-						
-					default:
-						pieceChar = ' ';
-						break;
-				}
-				
-				if(piece.m_color == 'W') 
-					pieceChar = toupper(pieceChar);
-				
-				fen += pieceChar;
+				char pieceChar = pieceTypeToChar(piece.m_type);
+				fen += (piece.m_color == 'W') ? toupper(pieceChar) : tolower(pieceChar);
 			}
 		}
 		
@@ -494,11 +513,11 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			fen += "/";
 	}
 
-	// 2. Color on the move
+	// 2. current player
 	fen += " ";
 	fen += (currentTurn == 'W') ? "w" : "b";
 
-	// 3. Castling status
+	// 3. castling
 	std::string castling = "";
 	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'W')
 	{
@@ -508,8 +527,8 @@ std::string ChessBoard::generateFEN(char currentTurn)
 		if(m_board[7][0].m_type == PieceType::ROOK)
 			castling += "Q";
 	}
-	
-	if(m_board[0][4].m_type == PieceType::KING and m_board[0][4].m_color == 'B')
+
+	if(m_board[0][4].m_type == PieceType::KING && m_board[0][4].m_color == 'B')
 	{
 		if(m_board[0][7].m_type == PieceType::ROOK)
 			castling += "k";
@@ -520,17 +539,18 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	
 	fen += " " + (castling.empty() ? "-" : castling);
 
-	// 4. En passant
-	if(m_enPassantTarget.x >= 0 and m_enPassantTarget.y >= 0)
-		fen += " " + boardToString(m_enPassantTarget.x, m_enPassantTarget.y);
+	// 4. en passant
+	fen += " ";
+	if(m_enPassantTarget.x != -1)
+		fen += boardToString(m_enPassantTarget.x, m_enPassantTarget.y);
 	else
-		fen += " -";
+		fen += "-";
 
-	// 5. Half-Move Counter (currently set to 0)
+	// 5. half move counter without capture
 	fen += " 0";
 
-	// 6. Full move counter (can be downloaded from MoveLogger)
-	fen += " 1";  // Na razie ustawiony domyślnie
+	// 6. move counter
+	fen += " " + std::to_string(m_fullMoveNumber);
 
 	return fen;
 }

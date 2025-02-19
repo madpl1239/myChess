@@ -1,7 +1,7 @@
 /*
  * chessBoard.hpp
  *
- * 12-01-2025 by madpl (aka madpl1239)
+ * 12-01-2025 by madpl (aka madpl1239, aka Bogdan Kułaga)
  */
 #pragma once
 
@@ -21,9 +21,12 @@ public:
 	~ChessBoard();
 
 	void setInitialPositions();
+	
 	bool isPieceAt(int x, int y) const;
 	bool isValidMove(int startX, int startY, int endX, int endY) const;
+	
 	void movePiece(int startX, int startY, int endX, int endY);
+	void movePieceForce(int startX, int startY, int endX, int endY);
 	
 	std::string toChess(int x, int y) const;
 	sf::Vector2i toCoords(char col, char row) const;
@@ -52,6 +55,7 @@ private:
 
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;
+	int m_fullMoveNumber;
 	MoveLogger& m_moveLogger;
 	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;
