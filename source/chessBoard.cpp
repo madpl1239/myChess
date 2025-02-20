@@ -553,6 +553,8 @@ void ChessBoard::saveGame(const std::string& filename)
 			
 			file << static_cast<int>(piece.m_type) << " " << color << " " << x << " " << y << "\n";
 		}
+		
+		file << "*\n";
 	}
 	
 	file << "ENPASSANT " << m_enPassantTarget.x << " " << m_enPassantTarget.y << "\n";
@@ -592,6 +594,9 @@ void ChessBoard::loadGame(const std::string& filename)
 		
 		else if(type == "TURN") 
 			iss >> currentTurn;
+		
+		else if(type == "*")
+			continue;
 		
 		else
 		{

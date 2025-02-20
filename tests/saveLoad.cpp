@@ -23,6 +23,9 @@ void testSaveLoadGame()
 	
 	ChessBoard board(win, logger);
 	board.setInitialPositions();
+	board.movePiece(4, 1, 4, 3); // White move e2e4
+	board.movePiece(3, 6, 3, 5); // Black move d7d6
+	board.movePiece(3, 1, 3, 3); // White move d2d4
 	board.saveGame("test_save.txt");
 	
 	ChessBoard loadedBoard(win, logger);
@@ -37,6 +40,7 @@ void testSaveLoadGame()
 		}
 	}
 	
+	// en passant will be: d3 (3, 2) --> check test_save.txt
 	assert(board.getEnPassantTarget() == loadedBoard.getEnPassantTarget());
 	std::cout << "Test passed: Save and Load Game \u2705\n";
 }
