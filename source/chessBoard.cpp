@@ -263,29 +263,40 @@ bool ChessBoard::isInCheck(char kingColor) const
 
 std::string ChessBoard::pieceTypeToString(PieceType type) const
 {
+	std::string result = "Unknown";
+	
 	switch(type)
 	{
 		case PieceType::PAWN:
-			return "Pawn";
+			result = "Pawn";
+			break;
 		
 		case PieceType::ROOK:
-			return "Rook";
+			result = "Rook";
+			break;
 		
 		case PieceType::KNIGHT:
-			return "Knight";
+			result = "Knight";
+			break;
 		
 		case PieceType::BISHOP:
-			return "Bishop";
+			result = "Bishop";
+			break;
 		
 		case PieceType::QUEEN:
-			return "Queen";
+			result = "Queen";
+			break;
 		
 		case PieceType::KING:
-			return "King";
+			result = "King";
+			break;
 		
 		default:
-			return "Unknown";
+			result = "Unknown";
+			break;
 	}
+	
+	return result;
 }
 
 
@@ -297,24 +308,31 @@ char ChessBoard::pieceTypeToChar(PieceType type) const
 	{
 		case PieceType::PAWN:
 			result = 'p';
+			break;
 			
 		case PieceType::ROOK:
 			result = 'r';
+			break;
 			
 		case PieceType::KNIGHT:
 			result = 'n';
+			break;
 			
 		case PieceType::BISHOP:
 			result = 'b';
+			break;
 			
 		case PieceType::QUEEN:
 			result = 'q';
+			break;
 			
 		case PieceType::KING:
 			result = 'k';
+			break;
 			
 		default:
 			result = ' ';
+			break;
 	}
 	
 	return result;
@@ -564,7 +582,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 void ChessBoard::saveGame(const std::string& filename)
 {
 	std::ofstream file(filename);
-	
+
 	if(not file)
 	{
 		std::cerr << "Error: Unable to open file for saving!\n";
@@ -581,6 +599,8 @@ void ChessBoard::saveGame(const std::string& filename)
 			
 			file << static_cast<int>(piece.m_type) << " " << color << " " << x << " " << y << "\n";
 		}
+		
+		file << "*\n";
 	}
 	
 	file << "ENPASSANT " << m_enPassantTarget.x << " " << m_enPassantTarget.y << "\n";
@@ -620,6 +640,9 @@ void ChessBoard::loadGame(const std::string& filename)
 		
 		else if(type == "TURN") 
 			iss >> currentTurn;
+		
+		else if(type == "*")
+			continue;
 		
 		else
 		{
