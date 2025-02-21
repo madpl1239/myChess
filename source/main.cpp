@@ -98,7 +98,7 @@ int main(void)
 						engine.sendCommand("position fen " + fen);
 						engine.sendCommand("isready");
 						std::string response = engine.getResponse();
-						std::cout << "Stockfish response after position fen: " << response << std::endl;
+						std::cout << "response after position fen isready?: " << response << std::endl;
 					}
 				}
 				
