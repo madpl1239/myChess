@@ -418,7 +418,7 @@ void ChessBoard::movePieceForce(int startX, int startY, int endX, int endY)
 
 std::string ChessBoard::toChess(int x, int y) const
 {
-	std::string str;
+	std::string str{};
 
 	str += static_cast<char>(97 + x);
 	str += static_cast<char>(7 - y + 49);
