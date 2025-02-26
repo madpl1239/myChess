@@ -1,6 +1,8 @@
 # folders
 /build
 /tests
+/test-fen
+/testDraw
 
 # files
 .directory
