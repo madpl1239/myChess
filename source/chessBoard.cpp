@@ -63,16 +63,16 @@ void ChessBoard::setInitialPositions()
 				if(x == 0 or x == 7)
 					m_board[y][x] = Piece(PieceType::ROOK, color);
 				
-				if(x == 1 or x == 6)
+				else if(x == 1 or x == 6)
 					m_board[y][x] = Piece(PieceType::KNIGHT, color);
 				
-				if(x == 2 or x == 5)
+				else if(x == 2 or x == 5)
 					m_board[y][x] = Piece(PieceType::BISHOP, color);
 				
-				if(x == 3)
+				else if(x == 3)
 					m_board[y][x] = Piece(PieceType::QUEEN, color);
 				
-				if(x == 4)
+				else if(x == 4)
 					m_board[y][x] = Piece(PieceType::KING, color);
 			}
 		}

@@ -14,7 +14,7 @@ int main(void)
 	std::cout << "Running test: draw board\n";
 	
 	sf::RenderWindow win(sf::VideoMode(SIZE + 400, SIZE), "");
-	win.setPosition(200, 100);
+	win.setPosition({200, 100});
 	
 	MoveLogger logger(SIZE + 10, 10);
 	SoundManager snd{};
@@ -34,19 +34,19 @@ int main(void)
 	while(win.isOpen() and not quit)
 	{
 		sf::Event e;
-		while(win.poolEvent(e))
+		while(win.pollEvent(e))
 		{
-			if(e.event.)
-				guit = true;
+			if(e.type == sf::Event::Closed)
+				quit = true;
 		}
 		
+		win.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 		board.draw(boardTexture, figuresTexture);
 		win.display();
 	}
 	
-	win.close();
-	
 	std::cout << "done.\n";
+	win.close();
 	
 	return 0;
 }
