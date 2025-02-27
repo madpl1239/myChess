@@ -46,7 +46,7 @@ ChessBoard::~ChessBoard()
 
 void ChessBoard::setInitialPositions()
 {
-	for(int y = 0; y < 8; ++y)
+	for(int y = 7; y >= 0; --y)
 	{
 		for(int x = 0; x < 8; ++x)
 		{
@@ -687,11 +687,11 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 {
 	sf::Sprite boardSprite(boardTexture);
 	sf::Sprite pieceSprite(figuresTexture);
-	
+
 	boardSprite.setPosition(0, 0);
 	m_window.draw(boardSprite);
-	
-	for(int y = 0; y < 8; ++y) 
+
+	for(int y = 7; y >= 0; --y) 
 	{
 		for(int x = 0; x < 8; ++x) 
 		{
@@ -700,10 +700,10 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 				continue;
 			
 			int pieceIndex = static_cast<int>(piece.m_type);
-			int colorOffset = (piece.m_color == 'B') ? TILE_SIZE : 0;
+			int colorOffset = (piece.m_color == 'W') ? TILE_SIZE : 0;
 			
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * TILE_SIZE, colorOffset, TILE_SIZE, TILE_SIZE));
-			pieceSprite.setPosition(x * TILE_SIZE + OFFSET, y * TILE_SIZE + OFFSET);
+			pieceSprite.setPosition(x * TILE_SIZE + OFFSET, (7 - y) * TILE_SIZE + OFFSET);
 			pieceSprite.setOrigin(0, 1);
 			
 			m_window.draw(pieceSprite);
