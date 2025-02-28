@@ -22,7 +22,7 @@ Highlighter::Highlighter():
 
 void Highlighter::setSelection(int x, int y)
 {
-	m_selection.setPosition(x * TILE_SIZE + OFFSET, y * TILE_SIZE + OFFSET);
+	m_selection.setPosition(x * TILE_SIZE + OFFSET, (7 - y) * TILE_SIZE + OFFSET);
 	m_selectionActive = true;
 }
 
@@ -35,7 +35,7 @@ void Highlighter::setSelectionActive(bool _switch)
 
 void Highlighter::setDestination(int x, int y)
 {
-	m_destination.setPosition(x * TILE_SIZE + OFFSET, y * TILE_SIZE + OFFSET);
+	m_destination.setPosition(x * TILE_SIZE + OFFSET, (7 - y) * TILE_SIZE + OFFSET);
 	m_destinationActive = true;
 }
 

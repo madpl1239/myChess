@@ -108,7 +108,7 @@ int main(void)
 					{
 						sf::Vector2i pos = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
 						int x = std::round(pos.x / TILE_SIZE);
-						int y = std::round(pos.y / TILE_SIZE);
+						int y = 7 - std::round(pos.y / TILE_SIZE);
 						
 						if(x < 8 and y < 8)
 						{

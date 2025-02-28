@@ -46,7 +46,7 @@ ChessBoard::~ChessBoard()
 
 void ChessBoard::setInitialPositions()
 {
-	for(int y = 0; y < 8; ++y)
+	for(int y = 7; y >= 0; --y)
 	{
 		for(int x = 0; x < 8; ++x)
 		{
@@ -132,7 +132,7 @@ bool ChessBoard::validatePawnMove(const Piece& pawn, int startX, int startY, int
 	if(dx == 0)
 	{
 		if(dy == 1 and m_board[endY][endX].m_type == PieceType::NONE)
-			return startY + direction == endY;
+			return (startY + direction) == endY;
 		
 		if(dy == 2 and ((pawn.m_color == 'W' and startY == 1) or (pawn.m_color == 'B' and startY == 6)))
 			return (m_board[startY + direction][startX].m_type == PieceType::NONE and
@@ -421,7 +421,7 @@ std::string ChessBoard::toChess(int x, int y) const
 	std::string str{};
 
 	str += static_cast<char>(97 + x);
-	str += static_cast<char>(7 - y + 49);
+	str += static_cast<char>(y + 49);
 
 	return str;
 }
@@ -430,7 +430,7 @@ std::string ChessBoard::toChess(int x, int y) const
 sf::Vector2i ChessBoard::toCoords(char col, char row) const
 {
 	int x = static_cast<int>(col - 'a');
-	int y = 7 - static_cast<int>(row - '1');
+	int y = static_cast<int>(row - '1');
 	
 	return sf::Vector2i(x, y);
 }
@@ -691,7 +691,7 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 	boardSprite.setPosition(0, 0);
 	m_window.draw(boardSprite);
 	
-	for(int y = 0; y < 8; ++y) 
+	for(int y = 7; y >= 0; --y) 
 	{
 		for(int x = 0; x < 8; ++x) 
 		{
@@ -700,10 +700,10 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 				continue;
 			
 			int pieceIndex = static_cast<int>(piece.m_type);
-			int colorOffset = (piece.m_color == 'B') ? TILE_SIZE : 0;
+			int colorOffset = (piece.m_color == 'W') ? TILE_SIZE : 0;
 			
 			pieceSprite.setTextureRect(sf::IntRect(pieceIndex * TILE_SIZE, colorOffset, TILE_SIZE, TILE_SIZE));
-			pieceSprite.setPosition(x * TILE_SIZE + OFFSET, y * TILE_SIZE + OFFSET);
+			pieceSprite.setPosition(x * TILE_SIZE + OFFSET, (7 - y) * TILE_SIZE + OFFSET);
 			pieceSprite.setOrigin(0, 1);
 			
 			m_window.draw(pieceSprite);
