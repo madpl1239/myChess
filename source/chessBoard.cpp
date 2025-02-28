@@ -14,7 +14,8 @@ ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManage
 	m_window(window),
 	m_moveLogger(logger),
 	m_sndManager(sndManager),
-	m_enPassantTarget(-1, -1)
+	m_enPassantTarget(-1, -1),
+	m_currentTurn('W')
 {
 	#ifdef DEBUG
 	std::cout << "[DEBUG] ctor ChessBoard\n";
@@ -46,6 +47,8 @@ ChessBoard::~ChessBoard()
 
 void ChessBoard::setInitialPositions()
 {
+	m_currentTurn = 'W';
+	
 	for(int y = 7; y >= 0; --y)
 	{
 		for(int x = 0; x < 8; ++x)
@@ -404,6 +407,8 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	// increment full move number after Black's move
 	if(movingPiece.m_color == 'B')
 		++m_fullMoveNumber;
+	
+	m_currentTurn = (m_currentTurn == 'W') ? 'B' : 'W';
 }
 
 
@@ -680,6 +685,12 @@ const Piece& ChessBoard::getPiece(int x, int y) const
 const sf::Vector2i& ChessBoard::getEnPassantTarget() const
 {
 	return m_enPassantTarget;
+}
+
+
+char ChessBoard::getCurrentTurn() const
+{
+	return m_currentTurn;
 }
 
 

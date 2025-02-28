@@ -43,6 +43,7 @@ public:
 	// getters
 	const Piece& getPiece(int x, int y) const;
 	const sf::Vector2i& getEnPassantTarget() const;
+	char getCurrentTurn() const;
 	
 	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
 
@@ -57,6 +58,7 @@ private:
 	std::vector<std::vector<Piece>> m_board;
 	sf::Vector2i m_enPassantTarget;
 	int m_fullMoveNumber;
+	char m_currentTurn;
 	MoveLogger& m_moveLogger;
 	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;
