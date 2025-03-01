@@ -65,6 +65,7 @@ int main(void)
 		std::string position = "";
 		std::string commPlayer = "";
 		std::string commStockfish = "";
+		std::string fen = "";
 		
 		sf::Vector2i selectedPiece;
 		bool isPieceSelected = false;
@@ -89,16 +90,16 @@ int main(void)
 					if(event.key.code == sf::Keyboard::L)
 					{
 						board.loadGame("./save_game.txt");
+						board.m_loaded = true;
 						
 						// transferring the new layout to Stockfish
-						// you could add a variable to store the current color
-						std::string fen = board.generateFEN('W');
+						char sideToMove = board.getCurrentTurn();
+						fen = board.generateFEN(sideToMove);
 						std::cout << "Generated FEN after loading game: " << fen << "\n";
-						engine.sendCommand("ucinewgame");
-						engine.sendCommand("position fen " + fen);
-						engine.sendCommand("isready");
-						std::string response = engine.getResponse();
-						std::cout << "response after position fen isready?: " << response << std::endl;
+						// engine.sendCommand("ucinewgame");
+						// engine.sendCommand("isready");
+						// std::string response = engine.getResponse();
+						// std::cout << "response after position fen isready?: " << response << std::endl;
 					}
 				}
 				
@@ -135,14 +136,31 @@ int main(void)
 									bool isCastling = board.castling(commPlayer, position, rStart, rEnd);
 									
 									position += " " + commPlayer;
-									commPlayer.clear();
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
 									
 									if(isCastling and board.atBoard(rStart, rEnd))
 										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 									
+									if(board.m_loaded)
+									{
+										engine.sendCommand("ucinewgame");
+										engine.sendCommand("position fen " + fen + " moves " + commPlayer);
+										engine.sendCommand("isready");
+										
+										std::string response = engine.getResponse();
+										std::cout << "response after position fen isready?: " << response << std::endl;
+										
+										engine.sendCommand("go depth 2");
+										
+										board.m_loaded = false;
+										commPlayer.clear();
+										commStockfish.clear();
+									}	
+									
+									commPlayer.clear();
 									commStockfish.clear();
 									commStockfish = getNextMove(engine, position);
+									
 									moveLogger.updateMove(false, commStockfish);
 									
 									engineMovePending = true;
@@ -193,6 +211,7 @@ int main(void)
 				else
 				{
 					#ifdef DEBUG
+					std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
 					std::cout << "[DEBUG] Invalid move from engine!\n";
 					#endif
 				}

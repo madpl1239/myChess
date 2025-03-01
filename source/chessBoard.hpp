@@ -46,6 +46,8 @@ public:
 	char getCurrentTurn() const;
 	
 	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
+	
+	bool m_loaded;
 
 private:
 	bool validatePawnMove(const Piece& pawn, int startX, int startY, int endX, int endY, int dx, int dy) const;

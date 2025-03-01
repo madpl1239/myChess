@@ -1,7 +1,7 @@
 /*
  * chessBoard.cpp
  *
- * 12-01-2025 by madpl
+ * 12-01-2025 by madpl (aka madpl1239, aka Bogdan Kułaga)
  */
 #include <iostream>
 #include <cmath>
@@ -15,7 +15,8 @@ ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManage
 	m_moveLogger(logger),
 	m_sndManager(sndManager),
 	m_enPassantTarget(-1, -1),
-	m_currentTurn('W')
+	m_currentTurn('W'),
+	m_loaded(false)
 {
 	#ifdef DEBUG
 	std::cout << "[DEBUG] ctor ChessBoard\n";
@@ -406,7 +407,9 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 
 	// increment full move number after Black's move
 	if(movingPiece.m_color == 'B')
+	{
 		++m_fullMoveNumber;
+	}
 	
 	m_currentTurn = (m_currentTurn == 'W') ? 'B' : 'W';
 }
@@ -418,6 +421,14 @@ void ChessBoard::movePieceForce(int startX, int startY, int endX, int endY)
 	
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
+	
+	// increment full move number after Black's move
+	if(movingPiece.m_color == 'B')
+	{
+		++m_fullMoveNumber;
+	}
+	
+	m_currentTurn = (m_currentTurn == 'W') ? 'B' : 'W';
 }
 
 
@@ -547,7 +558,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 
 	// 3. castling
 	std::string castling = "";
-	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'W')
+	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'B')
 	{
 		if(m_board[7][7].m_type == PieceType::ROOK)
 			castling += "K";
@@ -556,7 +567,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 			castling += "Q";
 	}
 
-	if(m_board[0][4].m_type == PieceType::KING && m_board[0][4].m_color == 'B')
+	if(m_board[0][4].m_type == PieceType::KING && m_board[0][4].m_color == 'W')
 	{
 		if(m_board[0][7].m_type == PieceType::ROOK)
 			castling += "k";
@@ -609,6 +620,7 @@ void ChessBoard::saveGame(const std::string& filename)
 	}
 	
 	file << "ENPASSANT " << m_enPassantTarget.x << " " << m_enPassantTarget.y << "\n";
+	file << "TURN " << m_currentTurn << "\n";
 	
 	file.close();
 }
@@ -671,6 +683,8 @@ void ChessBoard::loadGame(const std::string& filename)
 			}
 		}
 	}
+	
+	m_currentTurn = currentTurn;
 
 	file.close();
 }
