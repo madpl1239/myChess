@@ -38,7 +38,7 @@ MoveLogger::MoveLogger(int x, int y):
 	engine.setCharacterSize(TEXTMOVE_HEIGHT);
 	engine.setFillColor(sf::Color(20, 28, 102, 255));
 	engine.setStyle(sf::Text::Bold);
-	engine.setPosition(m_posX + 10, m_posY + 84);
+	engine.setPosition(m_posX + 10, m_posY + 86);
 	m_staticTexts.push_back(engine);
 
 	sf::Text checkInfo;

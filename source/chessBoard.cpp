@@ -43,6 +43,8 @@ ChessBoard::~ChessBoard()
 	}
 	
 	m_fullMoveNumber = 0;
+	m_loaded = false;
+	m_enPassantTarget = {};
 }
 
 
@@ -313,27 +315,27 @@ char ChessBoard::pieceTypeToChar(PieceType type) const
 		case PieceType::PAWN:
 			result = 'p';
 			break;
-			
+		
 		case PieceType::ROOK:
 			result = 'r';
 			break;
-			
+		
 		case PieceType::KNIGHT:
 			result = 'n';
 			break;
-			
+		
 		case PieceType::BISHOP:
 			result = 'b';
 			break;
-			
+		
 		case PieceType::QUEEN:
 			result = 'q';
 			break;
-			
+		
 		case PieceType::KING:
 			result = 'k';
 			break;
-			
+		
 		default:
 			result = ' ';
 			break;

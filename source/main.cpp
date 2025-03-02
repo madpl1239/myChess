@@ -1,7 +1,7 @@
 /*
  * main.cpp
  *
- * Chess GUI for stockfish (any version).
+ * Chess GUI for stockfish (testing version from branch working).
  *
  * 12-01-2025 by madpl
  */
@@ -30,11 +30,11 @@ int main(void)
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
 		
-		sf::Clock engineMoveTimer;
+		sf::Clock engineMoveTimer{};
 		bool engineMovePending = false;
 		
 		MoveLogger moveLogger(SIZE + 10, 10);
-		SoundManager sndManager;
+		SoundManager sndManager{};
 		if(not initialSounds(sndManager))
 			throw std::runtime_error("load sounds error!");
 		
@@ -60,7 +60,7 @@ int main(void)
 		ChessBoard board(window, moveLogger, sndManager);
 		board.setInitialPositions();
 		
-		Highlighter highlighter;
+		Highlighter highlighter{};
 		
 		std::string position = "";
 		std::string commPlayer = "";
@@ -91,15 +91,17 @@ int main(void)
 					{
 						board.loadGame("./save_game.txt");
 						board.m_loaded = true;
+						position.clear();
+						commPlayer.clear();
+						commStockfish.clear();
+						
+						engine.sendCommand("ucinewgame");
 						
 						// transferring the new layout to Stockfish
 						char sideToMove = board.getCurrentTurn();
 						fen = board.generateFEN(sideToMove);
+						
 						std::cout << "Generated FEN after loading game: " << fen << "\n";
-						// engine.sendCommand("ucinewgame");
-						// engine.sendCommand("isready");
-						// std::string response = engine.getResponse();
-						// std::cout << "response after position fen isready?: " << response << std::endl;
 					}
 				}
 				
@@ -129,6 +131,8 @@ int main(void)
 								if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
 								{
 									commPlayer += board.toChess(x, y);
+									
+									// white side, update text info at window
 									moveLogger.updateMove(true, commPlayer);
 									
 									sf::Vector2i rStart;
@@ -138,29 +142,30 @@ int main(void)
 									position += " " + commPlayer;
 									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
 									
+									// move of rook
 									if(isCastling and board.atBoard(rStart, rEnd))
 										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 									
 									if(board.m_loaded)
 									{
-										engine.sendCommand("ucinewgame");
-										engine.sendCommand("position fen " + fen + " moves " + commPlayer);
-										engine.sendCommand("isready");
-										
-										std::string response = engine.getResponse();
-										std::cout << "response after position fen isready?: " << response << std::endl;
-										
-										engine.sendCommand("go depth 2");
-										
-										board.m_loaded = false;
 										commPlayer.clear();
 										commStockfish.clear();
+										
+										commStockfish = getNextMoveAfterFEN(engine, fen, position);
 									}	
 									
-									commPlayer.clear();
-									commStockfish.clear();
-									commStockfish = getNextMove(engine, position);
+									// position is not updated
+									if(board.m_loaded)
+										commStockfish = getNextMoveAfterFEN(engine, fen, position);
+									else
+									{
+										commPlayer.clear();
+										commStockfish.clear();
+										
+										commStockfish = getNextMove(engine, position);
+									}
 									
+									// black side, update text info at window
 									moveLogger.updateMove(false, commStockfish);
 									
 									engineMovePending = true;
@@ -174,7 +179,7 @@ int main(void)
 									std::cout << "[DEBUG] Invalid move!\n";
 									#endif
 									
-									moveLogger.updateInvalidStatus("Invalid Move!");
+									moveLogger.updateInvalidStatus("Invalid move!");
 									sndManager.play("invalid");
 								}
 								
@@ -191,7 +196,7 @@ int main(void)
 						}
 					}
 				}
-			}
+			} // while
 			
 			// checking for 1 seconds
 			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 1)
@@ -200,6 +205,8 @@ int main(void)
 				
 				sf::Vector2i rStart;
 				sf::Vector2i rEnd;
+				
+				// commStockfish, position not updated in castling() method
 				bool isCastling = board.castling(commStockfish, position, rStart, rEnd);
 				
 				position += " " + commStockfish;
@@ -214,8 +221,12 @@ int main(void)
 					std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
 					std::cout << "[DEBUG] Invalid move from engine!\n";
 					#endif
+					
+					moveLogger.updateInvalidStatus("Invalid engine move!");
+					sndManager.play("invalid");
 				}
 				
+				// move of rook
 				if(isCastling and board.atBoard(rStart, rEnd))
 					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 				
