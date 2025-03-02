@@ -43,7 +43,7 @@ public:
 	// getters
 	const Piece& getPiece(int x, int y) const;
 	const sf::Vector2i& getEnPassantTarget() const;
-	char getCurrentTurn() const;
+	const char getCurrentTurn() const;
 	
 	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
 	
