@@ -390,6 +390,15 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
 	else
 		m_enPassantTarget = sf::Vector2i(-1, -1);
+	
+	// pawn promotion - default to Queen
+	if(movingPiece.m_type == PieceType::PAWN and (endY == 0 or endY == 7))
+	{
+		m_board[endY][endX] = Piece(PieceType::QUEEN, movingPiece.m_color);
+		#ifdef DEBUG
+		std::cout << "[DEBUG] Pawn promoted to Queen at (" << endX << ", " << endY << ")\n";
+		#endif
+	}
 
 	char currentPlayerColor = m_board[endY][endX].m_color;
 	char opponentColor = (currentPlayerColor == 'W') ? 'B' : 'W';
