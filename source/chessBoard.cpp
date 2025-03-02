@@ -563,19 +563,19 @@ std::string ChessBoard::generateFEN(char currentTurn)
 	if(m_board[7][4].m_type == PieceType::KING && m_board[7][4].m_color == 'B')
 	{
 		if(m_board[7][7].m_type == PieceType::ROOK)
-			castling += "K";
+			castling += "k";
 		
 		if(m_board[7][0].m_type == PieceType::ROOK)
-			castling += "Q";
+			castling += "q";
 	}
 
 	if(m_board[0][4].m_type == PieceType::KING && m_board[0][4].m_color == 'W')
 	{
 		if(m_board[0][7].m_type == PieceType::ROOK)
-			castling += "k";
+			castling += "K";
 		
 		if(m_board[0][0].m_type == PieceType::ROOK)
-			castling += "q";
+			castling += "Q";
 	}
 	
 	fen += " " + (castling.empty() ? "-" : castling);
@@ -640,9 +640,10 @@ void ChessBoard::loadGame(const std::string& filename)
 	}
 
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
-	std::string line;
+	
 	char currentTurn = 'W'; // White's move by default
 
+	std::string line;
 	while(std::getline(file, line))
 	{
 		std::istringstream iss(line);
@@ -704,7 +705,7 @@ const sf::Vector2i& ChessBoard::getEnPassantTarget() const
 }
 
 
-char ChessBoard::getCurrentTurn() const
+const char ChessBoard::getCurrentTurn() const
 {
 	return m_currentTurn;
 }

@@ -42,7 +42,7 @@ int initialCommand(Stockfish& engine)
 		result = -1;
 	}
 	
-	engine.sendCommand("setoption name Skill Level value 3");
+	engine.sendCommand("setoption name Skill Level value 1");
 	engine.sendCommand("isready");
 	
 	resp.clear();
