@@ -1,3 +1,4 @@
+![alt text](image.png)
 # My Chess GUI (SFML) for Stockfish
 This is an example of a program that uses the stockfish engine and you can play chess with this engine.
 
