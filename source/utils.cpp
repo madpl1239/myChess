@@ -19,10 +19,7 @@ int initialCommand(Stockfish& engine)
 			
 		result = -1;
 	}
-
-	engine.sendCommand("uci");
-	std::cout << engine.getResponse();
-
+	
 	engine.sendCommand("isready");
 	if(engine.getResponse().find("readyok") != std::string::npos)
 		std::cout << "readyok\n";
@@ -41,6 +38,18 @@ int initialCommand(Stockfish& engine)
 	if(resp.find("readyok") == std::string::npos)
 	{
 		std::cout << "response error\n";
+		
+		result = -1;
+	}
+	
+	engine.sendCommand("setoption name Skill Level value 3");
+	engine.sendCommand("isready");
+	
+	resp.clear();
+	resp = engine.getResponse();
+	if(resp.find("readyok") == std::string::npos)
+	{
+		std::cout << "Skill Level error\n";
 		
 		result = -1;
 	}
@@ -77,7 +86,7 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 	engine.sendCommand("go depth 2");
 	
 	std::string response = engine.getResponse();
-		
+	
 	size_t bestmoveIdx = response.find("bestmove");
 	if(bestmoveIdx != std::string::npos)
 	{
@@ -85,6 +94,28 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 		
 		return (endIdx != std::string::npos) ? response.substr(bestmoveIdx + 9, endIdx - (bestmoveIdx + 9))
 												: response.substr(bestmoveIdx + 9);
+	}
+	
+	return "no response";
+}
+
+
+std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string& position)
+{
+	std::string command = "position fen " + fen + " moves " + position;
+	
+	engine.sendCommand(command);
+	engine.sendCommand("go depth 2");
+	
+	std::string response = engine.getResponse();
+	
+	size_t bestmoveIdx = response.find("bestmove");
+	if(bestmoveIdx != std::string::npos)
+	{
+		size_t endIdx = response.find(' ', bestmoveIdx + 9);
+		
+		return (endIdx != std::string::npos) ? response.substr(bestmoveIdx + 9, endIdx - (bestmoveIdx + 9))
+		: response.substr(bestmoveIdx + 9);
 	}
 	
 	return "no response";

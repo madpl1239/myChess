@@ -18,5 +18,5 @@ endif()
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE})
-target_link_libraries(${CMAKE_PROJECT_NAME}
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 	-lpthread sfml-system sfml-window sfml-graphics sfml-audio)

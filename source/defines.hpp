@@ -16,6 +16,9 @@
 #define READ 0
 #define WRITE 1
 
+#define ARIAL "./resources/arial.ttf"
+#define DIGITAL "./resources/digital-7mono.ttf"
+
 const int SIZE = 504;		// size of chessBoard (504x504 pikseli)
 const int TILE_SIZE = 56;	// chess square size
 const int OFFSET = 28;		// offset for piece
