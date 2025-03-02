@@ -153,10 +153,6 @@ int main(void)
 										
 										commStockfish = getNextMoveAfterFEN(engine, fen, position);
 									}	
-									
-									// position is not updated
-									if(board.m_loaded)
-										commStockfish = getNextMoveAfterFEN(engine, fen, position);
 									else
 									{
 										commPlayer.clear();
