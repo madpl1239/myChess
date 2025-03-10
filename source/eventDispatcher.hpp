@@ -18,36 +18,30 @@ class EventDispatcher
 public:
 	EventDispatcher(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine, MoveLogger& moveLogger,
 					Highlighter& highlighter, SoundManager& sndManager):
-	window(window),
-	board(board),
-	engine(engine),
-	moveLogger(moveLogger),
-	highlighter(highlighter),
-	sndManager(sndManager)
+	m_window(window),
+	m_board(board),
+	m_engine(engine),
+	m_moveLogger(moveLogger),
+	m_highlighter(highlighter),
+	m_sndManager(sndManager)
 	{}
 
 	bool dispatchEvents(bool& quit, bool& engineMovePending, sf::Clock& engineMoveTimer, std::string& position, std::string& commPlayer,
 							std::string& commStockfish, std::string& fen, bool& isPieceSelected, sf::Vector2i& selectedPiece)
 	{
 		sf::Event event;
-		while(window.pollEvent(event))
+		while(m_window.pollEvent(event))
 		{
 			if(event.type == sf::Event::Closed)
-			{
 				quit = true;
-			}
-
+			
 			else if(event.type == sf::Event::KeyPressed)
-			{
 				handleKeyPress(event, quit, position, commPlayer, commStockfish, fen);
-			}
-
+			
 			else if(event.type == sf::Event::MouseButtonPressed)
-			{
-				handleMousePress(event, engineMovePending, engineMoveTimer, position, commPlayer, commStockfish, isPieceSelected, selectedPiece);
-			}
+				handleMousePress(event, engineMovePending, engineMoveTimer, position, commPlayer, commStockfish, isPieceSelected, selectedPiece, fen);
 		}
-
+		
 		return quit;
 	}
 
@@ -56,106 +50,100 @@ private:
 						std::string& commStockfish, std::string& fen)
 	{
 		if(event.key.code == sf::Keyboard::Escape)
-		{
 			quit = true;
-		}
-
+		
 		else if(event.key.code == sf::Keyboard::S)
-		{
-			board.saveGame("./save_game.txt");
-		}
-
+			m_board.saveGame("./save_game.txt");
+		
 		else if(event.key.code == sf::Keyboard::L)
 		{
-			board.loadGame("./save_game.txt");
-			board.m_loaded = true;
+			m_board.loadGame("./save_game.txt");
+			m_board.m_loaded = true;
 			position.clear();
 			commPlayer.clear();
 			commStockfish.clear();
-			engine.sendCommand("ucinewgame");
-			char sideToMove = board.getCurrentTurn();
-			fen = board.generateFEN(sideToMove);
+			m_engine.sendCommand("ucinewgame");
+			char sideToMove = m_board.getCurrentTurn();
+			fen = m_board.generateFEN(sideToMove);
 			std::cout << "Generated FEN after loading game: " << fen << "\n";
 		}
 	}
 
 	void handleMousePress(sf::Event& event, bool& engineMovePending, sf::Clock& engineMoveTimer, std::string& position, std::string& commPlayer,
-							std::string& commStockfish, bool& isPieceSelected, sf::Vector2i& selectedPiece)
+							std::string& commStockfish, bool& isPieceSelected, sf::Vector2i& selectedPiece, std::string& fen)
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
 		{
-			sf::Vector2i pos = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
+			sf::Vector2i pos = sf::Mouse::getPosition(m_window) - sf::Vector2i(OFFSET, OFFSET);
 			int x = std::round(pos.x / TILE_SIZE);
 			int y = 7 - std::round(pos.y / TILE_SIZE);
 			
 			if(x < 8 and y < 8)
 			{
-				if(!isPieceSelected)
+				if(not isPieceSelected)
 				{
-					if(board.isPieceAt(x, y))
+					if(m_board.isPieceAt(x, y))
 					{
-						commPlayer = board.toChess(x, y);
+						commPlayer = m_board.toChess(x, y);
 						selectedPiece = sf::Vector2i(x, y);
-						highlighter.setSelection(x, y);
+						m_highlighter.setSelection(x, y);
 						isPieceSelected = true;
-						moveLogger.updateInvalidStatus("");
+						m_moveLogger.updateInvalidStatus("");
 					}
 				}
 				else
 				{
-					if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
+					if(m_board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
 					{
-						commPlayer += board.toChess(x, y);
-						moveLogger.updateMove(true, commPlayer);
+						commPlayer += m_board.toChess(x, y);
+						m_moveLogger.updateMove(true, commPlayer);
 						
 						sf::Vector2i rStart;
 						sf::Vector2i rEnd;
-						bool isCastling = board.castling(commPlayer, position, rStart, rEnd);
+						bool isCastling = m_board.castling(commPlayer, position, rStart, rEnd);
 						
 						position += " " + commPlayer;
-						board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+						m_board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
 						
-						if(isCastling and board.atBoard(rStart, rEnd))
-						{
-							board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-						}
+						if(isCastling and m_board.atBoard(rStart, rEnd))
+							m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
 						
-						if(board.m_loaded)
+						if(m_board.m_loaded)
 						{
 							commPlayer.clear();
 							commStockfish.clear();
-							commStockfish = getNextMoveAfterFEN(engine, fen, position);
+							commStockfish = getNextMoveAfterFEN(m_engine, fen, position);
 						}
 						else
 						{
 							commPlayer.clear();
 							commStockfish.clear();
-							commStockfish = getNextMove(engine, position);
+							commStockfish = getNextMove(m_engine, position);
 						}
-
-						moveLogger.updateMove(false, commStockfish);
+						
+						m_moveLogger.updateMove(false, commStockfish);
 						engineMovePending = true;
 						engineMoveTimer.restart();
-						sndManager.play("move");
+						m_sndManager.play("move");
 					}
 					else
 					{
-						moveLogger.updateInvalidStatus("Invalid move!");
-						sndManager.play("invalid");
+						m_moveLogger.updateInvalidStatus("Invalid move!");
+						m_sndManager.play("invalid");
 					}
-
-					highlighter.setDestination(x, y);
-					highlighter.setSelectionActive(false);
+					
+					m_highlighter.setDestination(x, y);
+					m_highlighter.setSelectionActive(false);
 					isPieceSelected = false;
 				}
 			}
 		}
 	}
 
-	sf::RenderWindow& window;
-	ChessBoard& board;
-	Stockfish& engine;
-	MoveLogger& moveLogger;
-	Highlighter& highlighter;
-	SoundManager& sndManager;
+	sf::RenderWindow& m_window;
+	ChessBoard& m_board;
+	Stockfish& m_engine;
+	MoveLogger& m_moveLogger;
+	Highlighter& m_highlighter;
+	SoundManager& m_sndManager;
 };
