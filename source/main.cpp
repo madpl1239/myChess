@@ -76,7 +76,8 @@ int main(void)
 		
 		while(window.isOpen() and !quit) 
 		{
-			quit = dispatcher.dispatchEvents(quit, engineMovePending, engineMoveTimer, position, commPlayer, commStockfish, fen, isPieceSelected, selectedPiece);
+			quit = dispatcher.dispatchEvents(quit, engineMovePending, engineMoveTimer, position,
+											 commPlayer, commStockfish, fen, isPieceSelected, selectedPiece);
 			
 			// checking for 1 seconds
 			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 1)

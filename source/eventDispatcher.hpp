@@ -26,8 +26,9 @@ public:
 	m_sndManager(sndManager)
 	{}
 
-	bool dispatchEvents(bool& quit, bool& engineMovePending, sf::Clock& engineMoveTimer, std::string& position, std::string& commPlayer,
-							std::string& commStockfish, std::string& fen, bool& isPieceSelected, sf::Vector2i& selectedPiece)
+	bool dispatchEvents(bool& quit, bool& engineMovePending, sf::Clock& engineMoveTimer, std::string& position,
+						std::string& commPlayer, std::string& commStockfish, std::string& fen,
+						bool& isPieceSelected, sf::Vector2i& selectedPiece)
 	{
 		sf::Event event;
 		while(m_window.pollEvent(event))
@@ -39,7 +40,8 @@ public:
 				handleKeyPress(event, quit, position, commPlayer, commStockfish, fen);
 			
 			else if(event.type == sf::Event::MouseButtonPressed)
-				handleMousePress(event, engineMovePending, engineMoveTimer, position, commPlayer, commStockfish, isPieceSelected, selectedPiece, fen);
+				handleMousePress(event, engineMovePending, engineMoveTimer, position, commPlayer, 
+								 commStockfish, isPieceSelected, selectedPiece, fen);
 		}
 		
 		return quit;
@@ -69,8 +71,9 @@ private:
 		}
 	}
 
-	void handleMousePress(sf::Event& event, bool& engineMovePending, sf::Clock& engineMoveTimer, std::string& position, std::string& commPlayer,
-							std::string& commStockfish, bool& isPieceSelected, sf::Vector2i& selectedPiece, std::string& fen)
+	void handleMousePress(sf::Event& event, bool& engineMovePending, sf::Clock& engineMoveTimer,
+						  std::string& position, std::string& commPlayer, std::string& commStockfish,
+							bool& isPieceSelected, sf::Vector2i& selectedPiece, std::string& fen)
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
 		{
