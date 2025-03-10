@@ -16,6 +16,7 @@
 #include "moveLogger.hpp"
 #include "highLighter.hpp"
 #include "sndManager.hpp"
+#include "eventDispatcher.hpp"
 
 
 int main(void) 
@@ -71,128 +72,11 @@ int main(void)
 		bool isPieceSelected = false;
 		bool quit = false;
 		
+		EventDispatcher dispatcher(window, board, engine, moveLogger, highlighter, sndManager);
+		
 		while(window.isOpen() and !quit) 
 		{
-			sf::Event event;
-			while(window.pollEvent(event)) 
-			{
-				if(event.type == sf::Event::Closed)
-					quit = true;
-				
-				else if(event.type == sf::Event::KeyPressed)
-				{
-					if(event.key.code == sf::Keyboard::Escape)
-						quit = true;
-					
-					if(event.key.code == sf::Keyboard::S)
-						board.saveGame("./save_game.txt");
-					
-					if(event.key.code == sf::Keyboard::L)
-					{
-						board.loadGame("./save_game.txt");
-						board.m_loaded = true;
-						position.clear();
-						commPlayer.clear();
-						commStockfish.clear();
-						
-						engine.sendCommand("ucinewgame");
-						
-						// transferring the new layout to Stockfish
-						char sideToMove = board.getCurrentTurn();
-						fen = board.generateFEN(sideToMove);
-						
-						std::cout << "Generated FEN after loading game: " << fen << "\n";
-					}
-				}
-				
-				else if(event.type == sf::Event::MouseButtonPressed)
-				{
-					if(event.mouseButton.button == sf::Mouse::Left)
-					{
-						sf::Vector2i pos = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
-						int x = std::round(pos.x / TILE_SIZE);
-						int y = 7 - std::round(pos.y / TILE_SIZE);
-						
-						if(x < 8 and y < 8)
-						{
-							if(not isPieceSelected)
-							{
-								if(board.isPieceAt(x, y))
-								{
-									commPlayer = board.toChess(x, y);
-									selectedPiece = sf::Vector2i(x, y);
-									highlighter.setSelection(x, y);
-									isPieceSelected = true;
-									moveLogger.updateInvalidStatus("");
-								}
-							}
-							else
-							{
-								if(board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
-								{
-									commPlayer += board.toChess(x, y);
-									
-									// white side, update text info at window
-									moveLogger.updateMove(true, commPlayer);
-									
-									sf::Vector2i rStart;
-									sf::Vector2i rEnd;
-									bool isCastling = board.castling(commPlayer, position, rStart, rEnd);
-									
-									position += " " + commPlayer;
-									board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
-									
-									// move of rook
-									if(isCastling and board.atBoard(rStart, rEnd))
-										board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-									
-									if(board.m_loaded)
-									{
-										commPlayer.clear();
-										commStockfish.clear();
-										
-										commStockfish = getNextMoveAfterFEN(engine, fen, position);
-									}	
-									else
-									{
-										commPlayer.clear();
-										commStockfish.clear();
-										
-										commStockfish = getNextMove(engine, position);
-									}
-									
-									// black side, update text info at window
-									moveLogger.updateMove(false, commStockfish);
-									
-									engineMovePending = true;
-									engineMoveTimer.restart();
-									
-									sndManager.play("move");
-								}
-								else
-								{
-									#ifdef DEBUG
-									std::cout << "[DEBUG] Invalid move!\n";
-									#endif
-									
-									moveLogger.updateInvalidStatus("Invalid move!");
-									sndManager.play("invalid");
-								}
-								
-								highlighter.setDestination(x, y);
-								highlighter.setSelectionActive(false);
-								isPieceSelected = false;
-							}
-						}
-						else
-						{
-							#ifdef DEBUG
-							std::cout << "[DEBUG] x, y out of range!\n";
-							#endif
-						}
-					}
-				}
-			} // while
+			quit = dispatcher.dispatchEvents(quit, engineMovePending, engineMoveTimer, position, commPlayer, commStockfish, fen, isPieceSelected, selectedPiece);
 			
 			// checking for 1 seconds
 			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 1)
