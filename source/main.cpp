@@ -3,7 +3,7 @@
  *
  * Chess GUI for stockfish (testing version from branch working).
  *
- * 12-01-2025 by madpl
+ * 12-01-2025 by madpl (aka Bogdan Kułaga)
  */
 #include <SFML/Graphics.hpp>
 #include <iostream>
