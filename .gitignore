@@ -3,6 +3,7 @@
 /tests
 /test-fen
 /testDraw
+/.vscode
 
 # files
 .directory
