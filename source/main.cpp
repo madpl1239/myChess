@@ -16,7 +16,7 @@
 #include "moveLogger.hpp"
 #include "highLighter.hpp"
 #include "sndManager.hpp"
-#include "eventDispatcher.hpp"
+#include "game.hpp"
 
 
 int main(void) 
@@ -30,9 +30,6 @@ int main(void)
 		window.setPosition(sf::Vector2i(200, 200));
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
-		
-		sf::Clock engineMoveTimer{};
-		bool engineMovePending = false;
 		
 		MoveLogger moveLogger(SIZE + 10, 10);
 		SoundManager sndManager{};
@@ -63,66 +60,13 @@ int main(void)
 		
 		Highlighter highlighter{};
 		
-		std::string position = "";
-		std::string commPlayer = "";
-		std::string commStockfish = "";
 		std::string fen = "";
 		
 		sf::Vector2i selectedPiece;
 		bool isPieceSelected = false;
-		bool quit = false;
 		
-		EventDispatcher dispatcher(window, board, engine, moveLogger, highlighter, sndManager);
-		
-		while(window.isOpen() and !quit) 
-		{
-			quit = dispatcher.dispatchEvents(quit, engineMovePending, engineMoveTimer, position,
-											 commPlayer, commStockfish, fen, isPieceSelected, selectedPiece);
-			
-			// checking for 1 seconds
-			if(engineMovePending and engineMoveTimer.getElapsedTime().asSeconds() >= 1)
-			{
-				engineMovePending = false;
-				
-				sf::Vector2i rStart;
-				sf::Vector2i rEnd;
-				
-				// commStockfish, position not updated in castling() method
-				bool isCastling = board.castling(commStockfish, position, rStart, rEnd);
-				
-				position += " " + commStockfish;
-				sf::Vector2i posStart = board.toCoords(commStockfish[0], commStockfish[1]);
-				sf::Vector2i posEnd = board.toCoords(commStockfish[2], commStockfish[3]);
-				
-				if(board.atBoard(posStart, posEnd))
-					board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
-				else
-				{
-					#ifdef DEBUG
-					std::cout << "[DEBUG] commStockfish = " << commStockfish << "\n";
-					std::cout << "[DEBUG] Invalid move from engine!\n";
-					#endif
-					
-					moveLogger.updateInvalidStatus("Invalid engine move!");
-					sndManager.play("invalid");
-				}
-				
-				// move of rook
-				if(isCastling and board.atBoard(rStart, rEnd))
-					board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-				
-				sndManager.play("move");
-			}
-			
-			if(not engineMovePending)
-				highlighter.setDestination(-5, -5);
-				
-			window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
-			board.draw(boardTexture, figuresTexture);
-			highlighter.draw(window);
-			moveLogger.draw(window);
-			window.display();
-		}
+		Game game(window, board, engine, moveLogger, highlighter, sndManager);
+		game.run();
 		
 		window.close();
 	}

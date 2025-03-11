@@ -395,6 +395,7 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	if(movingPiece.m_type == PieceType::PAWN and (endY == 0 or endY == 7))
 	{
 		m_board[endY][endX] = Piece(PieceType::QUEEN, movingPiece.m_color);
+		
 		#ifdef DEBUG
 		std::cout << "[DEBUG] Pawn promoted to Queen at (" << endX << ", " << endY << ")\n";
 		#endif
