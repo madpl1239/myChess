@@ -31,11 +31,11 @@ public:
 
 	void run()
 	{
-		bool quit = false;
+		m_quit = false;
 		
-		while(m_window.isOpen() and !quit) 
+		while(m_window.isOpen() and !m_quit) 
 		{
-			quit = gameLoop(quit);
+			gameLoop();
 			
 			// checking for 1 seconds
 			if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
@@ -84,28 +84,26 @@ public:
 	}
 
 private:
-	bool gameLoop(bool& quit)
+	void gameLoop()
 	{
 		sf::Event event;
 		while(m_window.pollEvent(event))
 		{
 			if(event.type == sf::Event::Closed)
-				quit = true;
+				m_quit = true;
 			
 			else if(event.type == sf::Event::KeyPressed)
-				handleKeyPress(event, quit);
+				handleKeyPress(event);
 			
 			else if(event.type == sf::Event::MouseButtonPressed)
 				handleMousePress(event);
 		}
-		
-		return quit;
 	}
 	
-	void handleKeyPress(sf::Event& event, bool& quit)
+	void handleKeyPress(sf::Event& event)
 	{
 		if(event.key.code == sf::Keyboard::Escape)
-			quit = true;
+			m_quit = true;
 		
 		else if(event.key.code == sf::Keyboard::S)
 			m_board.saveGame("./save_game.txt");
@@ -206,8 +204,8 @@ private:
 	MoveLogger& m_moveLogger;
 	Highlighter& m_highlighter;
 	SoundManager& m_sndManager;
-	sf::Texture m_boardTexture;
-	sf::Texture m_figuresTexture;
+	sf::Texture& m_boardTexture;
+	sf::Texture& m_figuresTexture;
 	
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
@@ -219,4 +217,6 @@ private:
 	
 	sf::Vector2i m_selectedPiece{};
 	bool m_isPieceSelected = false;
+	
+	bool m_quit = false;
 };
