@@ -16,14 +16,17 @@
 class Game
 {
 public:
-	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine, MoveLogger& moveLogger,
-					Highlighter& highlighter, SoundManager& sndManager):
+	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
+		 MoveLogger& moveLogger, Highlighter& highlighter, SoundManager& sndManager,
+		 sf::Texture& boardTexture, sf::Texture& figuresTexture):
 	m_window(window),
 	m_board(board),
 	m_engine(engine),
 	m_moveLogger(moveLogger),
 	m_highlighter(highlighter),
-	m_sndManager(sndManager)
+	m_sndManager(sndManager),
+	m_boardTexture(boardTexture),
+	m_figuresTexture(figuresTexture)
 	{}
 
 	void run()
@@ -32,7 +35,7 @@ public:
 		
 		while(m_window.isOpen() and !quit) 
 		{
-			quit = gameLoop(quit, fen, isPieceSelected, selectedPiece);
+			quit = gameLoop(quit);
 			
 			// checking for 1 seconds
 			if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
@@ -73,7 +76,7 @@ public:
 				m_highlighter.setDestination(-5, -5);
 				
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
-			m_board.draw(boardTexture, figuresTexture);
+			m_board.draw(m_boardTexture, m_figuresTexture);
 			m_highlighter.draw(m_window);
 			m_moveLogger.draw(m_window);
 			m_window.display();
@@ -81,7 +84,7 @@ public:
 	}
 
 private:
-	bool gameLoop(bool& quit, std::string& fen, bool& isPieceSelected, sf::Vector2i& selectedPiece)
+	bool gameLoop(bool& quit)
 	{
 		sf::Event event;
 		while(m_window.pollEvent(event))
@@ -90,16 +93,16 @@ private:
 				quit = true;
 			
 			else if(event.type == sf::Event::KeyPressed)
-				handleKeyPress(event, quit, fen);
+				handleKeyPress(event, quit);
 			
 			else if(event.type == sf::Event::MouseButtonPressed)
-				handleMousePress(event, isPieceSelected, selectedPiece, fen);
+				handleMousePress(event);
 		}
 		
 		return quit;
 	}
 	
-	void handleKeyPress(sf::Event& event, bool& quit, std::string& fen)
+	void handleKeyPress(sf::Event& event, bool& quit)
 	{
 		if(event.key.code == sf::Keyboard::Escape)
 			quit = true;
@@ -116,13 +119,12 @@ private:
 			m_commStockfish.clear();
 			m_engine.sendCommand("ucinewgame");
 			char sideToMove = m_board.getCurrentTurn();
-			fen = m_board.generateFEN(sideToMove);
-			std::cout << "Generated FEN after loading game: " << fen << "\n";
+			m_fen = m_board.generateFEN(sideToMove);
+			std::cout << "Generated FEN after loading game: " << m_fen << "\n";
 		}
 	}
 
-	void handleMousePress(sf::Event& event, std::string& commPlayer,
-						  std::string& commStockfish, bool& isPieceSelected, sf::Vector2i& selectedPiece, std::string& fen)
+	void handleMousePress(sf::Event& event)
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
 		{
@@ -132,33 +134,33 @@ private:
 			
 			if(x < 8 and y < 8)
 			{
-				if(not isPieceSelected)
+				if(not m_isPieceSelected)
 				{
 					if(m_board.isPieceAt(x, y))
 					{
 						m_commPlayer = m_board.toChess(x, y);
 						
-						selectedPiece = sf::Vector2i(x, y);
+						m_selectedPiece = sf::Vector2i(x, y);
 						m_highlighter.setSelection(x, y);
 						m_moveLogger.updateInvalidStatus("");
 						
-						isPieceSelected = true;
+						m_isPieceSelected = true;
 					}
 				}
 				else
 				{
-					if(m_board.isValidMove(selectedPiece.x, selectedPiece.y, x, y))
+					if(m_board.isValidMove(m_selectedPiece.x, m_selectedPiece.y, x, y))
 					{
 						m_commPlayer += m_board.toChess(x, y);
 						
-						m_moveLogger.updateMove(true, commPlayer);
+						m_moveLogger.updateMove(true, m_commPlayer);
 						
 						sf::Vector2i rStart;
 						sf::Vector2i rEnd;
 						bool isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
 						
-						m_position += " " + commPlayer;
-						m_board.movePiece(selectedPiece.x, selectedPiece.y, x, y);
+						m_position += " " + m_commPlayer;
+						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
 						
 						if(isCastling and m_board.atBoard(rStart, rEnd))
 							m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
@@ -168,7 +170,7 @@ private:
 							m_commPlayer.clear();
 							m_commStockfish.clear();
 							
-							m_commStockfish = getNextMoveAfterFEN(m_engine, fen, m_position);
+							m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
 						}
 						else
 						{
@@ -192,7 +194,7 @@ private:
 					
 					m_highlighter.setDestination(x, y);
 					m_highlighter.setSelectionActive(false);
-					isPieceSelected = false;
+					m_isPieceSelected = false;
 				}
 			}
 		}
@@ -204,10 +206,17 @@ private:
 	MoveLogger& m_moveLogger;
 	Highlighter& m_highlighter;
 	SoundManager& m_sndManager;
+	sf::Texture m_boardTexture;
+	sf::Texture m_figuresTexture;
 	
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
+	
 	std::string m_position = "";
 	std::string m_commPlayer = "";
 	std::string m_commStockfish = "";
+	std::string m_fen = "";
+	
+	sf::Vector2i m_selectedPiece{};
+	bool m_isPieceSelected = false;
 };

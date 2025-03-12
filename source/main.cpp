@@ -60,12 +60,7 @@ int main(void)
 		
 		Highlighter highlighter{};
 		
-		std::string fen = "";
-		
-		sf::Vector2i selectedPiece;
-		bool isPieceSelected = false;
-		
-		Game game(window, board, engine, moveLogger, highlighter, sndManager);
+		Game game(window, board, engine, moveLogger, highlighter, sndManager, boardTexture, figuresTexture);
 		game.run();
 		
 		window.close();
