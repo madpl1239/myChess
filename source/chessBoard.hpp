@@ -14,7 +14,7 @@
 #include "sndManager.hpp"
 
 
-class ChessBoard 
+class ChessBoard
 {
 public:
 	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager);

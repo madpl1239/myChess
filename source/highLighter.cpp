@@ -13,10 +13,10 @@ Highlighter::Highlighter():
 	m_destinationActive(false)
 {
 	m_selection.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-	m_selection.setFillColor(sf::Color(255, 255, 0, 60));
+	m_selection.setFillColor(sf::Color(255, 255, 0, 40));
 
 	m_destination.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-	m_destination.setFillColor(sf::Color(0, 255, 0, 60));
+	m_destination.setFillColor(sf::Color(0, 255, 0, 40));
 }
 
 
