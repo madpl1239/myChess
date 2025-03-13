@@ -31,6 +31,8 @@ public:
 
 	void run()
 	{
+		m_quit = false;
+
 		while(m_window.isOpen() and !m_quit) 
 		{
 			gameLoop();
@@ -202,8 +204,8 @@ private:
 	MoveLogger& m_moveLogger;
 	Highlighter& m_highlighter;
 	SoundManager& m_sndManager;
-	sf::Texture m_boardTexture;
-	sf::Texture m_figuresTexture;
+	sf::Texture& m_boardTexture;
+	sf::Texture& m_figuresTexture;
 	
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
