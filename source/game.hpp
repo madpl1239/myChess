@@ -67,9 +67,19 @@ public:
 				
 				// move of rook
 				if(isCastling and m_board.atBoard(rStart, rEnd))
+				{
 					m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+					
+					m_board.setCurrentTurn('W');
+					m_board.setFullMoveNumber(m_board.getFullMoveNumber() - 1);
+				}
 				
 				m_sndManager.play("move");
+				
+				#ifdef DEBUG
+				std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
+				std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
+				#endif
 			}
 			
 			if(not m_engineMovePending)
@@ -161,7 +171,11 @@ private:
 						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
 						
 						if(isCastling and m_board.atBoard(rStart, rEnd))
+						{
 							m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+							
+							m_board.setCurrentTurn('B');
+						}
 						
 						if(m_board.m_loaded)
 						{

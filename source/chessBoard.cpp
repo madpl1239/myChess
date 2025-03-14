@@ -726,6 +726,24 @@ const char ChessBoard::getCurrentTurn() const
 }
 
 
+const int ChessBoard::getFullMoveNumber() const
+{
+	return m_fullMoveNumber;
+}
+
+
+void ChessBoard::setCurrentTurn(char side)
+{
+	m_currentTurn = side;
+}
+
+
+void ChessBoard::setFullMoveNumber(int number)
+{
+	m_fullMoveNumber = number;
+}
+
+
 void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture) 
 {
 	sf::Sprite boardSprite(boardTexture);
