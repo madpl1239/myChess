@@ -15,7 +15,6 @@ ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManage
 	m_moveLogger(logger),
 	m_sndManager(sndManager),
 	m_enPassantTarget(-1, -1),
-	m_currentTurn('W'),
 	m_loaded(false)
 {
 	#ifdef DEBUG
@@ -23,7 +22,10 @@ ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManage
 	#endif
 	
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
+	
+	// white are on the move
 	m_fullMoveNumber = 1;
+	m_currentTurn = 'W';
 }
 
 
@@ -45,11 +47,14 @@ ChessBoard::~ChessBoard()
 	m_fullMoveNumber = 0;
 	m_loaded = false;
 	m_enPassantTarget = {};
+	m_currentTurn = 0;
 }
 
 
 void ChessBoard::setInitialPositions()
 {
+	// white are on the move
+	m_fullMoveNumber = 1;
 	m_currentTurn = 'W';
 	
 	for(int y = 7; y >= 0; --y)
@@ -718,6 +723,24 @@ const sf::Vector2i& ChessBoard::getEnPassantTarget() const
 const char ChessBoard::getCurrentTurn() const
 {
 	return m_currentTurn;
+}
+
+
+const int ChessBoard::getFullMoveNumber() const
+{
+	return m_fullMoveNumber;
+}
+
+
+void ChessBoard::setCurrentTurn(char side)
+{
+	m_currentTurn = side;
+}
+
+
+void ChessBoard::setFullMoveNumber(int number)
+{
+	m_fullMoveNumber = number;
 }
 
 

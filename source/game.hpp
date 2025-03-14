@@ -31,11 +31,11 @@ public:
 
 	void run()
 	{
-		bool quit = false;
-		
-		while(m_window.isOpen() and !quit) 
+		m_quit = false;
+
+		while(m_window.isOpen() and !m_quit) 
 		{
-			quit = gameLoop(quit);
+			gameLoop();
 			
 			// checking for 1 seconds
 			if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
@@ -67,9 +67,19 @@ public:
 				
 				// move of rook
 				if(isCastling and m_board.atBoard(rStart, rEnd))
+				{
 					m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+					
+					m_board.setCurrentTurn('W');
+					m_board.setFullMoveNumber(m_board.getFullMoveNumber() - 1);
+				}
 				
 				m_sndManager.play("move");
+				
+				#ifdef DEBUG
+				std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
+				std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
+				#endif
 			}
 			
 			if(not m_engineMovePending)
@@ -84,28 +94,26 @@ public:
 	}
 
 private:
-	bool gameLoop(bool& quit)
+	void gameLoop()
 	{
 		sf::Event event;
 		while(m_window.pollEvent(event))
 		{
 			if(event.type == sf::Event::Closed)
-				quit = true;
+				m_quit = true;
 			
 			else if(event.type == sf::Event::KeyPressed)
-				handleKeyPress(event, quit);
+				handleKeyPress(event);
 			
 			else if(event.type == sf::Event::MouseButtonPressed)
 				handleMousePress(event);
 		}
-		
-		return quit;
 	}
 	
-	void handleKeyPress(sf::Event& event, bool& quit)
+	void handleKeyPress(sf::Event& event)
 	{
 		if(event.key.code == sf::Keyboard::Escape)
-			quit = true;
+			m_quit = true;
 		
 		else if(event.key.code == sf::Keyboard::S)
 			m_board.saveGame("./save_game.txt");
@@ -163,7 +171,11 @@ private:
 						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
 						
 						if(isCastling and m_board.atBoard(rStart, rEnd))
+						{
 							m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+							
+							m_board.setCurrentTurn('B');
+						}
 						
 						if(m_board.m_loaded)
 						{
@@ -206,8 +218,8 @@ private:
 	MoveLogger& m_moveLogger;
 	Highlighter& m_highlighter;
 	SoundManager& m_sndManager;
-	sf::Texture m_boardTexture;
-	sf::Texture m_figuresTexture;
+	sf::Texture& m_boardTexture;
+	sf::Texture& m_figuresTexture;
 	
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
@@ -219,4 +231,6 @@ private:
 	
 	sf::Vector2i m_selectedPiece{};
 	bool m_isPieceSelected = false;
+	
+	bool m_quit = false;
 };

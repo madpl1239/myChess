@@ -32,6 +32,7 @@ int main(void)
 		window.setKeyRepeatEnabled(false);
 		
 		MoveLogger moveLogger(SIZE + 10, 10);
+		
 		SoundManager sndManager{};
 		if(not initialSounds(sndManager))
 			throw std::runtime_error("load sounds error!");
@@ -60,7 +61,9 @@ int main(void)
 		
 		Highlighter highlighter{};
 		
-		Game game(window, board, engine, moveLogger, highlighter, sndManager, boardTexture, figuresTexture);
+		Game game(window, board, engine, moveLogger, highlighter, sndManager,
+				  boardTexture, figuresTexture);
+		
 		game.run();
 		
 		window.close();
