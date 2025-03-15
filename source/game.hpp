@@ -32,55 +32,10 @@ public:
 	void run()
 	{
 		m_quit = false;
-
+		
 		while(m_window.isOpen() and !m_quit) 
 		{
 			gameLoop();
-			
-			// checking for 1 seconds
-			if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
-			{
-				m_engineMovePending = false;
-				
-				sf::Vector2i rStart;
-				sf::Vector2i rEnd;
-				
-				// commStockfish, position not updated in castling() method
-				bool isCastling = m_board.castling(m_commStockfish, m_position, rStart, rEnd);
-				
-				m_position += " " + m_commStockfish;
-				sf::Vector2i posStart = m_board.toCoords(m_commStockfish[0], m_commStockfish[1]);
-				sf::Vector2i posEnd = m_board.toCoords(m_commStockfish[2], m_commStockfish[3]);
-				
-				if(m_board.atBoard(posStart, posEnd))
-					m_board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
-				else
-				{
-					#ifdef DEBUG
-					std::cout << "[DEBUG] commStockfish = " << m_commStockfish << "\n";
-					std::cout << "[DEBUG] Invalid move from engine!\n";
-					#endif
-					
-					m_moveLogger.updateInvalidStatus("Invalid engine move!");
-					m_sndManager.play("invalid");
-				}
-				
-				// move of rook
-				if(isCastling and m_board.atBoard(rStart, rEnd))
-				{
-					m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-					
-					m_board.setCurrentTurn('W');
-					m_board.setFullMoveNumber(m_board.getFullMoveNumber() - 1);
-				}
-				
-				m_sndManager.play("move");
-				
-				#ifdef DEBUG
-				std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
-				std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
-				#endif
-			}
 			
 			if(not m_engineMovePending)
 				m_highlighter.setDestination(-5, -5);
@@ -108,8 +63,53 @@ private:
 			else if(event.type == sf::Event::MouseButtonPressed)
 				handleMousePress(event);
 		}
+		
+		// checking for 1 seconds
+		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
+		{
+			m_engineMovePending = false;
+			
+			sf::Vector2i rStart;
+			sf::Vector2i rEnd;
+			
+			// commStockfish, position not updated in castling() method
+			bool isCastling = m_board.castling(m_commStockfish, m_position, rStart, rEnd);
+			
+			m_position += " " + m_commStockfish;
+			sf::Vector2i posStart = m_board.toCoords(m_commStockfish[0], m_commStockfish[1]);
+			sf::Vector2i posEnd = m_board.toCoords(m_commStockfish[2], m_commStockfish[3]);
+			
+			if(m_board.atBoard(posStart, posEnd))
+				m_board.movePiece(posStart.x, posStart.y, posEnd.x, posEnd.y);
+			else
+			{
+				#ifdef DEBUG
+				std::cout << "[DEBUG] commStockfish = " << m_commStockfish << "\n";
+				std::cout << "[DEBUG] Invalid move from engine!\n";
+				#endif
+				
+				m_moveLogger.updateInvalidStatus("Invalid engine move!");
+				m_sndManager.play("invalid");
+			}
+			
+			// move of rook
+			if(isCastling and m_board.atBoard(rStart, rEnd))
+			{
+				m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
+				
+				m_board.setCurrentTurn('W');
+				m_board.setFullMoveNumber(m_board.getFullMoveNumber() - 1);
+			}
+			
+			m_sndManager.play("move");
+			
+			#ifdef DEBUG
+			std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
+			std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
+			#endif
+		}	
 	}
-	
+
 	void handleKeyPress(sf::Event& event)
 	{
 		if(event.key.code == sf::Keyboard::Escape)
@@ -220,17 +220,17 @@ private:
 	SoundManager& m_sndManager;
 	sf::Texture& m_boardTexture;
 	sf::Texture& m_figuresTexture;
-	
+
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
-	
+
 	std::string m_position = "";
 	std::string m_commPlayer = "";
 	std::string m_commStockfish = "";
 	std::string m_fen = "";
-	
+
 	sf::Vector2i m_selectedPiece{};
 	bool m_isPieceSelected = false;
-	
+
 	bool m_quit = false;
 };
