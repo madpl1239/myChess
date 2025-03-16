@@ -26,7 +26,8 @@ public:
 	m_highlighter(highlighter),
 	m_sndManager(sndManager),
 	m_boardTexture(boardTexture),
-	m_figuresTexture(figuresTexture)
+	m_figuresTexture(figuresTexture),
+	m_mate(false)
 	{}
 
 	void run()
@@ -65,7 +66,7 @@ private:
 		}
 		
 		// checking for 1 seconds
-		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
+		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1 and !m_mate)
 		{
 			m_engineMovePending = false;
 			
@@ -85,6 +86,7 @@ private:
 			{
 				#ifdef DEBUG
 				std::cout << "[DEBUG] commStockfish = " << m_commStockfish << "\n";
+				std::cout << "[DEBUG] length: " << m_commStockfish.length() << "\n";
 				std::cout << "[DEBUG] Invalid move from engine!\n";
 				#endif
 				
@@ -107,7 +109,17 @@ private:
 			std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
 			std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
 			#endif
-		}	
+		}
+		
+		if(m_mate)
+		{
+			// checkmate
+			m_moveLogger.updateInvalidStatus("Checkmate!");
+			
+			#ifdef DEBUG
+			std::cout << "[DEBUG] Checkmate!\n"; 
+			#endif 
+		}
 	}
 
 	void handleKeyPress(sf::Event& event)
@@ -148,7 +160,7 @@ private:
 					{
 						m_commPlayer = m_board.toChess(x, y);
 						
-						m_selectedPiece = sf::Vector2i(x, y);
+						m_selectedPiece = {x, y};
 						m_highlighter.setSelection(x, y);
 						m_moveLogger.updateInvalidStatus("");
 						
@@ -192,6 +204,9 @@ private:
 							m_commStockfish = getNextMove(m_engine, m_position);
 						}
 						
+						if(m_commStockfish == "(none)")
+							m_mate = true;
+						
 						m_moveLogger.updateMove(false, m_commStockfish);
 						m_engineMoveTimer.restart();
 						m_sndManager.play("move");
@@ -232,5 +247,6 @@ private:
 	sf::Vector2i m_selectedPiece{};
 	bool m_isPieceSelected = false;
 
+	bool m_mate = false;
 	bool m_quit = false;
 };
