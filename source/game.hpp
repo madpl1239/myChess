@@ -137,8 +137,8 @@ private:
 		if(event.mouseButton.button == sf::Mouse::Left)
 		{
 			sf::Vector2i pos = sf::Mouse::getPosition(m_window) - sf::Vector2i(OFFSET, OFFSET);
-			int x = std::round(pos.x / TILE_SIZE);
-			int y = 7 - std::round(pos.y / TILE_SIZE);
+			int x = std::floor(pos.x / TILE_SIZE);
+			int y = 7 - std::floor(pos.y / TILE_SIZE);
 			
 			if(x < 8 and y < 8)
 			{
