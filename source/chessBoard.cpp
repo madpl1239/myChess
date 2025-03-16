@@ -622,7 +622,7 @@ void ChessBoard::saveGame(const std::string& filename)
 		
 		return;
 	}
-	
+
 	for(int y = 0; y < 8; ++y)
 	{
 		for(int x = 0; x < 8; ++x)
@@ -635,10 +635,10 @@ void ChessBoard::saveGame(const std::string& filename)
 		
 		file << "*\n";
 	}
-	
+
 	file << "ENPASSANT " << m_enPassantTarget.x << " " << m_enPassantTarget.y << "\n";
 	file << "TURN " << m_currentTurn << "\n";
-	
+
 	file.close();
 }
 
@@ -646,7 +646,7 @@ void ChessBoard::saveGame(const std::string& filename)
 void ChessBoard::loadGame(const std::string& filename)
 {
 	std::ifstream file(filename);
-	
+
 	if(not file)
 	{
 		std::cerr << "Error: Unable to open file for loading!\n";
@@ -655,7 +655,7 @@ void ChessBoard::loadGame(const std::string& filename)
 	}
 
 	m_board = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8, Piece()));
-	
+
 	char currentTurn = 'W'; // White's move by default
 
 	std::string line;
@@ -701,7 +701,7 @@ void ChessBoard::loadGame(const std::string& filename)
 			}
 		}
 	}
-	
+
 	m_currentTurn = currentTurn;
 
 	file.close();
@@ -748,10 +748,10 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture)
 {
 	sf::Sprite boardSprite(boardTexture);
 	sf::Sprite pieceSprite(figuresTexture);
-	
+
 	boardSprite.setPosition(0, 0);
 	m_window.draw(boardSprite);
-	
+
 	for(int y = 7; y >= 0; --y) 
 	{
 		for(int x = 0; x < 8; ++x) 
