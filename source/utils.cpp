@@ -83,7 +83,7 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 	std::string command = "position startpos moves" + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 2");
+	engine.sendCommand("go movetime 500");
 	
 	std::string response = engine.getResponse();
 	
@@ -105,7 +105,7 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 	std::string command = "position fen " + fen + " moves " + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 2");
+	engine.sendCommand("go movetime 500");
 	
 	std::string response = engine.getResponse();
 	

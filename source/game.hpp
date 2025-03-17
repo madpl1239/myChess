@@ -62,22 +62,20 @@ private:
 				handleKeyPress(event);
 			
 			else if(event.type == sf::Event::MouseButtonPressed)
-				handleMousePress(event);
+				handleMousePress(event); // player move
 		}
 		
-		// checking for 1 seconds
+		// engine move
 		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1 and !m_mate)
 		{
 			if(m_board.m_loaded)
 			{
 				m_commStockfish.clear();
-				
 				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
 			}
 			else
 			{
 				m_commStockfish.clear();
-				
 				m_commStockfish = getNextMove(m_engine, m_position);
 			}
 			
@@ -120,7 +118,6 @@ private:
 			}
 			
 			m_sndManager.play("move");
-			
 			m_engineMovePending = false;
 			
 			#ifdef DEBUG
@@ -146,7 +143,10 @@ private:
 			m_quit = true;
 		
 		else if(event.key.code == sf::Keyboard::S)
+		{
 			m_board.saveGame("./save_game.txt");
+			m_sndManager.play("check");
+		}
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
@@ -159,9 +159,11 @@ private:
 			char sideToMove = m_board.getCurrentTurn();
 			m_fen = m_board.generateFEN(sideToMove);
 			std::cout << "Generated FEN after loading game: " << m_fen << "\n";
+			m_sndManager.play("check");
 		}
 	}
 
+	// player move
 	void handleMousePress(sf::Event& event)
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
@@ -183,7 +185,6 @@ private:
 						m_selectedPiece = {x, y};
 						m_highlighter.setSelection(x, y);
 						m_moveLogger.updateInvalidStatus("");
-						
 						m_isPieceSelected = true;
 					}
 				}
