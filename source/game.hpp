@@ -68,7 +68,23 @@ private:
 		// checking for 1 seconds
 		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1 and !m_mate)
 		{
-			m_engineMovePending = false;
+			if(m_board.m_loaded)
+			{
+				m_commStockfish.clear();
+				
+				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
+			}
+			else
+			{
+				m_commStockfish.clear();
+				
+				m_commStockfish = getNextMove(m_engine, m_position);
+			}
+			
+			if(m_commStockfish == "(none)")
+				m_mate = true;
+			
+			m_moveLogger.updateMove(false, m_commStockfish);
 			
 			sf::Vector2i rStart;
 			sf::Vector2i rEnd;
@@ -104,6 +120,8 @@ private:
 			}
 			
 			m_sndManager.play("move");
+			
+			m_engineMovePending = false;
 			
 			#ifdef DEBUG
 			std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
@@ -148,6 +166,8 @@ private:
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
 		{
+			m_engineMoveTimer.restart();
+			
 			sf::Vector2i pos = sf::Mouse::getPosition(m_window) - sf::Vector2i(OFFSET, OFFSET);
 			int x = std::floor(pos.x / TILE_SIZE);
 			int y = 7 - std::floor(pos.y / TILE_SIZE);
@@ -189,28 +209,9 @@ private:
 							m_board.setCurrentTurn('B');
 						}
 						
-						if(m_board.m_loaded)
-						{
-							m_commPlayer.clear();
-							m_commStockfish.clear();
-							
-							m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
-						}
-						else
-						{
-							m_commPlayer.clear();
-							m_commStockfish.clear();
-							
-							m_commStockfish = getNextMove(m_engine, m_position);
-						}
-						
-						if(m_commStockfish == "(none)")
-							m_mate = true;
-						
-						m_moveLogger.updateMove(false, m_commStockfish);
-						m_engineMoveTimer.restart();
 						m_sndManager.play("move");
 						
+						m_commPlayer.clear();
 						m_engineMovePending = true;
 					}
 					else
