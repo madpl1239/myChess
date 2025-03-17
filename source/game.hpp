@@ -26,7 +26,8 @@ public:
 	m_highlighter(highlighter),
 	m_sndManager(sndManager),
 	m_boardTexture(boardTexture),
-	m_figuresTexture(figuresTexture)
+	m_figuresTexture(figuresTexture),
+	m_mate(false)
 	{}
 
 	void run()
@@ -65,9 +66,25 @@ private:
 		}
 		
 		// checking for 1 seconds
-		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1)
+		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1 and !m_mate)
 		{
-			m_engineMovePending = false;
+			if(m_board.m_loaded)
+			{
+				m_commStockfish.clear();
+				
+				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
+			}
+			else
+			{
+				m_commStockfish.clear();
+				
+				m_commStockfish = getNextMove(m_engine, m_position);
+			}
+			
+			if(m_commStockfish == "(none)")
+				m_mate = true;
+			
+			m_moveLogger.updateMove(false, m_commStockfish);
 			
 			sf::Vector2i rStart;
 			sf::Vector2i rEnd;
@@ -85,6 +102,7 @@ private:
 			{
 				#ifdef DEBUG
 				std::cout << "[DEBUG] commStockfish = " << m_commStockfish << "\n";
+				std::cout << "[DEBUG] length: " << m_commStockfish.length() << "\n";
 				std::cout << "[DEBUG] Invalid move from engine!\n";
 				#endif
 				
@@ -103,11 +121,23 @@ private:
 			
 			m_sndManager.play("move");
 			
+			m_engineMovePending = false;
+			
 			#ifdef DEBUG
 			std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
 			std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
 			#endif
-		}	
+		}
+		
+		if(m_mate)
+		{
+			// checkmate
+			m_moveLogger.updateInvalidStatus("Checkmate!");
+			
+			#ifdef DEBUG
+			std::cout << "[DEBUG] Checkmate!\n"; 
+			#endif 
+		}
 	}
 
 	void handleKeyPress(sf::Event& event)
@@ -136,6 +166,8 @@ private:
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
 		{
+			m_engineMoveTimer.restart();
+			
 			sf::Vector2i pos = sf::Mouse::getPosition(m_window) - sf::Vector2i(OFFSET, OFFSET);
 			int x = std::floor(pos.x / TILE_SIZE);
 			int y = 7 - std::floor(pos.y / TILE_SIZE);
@@ -148,7 +180,7 @@ private:
 					{
 						m_commPlayer = m_board.toChess(x, y);
 						
-						m_selectedPiece = sf::Vector2i(x, y);
+						m_selectedPiece = {x, y};
 						m_highlighter.setSelection(x, y);
 						m_moveLogger.updateInvalidStatus("");
 						
@@ -177,25 +209,9 @@ private:
 							m_board.setCurrentTurn('B');
 						}
 						
-						if(m_board.m_loaded)
-						{
-							m_commPlayer.clear();
-							m_commStockfish.clear();
-							
-							m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
-						}
-						else
-						{
-							m_commPlayer.clear();
-							m_commStockfish.clear();
-							
-							m_commStockfish = getNextMove(m_engine, m_position);
-						}
-						
-						m_moveLogger.updateMove(false, m_commStockfish);
-						m_engineMoveTimer.restart();
 						m_sndManager.play("move");
 						
+						m_commPlayer.clear();
 						m_engineMovePending = true;
 					}
 					else
@@ -232,5 +248,6 @@ private:
 	sf::Vector2i m_selectedPiece{};
 	bool m_isPieceSelected = false;
 
+	bool m_mate = false;
 	bool m_quit = false;
 };
