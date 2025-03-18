@@ -42,7 +42,7 @@ int initialCommand(Stockfish& engine)
 		result = -1;
 	}
 	
-	engine.sendCommand("setoption name Skill Level value 1");
+	engine.sendCommand("setoption name Skill Level value 3");
 	engine.sendCommand("isready");
 	
 	resp.clear();
@@ -83,7 +83,7 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 	std::string command = "position startpos moves" + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go movetime 500");
+	engine.sendCommand("go depth 3");
 	
 	std::string response = engine.getResponse();
 	
@@ -105,7 +105,7 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 	std::string command = "position fen " + fen + " moves " + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go movetime 500");
+	engine.sendCommand("go depth 3");
 	
 	std::string response = engine.getResponse();
 	

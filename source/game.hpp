@@ -86,9 +86,12 @@ private:
 			
 			sf::Vector2i rStart;
 			sf::Vector2i rEnd;
+			bool isCastling = false;
 			
-			// commStockfish, position not updated in castling() method
-			bool isCastling = m_board.castling(m_commStockfish, m_position, rStart, rEnd);
+			// m_commStockfish, m_position not updated in castling() method
+			sf::Vector2i kingPos = m_board.toCoords(m_commStockfish[0], m_commStockfish[1]);
+			if(m_board.getPiece(kingPos.x, kingPos.y).m_type == PieceType::KING)
+				isCastling = m_board.castling(m_commStockfish, m_position, rStart, rEnd);
 			
 			m_position += " " + m_commStockfish;
 			sf::Vector2i posStart = m_board.toCoords(m_commStockfish[0], m_commStockfish[1]);
@@ -198,7 +201,11 @@ private:
 						
 						sf::Vector2i rStart;
 						sf::Vector2i rEnd;
-						bool isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
+						bool isCastling = false;
+						
+						sf::Vector2i kingPos = m_board.toCoords(m_commPlayer[0], m_commPlayer[1]);
+						if(m_board.getPiece(kingPos.x, kingPos.y).m_type == PieceType::KING)
+							isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
 						
 						m_position += " " + m_commPlayer;
 						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
