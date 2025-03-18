@@ -83,7 +83,7 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 	std::string command = "position startpos moves" + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 3");
+	engine.sendCommand("go depth 2");
 	
 	std::string response = engine.getResponse();
 	
@@ -105,7 +105,7 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 	std::string command = "position fen " + fen + " moves " + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 3");
+	engine.sendCommand("go depth 2");
 	
 	std::string response = engine.getResponse();
 	
@@ -119,4 +119,28 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 	}
 	
 	return "no response";
+}
+
+
+float getEvaluation(std::string& response)
+{
+	std::istringstream iss(response);
+	std::string line;
+	float evaluation = 0.0f;
+
+	while(std::getline(iss, line))
+	{
+		if(line.find("score cp") != std::string::npos)
+		{
+			int score;
+			
+			sscanf(line.c_str(), "info depth %*d score cp %d", &score);
+			evaluation = score / 100.0f;
+		}
+		
+		else if(line.find("score mate") != std::string::npos)
+			evaluation = (line.find("score mate -") != std::string::npos) ? -6.0f : 6.0f;
+	}
+
+    return evaluation;
 }

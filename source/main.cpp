@@ -17,6 +17,7 @@
 #include "highLighter.hpp"
 #include "sndManager.hpp"
 #include "game.hpp"
+#include "scoreBar.hpp"
 
 
 int main(void) 
@@ -32,6 +33,7 @@ int main(void)
 		window.setKeyRepeatEnabled(false);
 		
 		MoveLogger moveLogger(SIZE + 10, 10);
+		ScoreBar scoreBar(504, 505);
 		
 		SoundManager sndManager{};
 		if(not initialSounds(sndManager))
@@ -61,8 +63,8 @@ int main(void)
 		
 		Highlighter highlighter{};
 		
-		Game game(window, board, engine, moveLogger, highlighter, sndManager,
-				  boardTexture, figuresTexture);
+		Game game(window, board, engine, moveLogger, highlighter, 
+				  scoreBar, sndManager, boardTexture, figuresTexture);
 		
 		game.run();
 		

@@ -126,6 +126,8 @@ public:
 			throw std::runtime_error("could not read response from stockfish");
 		}
 		
+		std::cout << response << "\n";
+		
 		return response;
 	}
 	

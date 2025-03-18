@@ -6,29 +6,59 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include "defines.hpp"
 #include "chessBoard.hpp"
 #include "stockHandle.hpp"
 #include "moveLogger.hpp"
 #include "highLighter.hpp"
 #include "sndManager.hpp"
+#include "scoreBar.hpp"
 
 
 class Game
 {
 public:
 	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
-		 MoveLogger& moveLogger, Highlighter& highlighter, SoundManager& sndManager,
+		 MoveLogger& moveLogger, Highlighter& highlighter, 
+		 ScoreBar& scoreBar, SoundManager& sndManager,
 		 sf::Texture& boardTexture, sf::Texture& figuresTexture):
 	m_window(window),
 	m_board(board),
 	m_engine(engine),
 	m_moveLogger(moveLogger),
 	m_highlighter(highlighter),
+	m_scoreBar(scoreBar),
 	m_sndManager(sndManager),
 	m_boardTexture(boardTexture),
 	m_figuresTexture(figuresTexture),
 	m_mate(false)
-	{}
+	{
+		#ifdef DEBUG
+		std::cout << "[DEBUG] ctor Game\n";
+		#endif
+	}
+	
+	~Game()
+	{
+		m_engineMoveTimer = {};
+		m_engineMovePending = false;
+		
+		m_position = "";
+		m_commPlayer = "";
+		m_commStockfish = "";
+		m_fen = "";
+		
+		m_selectedPiece = {};
+		m_isPieceSelected = false;
+		
+		m_mate = false;
+		m_quit = false;
+		
+		#ifdef DEBUG
+		std::cout << "[DEBUG] dtor Game\n";
+		#endif
+	}
 
 	void run()
 	{
@@ -44,6 +74,7 @@ public:
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 			m_board.draw(m_boardTexture, m_figuresTexture);
 			m_highlighter.draw(m_window);
+			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
 			m_window.display();
 		}
@@ -72,11 +103,13 @@ private:
 			{
 				m_commStockfish.clear();
 				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
+				// m_evaluation = getEvaluation(resp);
 			}
 			else
 			{
 				m_commStockfish.clear();
 				m_commStockfish = getNextMove(m_engine, m_position);
+				// m_evaluation = getEvaluation(resp);
 			}
 			
 			if(m_commStockfish == "(none)")
@@ -115,7 +148,6 @@ private:
 			if(isCastling and m_board.atBoard(rStart, rEnd))
 			{
 				m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-				
 				m_board.setCurrentTurn('W');
 				m_board.setFullMoveNumber(m_board.getFullMoveNumber() - 1);
 			}
@@ -213,7 +245,6 @@ private:
 						if(isCastling and m_board.atBoard(rStart, rEnd))
 						{
 							m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-							
 							m_board.setCurrentTurn('B');
 						}
 						
@@ -241,6 +272,7 @@ private:
 	Stockfish& m_engine;
 	MoveLogger& m_moveLogger;
 	Highlighter& m_highlighter;
+	ScoreBar& m_scoreBar;
 	SoundManager& m_sndManager;
 	sf::Texture& m_boardTexture;
 	sf::Texture& m_figuresTexture;
@@ -258,4 +290,6 @@ private:
 
 	bool m_mate = false;
 	bool m_quit = false;
+	
+	float m_evaluation = 0.0f;
 };
