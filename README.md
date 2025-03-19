@@ -14,7 +14,16 @@ If you want to save the game state, press the 's' key, and if you want to load a
 
 press the 'l' key. </br></br>
 
-***The program is still developing.***</br></br>
+***The program is still developing.***</br>
+
+main is always the branch to compile, working is the branch where we make changes most often.
+
+Build:</br>
+git clone .... myChess (or any other location)</br>
+if not exists build directory, please create it:</br>
+mkdir build</br>
+cmake -S . -B ./build</br>
+cmake --build ./build</br></br>
 
 
 Many corrections have been added, such as: castling bug has been fixed. During the game, a bug was revealed,
