@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.31)
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 project(myChess)
 
-add_definitions(-Os -march=native -pthread)
+add_definitions(-Os -march=native -std=c++23 -pthread)
 file(GLOB_RECURSE SOURCE ./source/*)
 
 option(WINDOWS "build for windows?" OFF)

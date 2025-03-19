@@ -14,7 +14,7 @@
 #include "sndManager.hpp"
 
 
-class ChessBoard 
+class ChessBoard
 {
 public:
 	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager);
@@ -44,6 +44,11 @@ public:
 	const Piece& getPiece(int x, int y) const;
 	const sf::Vector2i& getEnPassantTarget() const;
 	const char getCurrentTurn() const;
+	const int getFullMoveNumber() const;
+	
+	// setters
+	void setCurrentTurn(char side);
+	void setFullMoveNumber(int number);
 	
 	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
 	

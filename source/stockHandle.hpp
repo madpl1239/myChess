@@ -33,7 +33,7 @@ public:
 			throw std::runtime_error("failed to create child process");
 		}
 		
-		if(m_pid == 0)
+		if(m_pid == 0) // child process
 		{
 			// child process - stockfish
 			close(m_pipe1[WRITE]);
@@ -125,6 +125,8 @@ public:
 			perror("error reading from stockfish");
 			throw std::runtime_error("could not read response from stockfish");
 		}
+		
+		std::cout << response << "\n";
 		
 		return response;
 	}
