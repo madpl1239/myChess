@@ -12,7 +12,9 @@ corrections on the working branch.
 
 If you want to save the game state, press the 's' key, and if you want to load a previously saved game,
 
-press the 'l' key. The program is still developing.</t>
+press the 'l' key. </br></br>
+
+***The program is still developing.***</br></br>
 
 
 Many corrections have been added, such as: castling bug has been fixed. During the game, a bug was revealed,
@@ -27,4 +29,4 @@ a pawn to a queen, the engine goes crazy and starts making moves on the wrong si
 
 bug to fix, which was revealed during the game. Work in progress. 
 
-Best regards.
+*Best regards - team of myChess*.
