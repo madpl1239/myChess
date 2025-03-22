@@ -101,36 +101,6 @@ public:
 		}
 	}
 
-	std::string getResponse2()
-	{
-		char buffer[256];
-		ssize_t bytesRead;
-		std::string response;
-		
-		while((bytesRead = read(m_pipe2[READ], buffer, sizeof(buffer) - 1)) > 0)
-		{
-			buffer[bytesRead] = '\0';
-			response += buffer;
-			
-			if(response.find("uciok") != std::string::npos or 
-				response.find("readyok") != std::string::npos or 
-				response.find("bestmove") != std::string::npos)
-			{
-				break;
-			}
-		}
-		
-		if(bytesRead == -1)
-		{
-			perror("error reading from stockfish");
-			throw std::runtime_error("could not read response from stockfish");
-		}
-		
-		std::cout << response << "\n";
-		
-		return response;
-	}
-	
 	std::string getResponse()
 	{
 		char buffer[256];
@@ -182,12 +152,12 @@ public:
 		
 		return bestMoveLine;
 	}
-	
+
 	std::string getFinalResponse()
 	{
 		return m_finalResponse;
 	}
-	
+
 private:
 	std::string m_finalResponse = "score cp 0";
 	
