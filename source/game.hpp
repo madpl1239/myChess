@@ -103,13 +103,13 @@ private:
 			{
 				m_commStockfish.clear();
 				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
-				// m_evaluation = getEvaluation(resp);
+				m_evaluation = getEvaluation(m_engine.getFinalResponse(), m_mateEvaluation);
 			}
 			else
 			{
 				m_commStockfish.clear();
 				m_commStockfish = getNextMove(m_engine, m_position);
-				// m_evaluation = getEvaluation(resp);
+				m_evaluation = getEvaluation(m_engine.getFinalResponse(), m_mateEvaluation);
 			}
 			
 			if(m_commStockfish == "(none)")
@@ -158,6 +158,8 @@ private:
 			#ifdef DEBUG
 			std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
 			std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
+			std::cout << "[DEBUG] m_evaluation = " << m_evaluation << "\n";
+			std::cout << "[DEBUG] m_mateEvaluation = " << m_mateEvaluation << "\n";
 			#endif
 		}
 		
@@ -291,5 +293,6 @@ private:
 	bool m_mate = false;
 	bool m_quit = false;
 	
+	int m_mateEvaluation = 50;
 	float m_evaluation = 0.0f;
 };

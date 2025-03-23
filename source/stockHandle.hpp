@@ -153,7 +153,7 @@ public:
 		return bestMoveLine;
 	}
 
-	std::string getFinalResponse()
+	std::string& getFinalResponse()
 	{
 		return m_finalResponse;
 	}

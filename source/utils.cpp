@@ -122,25 +122,39 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 }
 
 
-float getEvaluation(std::string& response)
+float getEvaluation(std::string& response, int& mateEvaluation)
 {
 	std::istringstream iss(response);
 	std::string line;
 	float evaluation = 0.0f;
+	std::regex cp_regex(R"(score cp (-?\d+))");
+	std::regex mate_regex(R"(score mate (-?\d+))");
+
+	mateEvaluation = 100; // Domyślnie brak mata
 
 	while(std::getline(iss, line))
 	{
-		if(line.find("score cp") != std::string::npos)
+		std::smatch match;
+		
+		if(std::regex_search(line, match, mate_regex))
 		{
-			int score;
+			mateEvaluation = std::stoi(match[1].str());
 			
-			sscanf(line.c_str(), "info depth %*d score cp %d", &score);
-			evaluation = score / 100.0f;
+			// Mat -> zerujemy ocenę pozycji
+			evaluation = 0.0f;
+			
+			// możemy od razu wyjść, bo mat jest nadrzędny
+			return evaluation;
 		}
 		
-		else if(line.find("score mate") != std::string::npos)
-			evaluation = (line.find("score mate -") != std::string::npos) ? -6.0f : 6.0f;
+		if(std::regex_search(line, match, cp_regex))
+		{
+			int score = std::stoi(match[1].str());
+			
+			// konwersja centypionów
+			evaluation = score / 100.0f;
+		}
 	}
 
-    return evaluation;
+	return evaluation;
 }

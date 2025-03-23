@@ -20,7 +20,7 @@ MoveLogger::MoveLogger(int x, int y):
 	title.setCharacterSize(TEXTLOGO_HEIGHT);
 	title.setFillColor(sf::Color::Black);
 	// title.setStyle(sf::Text::Italic);
-	title.setPosition(m_posX + 10, m_posY + 10);
+	title.setPosition(m_posX + TEXTON_RIGHT, m_posY + 10);
 	m_staticTexts.push_back(title);
 
 	sf::Text player;
@@ -29,7 +29,7 @@ MoveLogger::MoveLogger(int x, int y):
 	player.setCharacterSize(TEXTMOVE_HEIGHT);
 	player.setFillColor(sf::Color(20, 28, 102, 255));
 	player.setStyle(sf::Text::Bold);
-	player.setPosition(m_posX + 10, m_posY + 60);
+	player.setPosition(m_posX + TEXTON_RIGHT, m_posY + 60);
 	m_staticTexts.push_back(player);
 
 	sf::Text engine;
@@ -38,7 +38,7 @@ MoveLogger::MoveLogger(int x, int y):
 	engine.setCharacterSize(TEXTMOVE_HEIGHT);
 	engine.setFillColor(sf::Color(20, 28, 102, 255));
 	engine.setStyle(sf::Text::Bold);
-	engine.setPosition(m_posX + 10, m_posY + 86);
+	engine.setPosition(m_posX + TEXTON_RIGHT, m_posY + 86);
 	m_staticTexts.push_back(engine);
 
 	sf::Text checkInfo;
@@ -47,7 +47,7 @@ MoveLogger::MoveLogger(int x, int y):
 	checkInfo.setCharacterSize(TEXTCHECK_HEIGHT);
 	checkInfo.setFillColor(sf::Color::Red);
 	checkInfo.setStyle(sf::Text::Italic | sf::Text::Bold);
-	checkInfo.setPosition(m_posX + 10, m_posY + 430);
+	checkInfo.setPosition(m_posX + TEXTON_RIGHT, m_posY + 430);
 	m_checkText = checkInfo;
 	
 	sf::Text invalidInfo;
@@ -56,7 +56,7 @@ MoveLogger::MoveLogger(int x, int y):
 	invalidInfo.setCharacterSize(TEXTCHECK_HEIGHT);
 	invalidInfo.setFillColor(sf::Color::Red);
 	invalidInfo.setStyle(sf::Text::Italic | sf::Text::Bold);
-	invalidInfo.setPosition(m_posX + 10, m_posY + 430);
+	invalidInfo.setPosition(m_posX + TEXTON_RIGHT, m_posY + 430);
 	m_invalidText = invalidInfo;
 }
 
