@@ -11,11 +11,11 @@ ScoreBar::ScoreBar(float boardHeight, float xPosition):
 	m_boardHeight(boardHeight)
 {
 	m_topBar.setSize(sf::Vector2f(m_width, boardHeight / 2));
-	m_topBar.setFillColor(sf::Color(255, 0, 0, 60));
+	m_topBar.setFillColor(sf::Color(255, 0, 0, 80));
 	m_topBar.setPosition(xPosition, 0);
 	
 	m_bottomBar.setSize(sf::Vector2f(m_width, boardHeight / 2));
-	m_bottomBar.setFillColor(sf::Color(0, 255, 0, 60));
+	m_bottomBar.setFillColor(sf::Color(0, 255, 0, 80));
 	m_bottomBar.setPosition(xPosition, boardHeight / 2);
 	
 	#ifdef DEBUG

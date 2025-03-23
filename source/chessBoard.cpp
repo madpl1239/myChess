@@ -750,11 +750,13 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture, sf
 	sf::Sprite pieceSprite(figuresTexture);
 	sf::Sprite bgSprite(bgTexture);
 
-	boardSprite.setPosition(0, 0);
-	m_window.draw(boardSprite);
-	
-	bgSprite.setPosition(SIZE, 0);
+	bgSprite.setPosition(0, 0);
+	bgSprite.setColor(sf::Color(255, 255, 255, 150));
 	m_window.draw(bgSprite);
+	
+	boardSprite.setPosition(0, 0);
+	boardSprite.setColor(sf::Color(255, 255, 255, 150));
+	m_window.draw(boardSprite);
 
 	for(int y = 7; y >= 0; --y) 
 	{

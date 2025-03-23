@@ -73,10 +73,12 @@ public:
 				m_highlighter.setDestination(-5, -5);
 				
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
+			
 			m_board.draw(m_boardTexture, m_figuresTexture, m_bgTexture);
 			m_highlighter.draw(m_window);
 			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
+			
 			m_window.display();
 		}
 	}
@@ -164,16 +166,16 @@ private:
 			std::cout << "[DEBUG] m_evaluation = " << m_evaluation << "\n";
 			std::cout << "[DEBUG] m_mateEvaluation = " << m_mateEvaluation << "\n";
 			#endif
-		}
-		
-		if(abs(m_mateEvaluation) == 1)
-		{
-			// checkmate
-			m_moveLogger.updateInvalidStatus("will be Checkmate!");
 			
-			#ifdef DEBUG
-			std::cout << "[DEBUG] will be Checkmate!\n"; 
-			#endif 
+			if(abs(m_mateEvaluation) == 1)
+			{
+				// checkmate
+				m_moveLogger.updateInvalidStatus("Checkmate!");
+				
+				#ifdef DEBUG
+				std::cout << "[DEBUG] Checkmate!\n"; 
+				#endif 
+			}
 		}
 		
 		m_scoreBar.update(m_evaluation);
