@@ -47,6 +47,10 @@ int main(void)
 		if(not figuresTexture.loadFromFile("./resources/figures.png"))
 			throw std::runtime_error("Could not load figures.png");
 		
+		sf::Texture bgTexture;
+		if(not bgTexture.loadFromFile("./resources/background1.jpg"))
+			throw std::runtime_error("Could not load background1.jpg");
+		
 		#ifdef LINUX
 		Stockfish engine("./stockfish");
 		#endif
@@ -63,8 +67,9 @@ int main(void)
 		
 		Highlighter highlighter{};
 		
-		Game game(window, board, engine, moveLogger, highlighter, 
-				  scoreBar, sndManager, boardTexture, figuresTexture);
+		Game game(window, board, engine, moveLogger,
+				  highlighter, scoreBar, sndManager,
+				  boardTexture, figuresTexture, bgTexture);
 		
 		game.run();
 		

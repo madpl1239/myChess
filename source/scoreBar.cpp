@@ -10,12 +10,12 @@
 ScoreBar::ScoreBar(float boardHeight, float xPosition):
 	m_boardHeight(boardHeight)
 {
-	m_topBar.setSize(sf::Vector2f(m_height, boardHeight / 2));
-	m_topBar.setFillColor(sf::Color::Red);
+	m_topBar.setSize(sf::Vector2f(m_width, boardHeight / 2));
+	m_topBar.setFillColor(sf::Color(255, 0, 0, 60));
 	m_topBar.setPosition(xPosition, 0);
 	
-	m_bottomBar.setSize(sf::Vector2f(m_height, boardHeight / 2));
-	m_bottomBar.setFillColor(sf::Color::Green);
+	m_bottomBar.setSize(sf::Vector2f(m_width, boardHeight / 2));
+	m_bottomBar.setFillColor(sf::Color(0, 255, 0, 60));
 	m_bottomBar.setPosition(xPosition, boardHeight / 2);
 	
 	#ifdef DEBUG
@@ -43,8 +43,8 @@ void ScoreBar::update(float evaluation)
 	float topHeight = (1.0f - ratio) * m_boardHeight;
 	float bottomHeight = ratio * m_boardHeight;
 	
-	m_topBar.setSize(sf::Vector2f(10, topHeight));
-	m_bottomBar.setSize(sf::Vector2f(10, bottomHeight));
+	m_topBar.setSize(sf::Vector2f(m_width, topHeight));
+	m_bottomBar.setSize(sf::Vector2f(m_width, bottomHeight));
 	m_bottomBar.setPosition(m_topBar.getPosition().x, topHeight);
 }
 

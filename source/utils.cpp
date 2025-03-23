@@ -131,7 +131,7 @@ float getEvaluation(std::string& response, int& mateEvaluation)
 	std::regex cp_regex(R"(score cp (-?\d+))");
 	std::regex mate_regex(R"(score mate (-?\d+))");
 
-	mateEvaluation = 100; // no mat by default
+	mateEvaluation = 50; // no mat by default
 
 	while(std::getline(iss, line))
 	{

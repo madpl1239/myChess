@@ -744,13 +744,17 @@ void ChessBoard::setFullMoveNumber(int number)
 }
 
 
-void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture) 
+void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture, sf::Texture& bgTexture) 
 {
 	sf::Sprite boardSprite(boardTexture);
 	sf::Sprite pieceSprite(figuresTexture);
+	sf::Sprite bgSprite(bgTexture);
 
 	boardSprite.setPosition(0, 0);
 	m_window.draw(boardSprite);
+	
+	bgSprite.setPosition(SIZE, 0);
+	m_window.draw(bgSprite);
 
 	for(int y = 7; y >= 0; --y) 
 	{
