@@ -6,29 +6,59 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include "defines.hpp"
 #include "chessBoard.hpp"
 #include "stockHandle.hpp"
 #include "moveLogger.hpp"
 #include "highLighter.hpp"
 #include "sndManager.hpp"
+#include "scoreBar.hpp"
 
 
 class Game
 {
 public:
 	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
-		 MoveLogger& moveLogger, Highlighter& highlighter, SoundManager& sndManager,
+		 MoveLogger& moveLogger, Highlighter& highlighter, 
+		 ScoreBar& scoreBar, SoundManager& sndManager,
 		 sf::Texture& boardTexture, sf::Texture& figuresTexture):
 	m_window(window),
 	m_board(board),
 	m_engine(engine),
 	m_moveLogger(moveLogger),
 	m_highlighter(highlighter),
+	m_scoreBar(scoreBar),
 	m_sndManager(sndManager),
 	m_boardTexture(boardTexture),
 	m_figuresTexture(figuresTexture),
 	m_mate(false)
-	{}
+	{
+		#ifdef DEBUG
+		std::cout << "[DEBUG] ctor Game\n";
+		#endif
+	}
+	
+	~Game()
+	{
+		m_engineMoveTimer = {};
+		m_engineMovePending = false;
+		
+		m_position = "";
+		m_commPlayer = "";
+		m_commStockfish = "";
+		m_fen = "";
+		
+		m_selectedPiece = {};
+		m_isPieceSelected = false;
+		
+		m_mate = false;
+		m_quit = false;
+		
+		#ifdef DEBUG
+		std::cout << "[DEBUG] dtor Game\n";
+		#endif
+	}
 
 	void run()
 	{
@@ -44,6 +74,7 @@ public:
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 			m_board.draw(m_boardTexture, m_figuresTexture);
 			m_highlighter.draw(m_window);
+			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
 			m_window.display();
 		}
@@ -62,23 +93,23 @@ private:
 				handleKeyPress(event);
 			
 			else if(event.type == sf::Event::MouseButtonPressed)
-				handleMousePress(event);
+				handleMousePress(event); // player move
 		}
 		
-		// checking for 1 seconds
+		// engine move
 		if(m_engineMovePending and m_engineMoveTimer.getElapsedTime().asSeconds() >= 1 and !m_mate)
 		{
 			if(m_board.m_loaded)
 			{
 				m_commStockfish.clear();
-				
 				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
+				// m_evaluation = getEvaluation(resp);
 			}
 			else
 			{
 				m_commStockfish.clear();
-				
 				m_commStockfish = getNextMove(m_engine, m_position);
+				// m_evaluation = getEvaluation(resp);
 			}
 			
 			if(m_commStockfish == "(none)")
@@ -88,9 +119,12 @@ private:
 			
 			sf::Vector2i rStart;
 			sf::Vector2i rEnd;
+			bool isCastling = false;
 			
-			// commStockfish, position not updated in castling() method
-			bool isCastling = m_board.castling(m_commStockfish, m_position, rStart, rEnd);
+			// m_commStockfish, m_position not updated in castling() method
+			sf::Vector2i kingPos = m_board.toCoords(m_commStockfish[0], m_commStockfish[1]);
+			if(m_board.getPiece(kingPos.x, kingPos.y).m_type == PieceType::KING)
+				isCastling = m_board.castling(m_commStockfish, m_position, rStart, rEnd);
 			
 			m_position += " " + m_commStockfish;
 			sf::Vector2i posStart = m_board.toCoords(m_commStockfish[0], m_commStockfish[1]);
@@ -114,13 +148,11 @@ private:
 			if(isCastling and m_board.atBoard(rStart, rEnd))
 			{
 				m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-				
 				m_board.setCurrentTurn('W');
 				m_board.setFullMoveNumber(m_board.getFullMoveNumber() - 1);
 			}
 			
 			m_sndManager.play("move");
-			
 			m_engineMovePending = false;
 			
 			#ifdef DEBUG
@@ -146,7 +178,10 @@ private:
 			m_quit = true;
 		
 		else if(event.key.code == sf::Keyboard::S)
+		{
 			m_board.saveGame("./save_game.txt");
+			m_sndManager.play("check");
+		}
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
@@ -159,9 +194,11 @@ private:
 			char sideToMove = m_board.getCurrentTurn();
 			m_fen = m_board.generateFEN(sideToMove);
 			std::cout << "Generated FEN after loading game: " << m_fen << "\n";
+			m_sndManager.play("check");
 		}
 	}
 
+	// player move
 	void handleMousePress(sf::Event& event)
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
@@ -183,7 +220,6 @@ private:
 						m_selectedPiece = {x, y};
 						m_highlighter.setSelection(x, y);
 						m_moveLogger.updateInvalidStatus("");
-						
 						m_isPieceSelected = true;
 					}
 				}
@@ -197,7 +233,11 @@ private:
 						
 						sf::Vector2i rStart;
 						sf::Vector2i rEnd;
-						bool isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
+						bool isCastling = false;
+						
+						sf::Vector2i kingPos = m_board.toCoords(m_commPlayer[0], m_commPlayer[1]);
+						if(m_board.getPiece(kingPos.x, kingPos.y).m_type == PieceType::KING)
+							isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
 						
 						m_position += " " + m_commPlayer;
 						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
@@ -205,7 +245,6 @@ private:
 						if(isCastling and m_board.atBoard(rStart, rEnd))
 						{
 							m_board.movePiece(rStart.x, rStart.y, rEnd.x, rEnd.y);
-							
 							m_board.setCurrentTurn('B');
 						}
 						
@@ -233,6 +272,7 @@ private:
 	Stockfish& m_engine;
 	MoveLogger& m_moveLogger;
 	Highlighter& m_highlighter;
+	ScoreBar& m_scoreBar;
 	SoundManager& m_sndManager;
 	sf::Texture& m_boardTexture;
 	sf::Texture& m_figuresTexture;
@@ -250,4 +290,6 @@ private:
 
 	bool m_mate = false;
 	bool m_quit = false;
+	
+	float m_evaluation = 0.0f;
 };
