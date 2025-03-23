@@ -40,7 +40,7 @@ int main(void)
 			throw std::runtime_error("load sounds error!");
 		
 		sf::Texture boardTexture;
-		if(not boardTexture.loadFromFile("./resources/board.png"))
+		if(not boardTexture.loadFromFile("./resources/board2.png"))
 			throw std::runtime_error("Could not load board.png");
 		
 		sf::Texture figuresTexture;
@@ -48,8 +48,8 @@ int main(void)
 			throw std::runtime_error("Could not load figures.png");
 		
 		sf::Texture bgTexture;
-		if(not bgTexture.loadFromFile("./resources/background1.jpg"))
-			throw std::runtime_error("Could not load background1.jpg");
+		if(not bgTexture.loadFromFile("./resources/background2.jpg"))
+			throw std::runtime_error("Could not load background2.jpg");
 		
 		#ifdef LINUX
 		Stockfish engine("./stockfish");
