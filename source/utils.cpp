@@ -83,7 +83,7 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 	std::string command = "position startpos moves" + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 2");
+	engine.sendCommand("go depth 4");
 	
 	std::string response = engine.getResponse();
 	
@@ -105,7 +105,7 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 	std::string command = "position fen " + fen + " moves " + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 2");
+	engine.sendCommand("go depth 4");
 	
 	std::string response = engine.getResponse();
 	
@@ -127,10 +127,11 @@ float getEvaluation(std::string& response, int& mateEvaluation)
 	std::istringstream iss(response);
 	std::string line;
 	float evaluation = 0.0f;
+	
 	std::regex cp_regex(R"(score cp (-?\d+))");
 	std::regex mate_regex(R"(score mate (-?\d+))");
 
-	mateEvaluation = 100; // Domyślnie brak mata
+	mateEvaluation = 100; // no mat by default
 
 	while(std::getline(iss, line))
 	{
@@ -140,10 +141,10 @@ float getEvaluation(std::string& response, int& mateEvaluation)
 		{
 			mateEvaluation = std::stoi(match[1].str());
 			
-			// Mat -> zerujemy ocenę pozycji
+			// checkmate -> we reset the position evaluation
 			evaluation = 0.0f;
 			
-			// możemy od razu wyjść, bo mat jest nadrzędny
+			// we can leave immediately because checkmate is superior
 			return evaluation;
 		}
 		
@@ -151,7 +152,7 @@ float getEvaluation(std::string& response, int& mateEvaluation)
 		{
 			int score = std::stoi(match[1].str());
 			
-			// konwersja centypionów
+			// conversion of centipiones
 			evaluation = score / 100.0f;
 		}
 	}
