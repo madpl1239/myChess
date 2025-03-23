@@ -22,7 +22,7 @@ public:
 	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
 		 MoveLogger& moveLogger, Highlighter& highlighter, 
 		 ScoreBar& scoreBar, SoundManager& sndManager,
-		 sf::Texture& boardTexture, sf::Texture& figuresTexture):
+		 sf::Texture& boardTexture, sf::Texture& figuresTexture, sf::Texture& bgTexture):
 	m_window(window),
 	m_board(board),
 	m_engine(engine),
@@ -32,6 +32,7 @@ public:
 	m_sndManager(sndManager),
 	m_boardTexture(boardTexture),
 	m_figuresTexture(figuresTexture),
+	m_bgTexture(bgTexture),
 	m_mate(false)
 	{
 		#ifdef DEBUG
@@ -72,7 +73,7 @@ public:
 				m_highlighter.setDestination(-5, -5);
 				
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
-			m_board.draw(m_boardTexture, m_figuresTexture);
+			m_board.draw(m_boardTexture, m_figuresTexture, m_bgTexture);
 			m_highlighter.draw(m_window);
 			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
@@ -103,16 +104,18 @@ private:
 			{
 				m_commStockfish.clear();
 				m_commStockfish = getNextMoveAfterFEN(m_engine, m_fen, m_position);
-				// m_evaluation = getEvaluation(resp);
+				m_evaluation = -getEvaluation(m_engine.getFinalResponse(), m_mateEvaluation);
+				m_mateEvaluation *= -1; 
 			}
 			else
 			{
 				m_commStockfish.clear();
 				m_commStockfish = getNextMove(m_engine, m_position);
-				// m_evaluation = getEvaluation(resp);
+				m_evaluation = -getEvaluation(m_engine.getFinalResponse(), m_mateEvaluation);
+				m_mateEvaluation *= -1;
 			}
 			
-			if(m_commStockfish == "(none)")
+			if(abs(m_mateEvaluation) == 0)
 				m_mate = true;
 			
 			m_moveLogger.updateMove(false, m_commStockfish);
@@ -158,18 +161,22 @@ private:
 			#ifdef DEBUG
 			std::cout << "[DEBUG] m_board.m_fullMoveNumber = " << m_board.getFullMoveNumber() << "\n";
 			std::cout << "[DEBUG] m_board.m_currentTurn = " << m_board.getCurrentTurn() << "\n";
+			std::cout << "[DEBUG] m_evaluation = " << m_evaluation << "\n";
+			std::cout << "[DEBUG] m_mateEvaluation = " << m_mateEvaluation << "\n";
 			#endif
 		}
 		
-		if(m_mate)
+		if(abs(m_mateEvaluation) == 1)
 		{
 			// checkmate
-			m_moveLogger.updateInvalidStatus("Checkmate!");
+			m_moveLogger.updateInvalidStatus("will be Checkmate!");
 			
 			#ifdef DEBUG
-			std::cout << "[DEBUG] Checkmate!\n"; 
+			std::cout << "[DEBUG] will be Checkmate!\n"; 
 			#endif 
 		}
+		
+		m_scoreBar.update(m_evaluation);
 	}
 
 	void handleKeyPress(sf::Event& event)
@@ -201,7 +208,7 @@ private:
 	// player move
 	void handleMousePress(sf::Event& event)
 	{
-		if(event.mouseButton.button == sf::Mouse::Left)
+		if(event.mouseButton.button == sf::Mouse::Left and !m_mate)
 		{
 			m_engineMoveTimer.restart();
 			
@@ -276,6 +283,7 @@ private:
 	SoundManager& m_sndManager;
 	sf::Texture& m_boardTexture;
 	sf::Texture& m_figuresTexture;
+	sf::Texture& m_bgTexture;
 
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
@@ -291,5 +299,6 @@ private:
 	bool m_mate = false;
 	bool m_quit = false;
 	
+	int m_mateEvaluation = 50;
 	float m_evaluation = 0.0f;
 };

@@ -25,5 +25,5 @@ private:
 	
 	float m_boardHeight;
 	
-	const int m_height = 14;
+	const int m_width = 24;
 };

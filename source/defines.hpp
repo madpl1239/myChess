@@ -26,3 +26,4 @@ const int OFFSET = 28;		// offset for piece
 const int TEXTLOGO_HEIGHT = 16;
 const int TEXTMOVE_HEIGHT = 26;
 const int TEXTCHECK_HEIGHT = 32;
+const int TEXTON_RIGHT = 24;

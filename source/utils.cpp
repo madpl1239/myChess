@@ -83,7 +83,7 @@ std::string getNextMove(Stockfish& engine, std::string& position)
 	std::string command = "position startpos moves" + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 2");
+	engine.sendCommand("go depth 4");
 	
 	std::string response = engine.getResponse();
 	
@@ -105,7 +105,7 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 	std::string command = "position fen " + fen + " moves " + position;
 	
 	engine.sendCommand(command);
-	engine.sendCommand("go depth 2");
+	engine.sendCommand("go depth 4");
 	
 	std::string response = engine.getResponse();
 	
@@ -122,25 +122,40 @@ std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string
 }
 
 
-float getEvaluation(std::string& response)
+float getEvaluation(std::string& response, int& mateEvaluation)
 {
 	std::istringstream iss(response);
 	std::string line;
 	float evaluation = 0.0f;
+	
+	std::regex cp_regex(R"(score cp (-?\d+))");
+	std::regex mate_regex(R"(score mate (-?\d+))");
+
+	mateEvaluation = 50; // no mat by default
 
 	while(std::getline(iss, line))
 	{
-		if(line.find("score cp") != std::string::npos)
+		std::smatch match;
+		
+		if(std::regex_search(line, match, mate_regex))
 		{
-			int score;
+			mateEvaluation = std::stoi(match[1].str());
 			
-			sscanf(line.c_str(), "info depth %*d score cp %d", &score);
-			evaluation = score / 100.0f;
+			// checkmate -> we reset the position evaluation
+			evaluation = 0.0f;
+			
+			// we can leave immediately because checkmate is superior
+			return evaluation;
 		}
 		
-		else if(line.find("score mate") != std::string::npos)
-			evaluation = (line.find("score mate -") != std::string::npos) ? -6.0f : 6.0f;
+		if(std::regex_search(line, match, cp_regex))
+		{
+			int score = std::stoi(match[1].str());
+			
+			// conversion of centipiones
+			evaluation = score / 100.0f;
+		}
 	}
 
-    return evaluation;
+	return evaluation;
 }

@@ -106,18 +106,38 @@ public:
 		char buffer[256];
 		ssize_t bytesRead;
 		std::string response;
+		std::string lastEvalLine, bestMoveLine;
 		
 		while((bytesRead = read(m_pipe2[READ], buffer, sizeof(buffer) - 1)) > 0)
 		{
 			buffer[bytesRead] = '\0';
 			response += buffer;
 			
-			if(response.find("uciok") != std::string::npos or 
-				response.find("readyok") != std::string::npos or 
-				response.find("bestmove") != std::string::npos)
+			std::istringstream iss(response);
+			std::string line;
+			while(std::getline(iss, line))
 			{
-				break;
+				if(line.find("score cp") != std::string::npos or
+					line.find("score mate") != std::string::npos)
+				{
+					// Zapisujemy ostatnią ocenę pozycji
+					lastEvalLine = line;
+				}
+				
+				if(line.find("uciok") != std::string::npos or
+					line.find("readyok") != std::string::npos or
+					line.find("bestmove") != std::string::npos)
+				{
+					// Zapisujemy najlepszy ruch
+					bestMoveLine = line;
+					
+					break; // Jeśli mamy bestmove, przerywamy
+				}
 			}
+			
+			// Jeśli mamy bestmove, kończymy odczyt
+			if(not bestMoveLine.empty())
+				break;
 		}
 		
 		if(bytesRead == -1)
@@ -126,12 +146,21 @@ public:
 			throw std::runtime_error("could not read response from stockfish");
 		}
 		
-		std::cout << response << "\n";
+		// Aktualizujemy globalną zmienną `finalResponse`
+		if(not lastEvalLine.empty())
+			m_finalResponse = lastEvalLine;
 		
-		return response;
+		return bestMoveLine;
 	}
-	
+
+	std::string& getFinalResponse()
+	{
+		return m_finalResponse;
+	}
+
 private:
+	std::string m_finalResponse = "score cp 0";
+	
 	pid_t m_pid;
 
 	// for parent process

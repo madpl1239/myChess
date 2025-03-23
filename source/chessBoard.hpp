@@ -50,7 +50,7 @@ public:
 	void setCurrentTurn(char side);
 	void setFullMoveNumber(int number);
 	
-	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture);
+	void draw(sf::Texture& boardTexture, sf::Texture& figuresTexture, sf::Texture& bgTexture);
 	
 	bool m_loaded;
 
