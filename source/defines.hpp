@@ -18,6 +18,7 @@
 
 #define ARIAL "./resources/arial.ttf"
 #define DIGITAL "./resources/digital-7mono.ttf"
+#define DEJAVUSANS "./resources/DejaVuSans.ttf"
 
 const int SIZE = 504;		// size of chessBoard (504x504 pikseli)
 const int TILE_SIZE = 56;	// chess square size
