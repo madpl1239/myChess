@@ -18,6 +18,7 @@
 #include "sndManager.hpp"
 #include "game.hpp"
 #include "scoreBar.hpp"
+#include "chessFont.hpp"
 
 
 int main(void) 
@@ -34,6 +35,7 @@ int main(void)
 		
 		MoveLogger moveLogger(SIZE + 10, 10);
 		ScoreBar scoreBar(504, 505);
+		ChessFont chessPiece("./resources/DejaVuSans.ttf");
 		
 		SoundManager sndManager{};
 		if(not initialSounds(sndManager))
