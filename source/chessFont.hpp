@@ -6,27 +6,41 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <unordered_map>
 
 
 class ChessFont
 {
 public:
+	enum color_t
+	{
+		White,
+		Black
+	};
+	
 	ChessFont(const std::string& fontPath)
 	{
-		if(not font.loadFromFile(fontPath))
+		if(not m_font.loadFromFile(fontPath))
 			throw std::runtime_error("Error: Unable to load font!");
 		
-		piece.setFont(font);
-		piece.setCharacterSize(100);
-		piece.setFillColor(sf::Color::White);
+		m_piece.setFont(m_font);
+		m_piece.setCharacterSize(62);
+		m_piece.setFillColor(sf::Color::White);
 	}
 
-	void setPiece(const std::string& pieceName, float x, float y)
+	void setPiece(const std::string& pieceName, float x, float y, color_t col)
 	{
-		if(pieceSymbols.find(pieceName) != pieceSymbols.end())
+		if(m_pieceSymbols.find(pieceName) != m_pieceSymbols.end())
 		{
-			piece.setString(pieceSymbols[pieceName]);
-			piece.setPosition(x, y);
+			m_piece.setString(m_pieceSymbols[pieceName]);
+			m_piece.setPosition(x, y);
+			
+			if(col == color_t::White)
+				m_piece.setFillColor(sf::Color::White);
+			
+			else if(col == color_t::Black)
+				m_piece.setFillColor(sf::Color::Black);
 		}
 		else
 			std::cerr << "Error: Unknown chess piece!\n";
@@ -34,14 +48,14 @@ public:
 
 	void draw(sf::RenderWindow& window)
 	{
-		window.draw(piece);
+		window.draw(m_piece);
 	}
 	
 private:
-	sf::Font font;
-	sf::Text piece;
+	sf::Font m_font;
+	sf::Text m_piece;
 
-	std::unordered_map<std::string, wchar_t> pieceSymbols
+	std::unordered_map<std::string, wchar_t> m_pieceSymbols
 	{
 		{"king_white", L'\u2654'},
 		{"queen_white", L'\u2655'},
