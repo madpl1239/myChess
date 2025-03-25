@@ -12,12 +12,13 @@
 #include "piece.hpp"
 #include "moveLogger.hpp"
 #include "sndManager.hpp"
+#include "chessFont.hpp"
 
 
 class ChessBoard
 {
 public:
-	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager);
+	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager, ChessFont& pieceFont);
 	~ChessBoard();
 
 	void setInitialPositions();
@@ -69,4 +70,5 @@ private:
 	MoveLogger& m_moveLogger;
 	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;
+	ChessFont& m_pieceFont;
 };

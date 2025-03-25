@@ -64,7 +64,7 @@ int main(void)
 		if(initialCommand(engine) == -1)
 			throw std::runtime_error("engine error!");
 		
-		ChessBoard board(window, moveLogger, sndManager);
+		ChessBoard board(window, moveLogger, sndManager, chessPiece);
 		board.setInitialPositions();
 		
 		Highlighter highlighter{};

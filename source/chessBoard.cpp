@@ -10,10 +10,11 @@
 #include "moveLogger.hpp"
 
 
-ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager):
+ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager, ChessFont& pieceFont):
 	m_window(window),
 	m_moveLogger(logger),
 	m_sndManager(sndManager),
+	m_pieceFont(pieceFont),
 	m_enPassantTarget(-1, -1),
 	m_loaded(false)
 {
@@ -379,6 +380,16 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 		}
 	}
 
+	if(m_board[endY][endX].m_type != PieceType::NONE)
+	{
+		char color = m_board[endY][endX].m_color;
+		PieceType figure = m_board[endY][endX].m_type;
+		
+		std::string strPiece = m_pieceFont.pieceTypeToSymbol(figure, color);
+		
+		m_pieceFont.addCapturedPiece(strPiece, color);
+	}
+	
 	// move piece to new position
 	m_board[endY][endX] = movingPiece;
 	m_board[startY][startX] = Piece();
@@ -749,10 +760,12 @@ void ChessBoard::draw(sf::Texture& boardTexture, sf::Texture& figuresTexture, sf
 	sf::Sprite boardSprite(boardTexture);
 	sf::Sprite pieceSprite(figuresTexture);
 	sf::Sprite bgSprite(bgTexture);
-
+	
 	bgSprite.setPosition(0, 0);
 	bgSprite.setColor(sf::Color(255, 255, 255, 150));
 	m_window.draw(bgSprite);
+	
+	m_pieceFont.draw(m_window);
 	
 	boardSprite.setPosition(0, 0);
 	boardSprite.setColor(sf::Color(255, 255, 255, 150));
