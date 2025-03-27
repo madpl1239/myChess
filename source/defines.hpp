@@ -28,9 +28,3 @@ const int TEXTLOGO_HEIGHT = 16;
 const int TEXTMOVE_HEIGHT = 26;
 const int TEXTCHECK_HEIGHT = 32;
 const int TEXTON_RIGHT = 24;
-
-const int PIECEFONT_SIZE = 36;
-const int PIECEWHITE_YPOS = 180;
-const int PIECEBLACK_YPOS = 250;
-const int PIECE_STARTX = 530;
-const int PIECE_DELTAX = 22;

@@ -28,7 +28,9 @@ int main(void)
 		// Logo
 		std::cout << "myChess testing version\n";
 		
-		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess - testing");
+		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess - testing",
+								sf::Style::Titlebar | sf::Style::Close);
+		
 		window.setPosition(sf::Vector2i(200, 200));
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);

@@ -67,11 +67,15 @@ public:
 		
 		while(m_window.isOpen() and !m_quit) 
 		{
+			sf::Time deltaTime = m_loggerTimer.restart();
+			
 			gameLoop();
 			
 			if(not m_engineMovePending)
 				m_highlighter.setDestination(-5, -5);
-				
+			
+			m_moveLogger.updateSaveLoad();
+			
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 			
 			m_board.draw(m_boardTexture, m_figuresTexture, m_bgTexture);
@@ -189,12 +193,14 @@ private:
 		else if(event.key.code == sf::Keyboard::S)
 		{
 			m_board.saveGame("./save_game.txt");
+			m_moveLogger.showSaveLoadMessage("save game");
 			m_sndManager.play("check");
 		}
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
 			m_board.loadGame("./save_game.txt");
+			m_moveLogger.showSaveLoadMessage("load game");
 			m_board.m_loaded = true;
 			m_position.clear();
 			m_commPlayer.clear();
@@ -287,6 +293,7 @@ private:
 	sf::Texture& m_figuresTexture;
 	sf::Texture& m_bgTexture;
 
+	sf::Clock m_loggerTimer{};
 	sf::Clock m_engineMoveTimer{};
 	bool m_engineMovePending = false;
 
