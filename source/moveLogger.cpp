@@ -9,7 +9,9 @@
 
 MoveLogger::MoveLogger(int x, int y):
 	m_posX(x),
-	m_posY(y)
+	m_posY(y),
+	m_saveLoadVisible(false),
+	m_saveLoadAlpha(255)
 {
 	if(not m_font.loadFromFile(ARIAL))
 		std::cout << "Error loading font!\n";
@@ -58,6 +60,15 @@ MoveLogger::MoveLogger(int x, int y):
 	invalidInfo.setStyle(sf::Text::Italic | sf::Text::Bold);
 	invalidInfo.setPosition(m_posX + TEXTON_RIGHT, m_posY + 430);
 	m_invalidText = invalidInfo;
+	
+	sf::Text saveLoadText;
+	saveLoadText.setFont(m_font);
+	saveLoadText.setString("save game");
+	saveLoadText.setCharacterSize(TEXTCHECK_HEIGHT);
+	saveLoadText.setFillColor(sf::Color(0, 0, 0, m_saveLoadAlpha));
+	saveLoadText.setStyle(sf::Text::Italic);
+	saveLoadText.setPosition(m_posX + TEXTON_RIGHT, m_posY + 430);
+	m_saveLoadText = saveLoadText;
 }
 
 
@@ -84,11 +95,41 @@ void MoveLogger::updateInvalidStatus(const std::string& checkMessage)
 }
 
 
+void MoveLogger::showSaveLoadMessage(const std::string& message)
+{
+	m_saveLoadText.setString(message);
+	m_saveLoadVisible = true;
+	m_saveLoadClock.restart();
+	m_saveLoadAlpha = 255;
+	m_saveLoadText.setFillColor(sf::Color(0x7F, 0xFF, 0xD4, m_saveLoadAlpha));
+}
+
+
+void MoveLogger::updateSaveLoad()
+{
+	if(m_saveLoadVisible)
+	{
+		float elapsed = m_saveLoadClock.getElapsedTime().asSeconds();
+		if(elapsed >= 4.0f)
+			m_saveLoadVisible = false;
+		
+		else if(elapsed >= 3.0f)
+		{
+			m_saveLoadAlpha = static_cast<sf::Uint8>(255 * (4.0f - elapsed));
+			m_saveLoadText.setFillColor(sf::Color(0x7F, 0xFF, 0xD4, m_saveLoadAlpha));
+		}
+	}
+}
+
+
 void MoveLogger::draw(sf::RenderWindow& window)
 {
 	for(const auto& text : m_staticTexts)
 		window.draw(text);
-	
+
 	window.draw(m_checkText);
 	window.draw(m_invalidText);
+
+	if(m_saveLoadVisible)
+		window.draw(m_saveLoadText);
 }
