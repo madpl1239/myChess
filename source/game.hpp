@@ -208,7 +208,11 @@ private:
 			m_engine.sendCommand("ucinewgame");
 			char sideToMove = m_board.getCurrentTurn();
 			m_fen = m_board.generateFEN(sideToMove);
+			
+			#ifdef DEBUG
 			std::cout << "Generated FEN after loading game: " << m_fen << "\n";
+			#endif
+			
 			m_sndManager.play("check");
 		}
 	}
