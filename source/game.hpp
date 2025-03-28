@@ -255,7 +255,8 @@ private:
 							isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
 						
 						m_position += " " + m_commPlayer;
-						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
+						if(m_board.atBoard(m_selectedPiece, {x, y}))
+							m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
 						
 						if(isCastling and m_board.atBoard(rStart, rEnd))
 						{

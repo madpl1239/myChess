@@ -22,7 +22,11 @@ int initialCommand(Stockfish& engine)
 	
 	engine.sendCommand("isready");
 	if(engine.getResponse().find("readyok") != std::string::npos)
+	{
+		#ifdef DEBUG
 		std::cout << "readyok\n";
+		#endif
+	}
 	else
 	{
 		engine.sendCommand("quit");
