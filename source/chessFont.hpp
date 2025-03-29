@@ -49,7 +49,11 @@ public:
 			}
 		}
 		else
+			#ifdef DEBUG
 			std::cerr << "Error: Unknown chess piece!\n";
+			#else
+			;
+			#endif		
 	}
 	
 	std::string pieceTypeToSymbol(PieceType type, char col)

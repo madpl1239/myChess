@@ -208,7 +208,11 @@ private:
 			m_engine.sendCommand("ucinewgame");
 			char sideToMove = m_board.getCurrentTurn();
 			m_fen = m_board.generateFEN(sideToMove);
+			
+			#ifdef DEBUG
 			std::cout << "Generated FEN after loading game: " << m_fen << "\n";
+			#endif
+			
 			m_sndManager.play("check");
 		}
 	}
@@ -255,7 +259,8 @@ private:
 							isCastling = m_board.castling(m_commPlayer, m_position, rStart, rEnd);
 						
 						m_position += " " + m_commPlayer;
-						m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
+						if(m_board.atBoard(m_selectedPiece, {x, y}))
+							m_board.movePiece(m_selectedPiece.x, m_selectedPiece.y, x, y);
 						
 						if(isCastling and m_board.atBoard(rStart, rEnd))
 						{

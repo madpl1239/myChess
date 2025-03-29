@@ -26,7 +26,9 @@ int main(void)
 	try
 	{
 		// Logo
+		#ifdef DEBUG
 		std::cout << "myChess testing version\n";
+		#endif
 		
 		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess - testing",
 								sf::Style::Titlebar | sf::Style::Close);
