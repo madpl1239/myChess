@@ -22,7 +22,7 @@ Build:</br>
 git clone .... myChess (or any other location)</br>
 if not exists build directory, please create it:</br>
 mkdir build</br>
-cmake -S . -B ./build</br>
+cmake -S .   -B ./build</br>
 cmake --build ./build</br></br>
 
 This is what the GUI we create looks like
