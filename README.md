@@ -25,6 +25,9 @@ mkdir build</br>
 cmake -S . -B ./build</br>
 cmake --build ./build</br></br>
 
+This is what the GUI we create looks like
+![alt text](chess1.png)
+
 
 Many corrections have been added, such as: castling bug has been fixed. During the game, a bug was revealed,
 
