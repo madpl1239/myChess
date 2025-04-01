@@ -10,7 +10,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "piece.hpp"
-#include "moveLogger.hpp"
+// #include "moveLogger.hpp"
+#include "textFader.hpp"
 #include "sndManager.hpp"
 #include "chessFont.hpp"
 
@@ -18,7 +19,8 @@
 class ChessBoard
 {
 public:
-	ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager, ChessFont& pieceFont);
+	ChessBoard(sf::RenderWindow& window, /*MoveLogger& logger*/
+			   TextFader& fader, SoundManager& sndManager, ChessFont& pieceFont);
 	~ChessBoard();
 
 	void setInitialPositions();
@@ -67,7 +69,9 @@ private:
 	sf::Vector2i m_enPassantTarget;
 	int m_fullMoveNumber;
 	char m_currentTurn;
-	MoveLogger& m_moveLogger;
+	// MoveLogger& m_moveLogger;
+	TextFader& m_fader;
+	
 	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;
 	ChessFont& m_pieceFont;

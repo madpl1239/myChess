@@ -10,9 +10,11 @@
 #include "moveLogger.hpp"
 
 
-ChessBoard::ChessBoard(sf::RenderWindow& window, MoveLogger& logger, SoundManager& sndManager, ChessFont& pieceFont):
+ChessBoard::ChessBoard(sf::RenderWindow& window, /*MoveLogger& logger*/
+					   TextFader& fader, SoundManager& sndManager, ChessFont& pieceFont):
 	m_window(window),
-	m_moveLogger(logger),
+	// m_moveLogger(logger),
+	m_fader(fader),
 	m_sndManager(sndManager),
 	m_pieceFont(pieceFont),
 	m_enPassantTarget(-1, -1),
@@ -422,7 +424,13 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 
 	if(isInCheck(opponentColor))
 	{
-		m_moveLogger.updateCheckStatus("King is check!");
+		// m_moveLogger.updateCheckStatus("King is check!");
+		std::string message = "King is check!";
+		
+		m_fader.showMessage(message, {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+							sf::Color::Red, TEXTCHECK_HEIGHT, 
+							sf::Text::Italic | sf::Text::Bold);
+		
 		m_sndManager.play("check");
 		
 		#ifdef DEBUG
@@ -430,14 +438,14 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 					<< " king is in check!\n";
 		#endif
 	}
+	/*
 	else
 		m_moveLogger.updateCheckStatus("");
+	*/
 
 	// increment full move number after Black's move
 	if(movingPiece.m_color == 'B')
-	{
 		++m_fullMoveNumber;
-	}
 	
 	m_currentTurn = (m_currentTurn == 'W') ? 'B' : 'W';
 }

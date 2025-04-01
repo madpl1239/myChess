@@ -1,6 +1,8 @@
 /*
  * highLighter.hpp
  * 
+ * Class highlights a given figure.
+ * 
  * 04-02-2025 by madpl
  */
 #pragma once

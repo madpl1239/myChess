@@ -1,6 +1,8 @@
 /*
  * highLighter.cpp
  * 
+ * Class highlights a given figure - implementation.
+ * 
  * 04-02-2025 by madpl
  */
 #include <iostream>

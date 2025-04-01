@@ -20,13 +20,14 @@ class Game
 {
 public:
 	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
-		 MoveLogger& moveLogger, Highlighter& highlighter, 
+		 MoveLogger& moveLogger, TextFader& fader, Highlighter& highlighter, 
 		 ScoreBar& scoreBar, SoundManager& sndManager,
 		 sf::Texture& boardTexture, sf::Texture& figuresTexture, sf::Texture& bgTexture):
 	m_window(window),
 	m_board(board),
 	m_engine(engine),
 	m_moveLogger(moveLogger),
+	m_textFader(fader),
 	m_highlighter(highlighter),
 	m_scoreBar(scoreBar),
 	m_sndManager(sndManager),
@@ -74,6 +75,7 @@ public:
 			if(not m_engineMovePending)
 				m_highlighter.setDestination(-5, -5);
 			
+			m_textFader.update();
 			m_moveLogger.updateSaveLoad();
 			
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
@@ -82,6 +84,7 @@ public:
 			m_highlighter.draw(m_window);
 			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
+			m_textFader.draw(m_window);
 			
 			m_window.display();
 		}
@@ -291,6 +294,7 @@ private:
 	ChessBoard& m_board;
 	Stockfish& m_engine;
 	MoveLogger& m_moveLogger;
+	TextFader& m_textFader;
 	Highlighter& m_highlighter;
 	ScoreBar& m_scoreBar;
 	SoundManager& m_sndManager;

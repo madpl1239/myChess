@@ -99,9 +99,9 @@ void MoveLogger::showSaveLoadMessage(const std::string& message)
 {
 	m_saveLoadText.setString(message);
 	m_saveLoadVisible = true;
-	m_saveLoadClock.restart();
 	m_saveLoadAlpha = 255;
 	m_saveLoadText.setFillColor(sf::Color(0x7F, 0xFF, 0xD4, m_saveLoadAlpha));
+	m_saveLoadClock.restart();
 }
 
 
