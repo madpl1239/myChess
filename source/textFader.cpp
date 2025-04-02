@@ -69,7 +69,7 @@ void TextFader::update()
 		if(elapsed >= m_displayTime)
 			msg.isActive = false;
 		
-		// elapsed wchodzi w faze m_fadeTime
+		// elapsed move to m_fadeTime fase
 		else if(elapsed >= (m_displayTime - m_fadeTime))
 		{
 			float alpha = 255 * (1 - (elapsed - (m_displayTime - m_fadeTime)) / m_fadeTime);
@@ -77,7 +77,7 @@ void TextFader::update()
 		}
 	}
 
-	// usuwa nieaktywne komunikaty
+	// remove deactivated messages
 	m_messages.erase(std::remove_if(m_messages.begin(), m_messages.end(),
 									[](const Message& msg){return !msg.isActive;}),
 						m_messages.end());
