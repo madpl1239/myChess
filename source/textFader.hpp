@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include "defines.hpp"
 
 using time_point_t = std::chrono::steady_clock::time_point;
 using Clock = std::chrono::steady_clock;

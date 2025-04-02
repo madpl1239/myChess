@@ -39,7 +39,7 @@ int main(void)
 		window.setKeyRepeatEnabled(false);
 		
 		TextFader textFader(4.0f, 2.0f);
-		MoveLogger moveLogger(SIZE + 10, 10);
+		MoveLogger moveLogger(SIZE + 10, 5);
 		ScoreBar scoreBar(504, 505);
 		ChessFont chessPiece("./resources/DejaVuSans.ttf");
 		

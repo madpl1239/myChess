@@ -10,7 +10,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "piece.hpp"
-// #include "moveLogger.hpp"
 #include "textFader.hpp"
 #include "sndManager.hpp"
 #include "chessFont.hpp"
@@ -69,8 +68,7 @@ private:
 	sf::Vector2i m_enPassantTarget;
 	int m_fullMoveNumber;
 	char m_currentTurn;
-	// MoveLogger& m_moveLogger;
-	TextFader& m_fader;
+	TextFader& m_textFader;
 	
 	SoundManager& m_sndManager;
 	sf::RenderWindow& m_window;

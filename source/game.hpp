@@ -76,7 +76,6 @@ public:
 				m_highlighter.setDestination(-5, -5);
 			
 			m_textFader.update();
-			m_moveLogger.updateSaveLoad();
 			
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 			
@@ -152,7 +151,10 @@ private:
 				std::cout << "[DEBUG] Invalid move from engine!\n";
 				#endif
 				
-				m_moveLogger.updateInvalidStatus("Invalid engine move!");
+				m_textFader.showMessage("Invalid engine move!", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+										IndianRed, TEXT_HEIGHT2, 
+										sf::Text::Italic | sf::Text::Bold);
+				
 				m_sndManager.play("invalid");
 			}
 			
@@ -177,7 +179,9 @@ private:
 			if(abs(m_mateEvaluation) == 1)
 			{
 				// checkmate
-				m_moveLogger.updateInvalidStatus("Checkmate!");
+				m_textFader.showMessage("Checkmate!", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+										sf::Color::Red, TEXT_HEIGHT1, 
+										sf::Text::Italic | sf::Text::Bold);
 				
 				#ifdef DEBUG
 				std::cout << "[DEBUG] Checkmate!\n"; 
@@ -196,14 +200,20 @@ private:
 		else if(event.key.code == sf::Keyboard::S)
 		{
 			m_board.saveGame("./save_game.txt");
-			m_moveLogger.showSaveLoadMessage("save game");
+			m_textFader.showMessage("save game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+									MediumSpringGreen, TEXT_HEIGHT2, 
+									sf::Text::Italic | sf::Text::Bold);
+			
 			m_sndManager.play("check");
 		}
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
 			m_board.loadGame("./save_game.txt");
-			m_moveLogger.showSaveLoadMessage("load game");
+			m_textFader.showMessage("load game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+									MediumSpringGreen, TEXT_HEIGHT2, 
+									sf::Text::Italic | sf::Text::Bold);
+			
 			m_board.m_loaded = true;
 			m_position.clear();
 			m_commPlayer.clear();
@@ -241,7 +251,6 @@ private:
 						
 						m_selectedPiece = {x, y};
 						m_highlighter.setSelection(x, y);
-						m_moveLogger.updateInvalidStatus("");
 						m_isPieceSelected = true;
 					}
 				}
@@ -278,7 +287,10 @@ private:
 					}
 					else
 					{
-						m_moveLogger.updateInvalidStatus("Invalid move!");
+						m_textFader.showMessage("Invalid move!", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+												IndianRed, TEXT_HEIGHT2, 
+												sf::Text::Italic | sf::Text::Bold);
+						
 						m_sndManager.play("invalid");
 					}
 					
