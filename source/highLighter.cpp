@@ -1,6 +1,8 @@
 /*
  * highLighter.cpp
  * 
+ * Class highlights a given figure - implementation.
+ * 
  * 04-02-2025 by madpl
  */
 #include <iostream>
@@ -17,6 +19,21 @@ Highlighter::Highlighter():
 
 	m_destination.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 	m_destination.setFillColor(sf::Color(0, 255, 0, 40));
+	
+	#ifdef DEBUG
+	std::cout  << "[DEBUG] ctor Highlighter\n";
+	#endif
+}
+
+
+Highlighter::~Highlighter()
+{
+	m_selectionActive = false;
+	m_destinationActive = false;
+	
+	#ifdef DEBUG
+	std::cout  << "[DEBUG] dtor Highlighter\n";
+	#endif
 }
 
 

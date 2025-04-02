@@ -15,25 +15,13 @@ class MoveLogger
 {
 public:
 	MoveLogger(int x, int y);
+	~MoveLogger();
 	
 	void updateMove(bool side, const std::string& move);
-	void updateCheckStatus(const std::string& checkMessage);
-	void updateInvalidStatus(const std::string& checkMessage);
-	
-	void showSaveLoadMessage(const std::string& message);
-	void updateSaveLoad();
-	
 	void draw(sf::RenderWindow& window);
 	
 private:
 	int m_posX, m_posY;
 	sf::Font m_font;
 	std::vector<sf::Text> m_staticTexts; 
-	sf::Text m_checkText;
-	sf::Text m_invalidText;
-	sf::Text m_saveLoadText;
-	
-	sf::Clock m_saveLoadClock{};
-	bool m_saveLoadVisible;
-	int m_saveLoadAlpha;
 };

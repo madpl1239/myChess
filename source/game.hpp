@@ -20,13 +20,14 @@ class Game
 {
 public:
 	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
-		 MoveLogger& moveLogger, Highlighter& highlighter, 
+		 MoveLogger& moveLogger, TextFader& fader, Highlighter& highlighter, 
 		 ScoreBar& scoreBar, SoundManager& sndManager,
 		 sf::Texture& boardTexture, sf::Texture& figuresTexture, sf::Texture& bgTexture):
 	m_window(window),
 	m_board(board),
 	m_engine(engine),
 	m_moveLogger(moveLogger),
+	m_textFader(fader),
 	m_highlighter(highlighter),
 	m_scoreBar(scoreBar),
 	m_sndManager(sndManager),
@@ -74,7 +75,7 @@ public:
 			if(not m_engineMovePending)
 				m_highlighter.setDestination(-5, -5);
 			
-			m_moveLogger.updateSaveLoad();
+			m_textFader.update();
 			
 			m_window.clear(sf::Color(0x7F, 0xAC, 0x7F, 0xFF));
 			
@@ -82,6 +83,7 @@ public:
 			m_highlighter.draw(m_window);
 			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
+			m_textFader.draw(m_window);
 			
 			m_window.display();
 		}
@@ -149,7 +151,10 @@ private:
 				std::cout << "[DEBUG] Invalid move from engine!\n";
 				#endif
 				
-				m_moveLogger.updateInvalidStatus("Invalid engine move!");
+				m_textFader.showMessage("Invalid engine move!", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+										IndianRed, TEXT_HEIGHT2, 
+										sf::Text::Italic | sf::Text::Bold);
+				
 				m_sndManager.play("invalid");
 			}
 			
@@ -174,7 +179,9 @@ private:
 			if(abs(m_mateEvaluation) == 1)
 			{
 				// checkmate
-				m_moveLogger.updateInvalidStatus("Checkmate!");
+				m_textFader.showMessage("Checkmate!", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+										sf::Color::Red, TEXT_HEIGHT1, 
+										sf::Text::Italic | sf::Text::Bold);
 				
 				#ifdef DEBUG
 				std::cout << "[DEBUG] Checkmate!\n"; 
@@ -193,14 +200,20 @@ private:
 		else if(event.key.code == sf::Keyboard::S)
 		{
 			m_board.saveGame("./save_game.txt");
-			m_moveLogger.showSaveLoadMessage("save game");
+			m_textFader.showMessage("save game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+									MediumSpringGreen, TEXT_HEIGHT2, 
+									sf::Text::Italic | sf::Text::Bold);
+			
 			m_sndManager.play("check");
 		}
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
 			m_board.loadGame("./save_game.txt");
-			m_moveLogger.showSaveLoadMessage("load game");
+			m_textFader.showMessage("load game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+									MediumSpringGreen, TEXT_HEIGHT2, 
+									sf::Text::Italic | sf::Text::Bold);
+			
 			m_board.m_loaded = true;
 			m_position.clear();
 			m_commPlayer.clear();
@@ -238,7 +251,6 @@ private:
 						
 						m_selectedPiece = {x, y};
 						m_highlighter.setSelection(x, y);
-						m_moveLogger.updateInvalidStatus("");
 						m_isPieceSelected = true;
 					}
 				}
@@ -275,7 +287,10 @@ private:
 					}
 					else
 					{
-						m_moveLogger.updateInvalidStatus("Invalid move!");
+						m_textFader.showMessage("Invalid move!", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
+												IndianRed, TEXT_HEIGHT2, 
+												sf::Text::Italic | sf::Text::Bold);
+						
 						m_sndManager.play("invalid");
 					}
 					
@@ -291,6 +306,7 @@ private:
 	ChessBoard& m_board;
 	Stockfish& m_engine;
 	MoveLogger& m_moveLogger;
+	TextFader& m_textFader;
 	Highlighter& m_highlighter;
 	ScoreBar& m_scoreBar;
 	SoundManager& m_sndManager;

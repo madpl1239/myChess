@@ -14,6 +14,7 @@
 #include "stockHandle.hpp"
 #include "utils.hpp"
 #include "moveLogger.hpp"
+#include "textFader.hpp"
 #include "highLighter.hpp"
 #include "sndManager.hpp"
 #include "game.hpp"
@@ -37,7 +38,8 @@ int main(void)
 		window.setFramerateLimit(60);
 		window.setKeyRepeatEnabled(false);
 		
-		MoveLogger moveLogger(SIZE + 10, 10);
+		TextFader textFader(4.0f, 2.0f);
+		MoveLogger moveLogger(SIZE + 10, 5);
 		ScoreBar scoreBar(504, 505);
 		ChessFont chessPiece("./resources/DejaVuSans.ttf");
 		
@@ -68,12 +70,12 @@ int main(void)
 		if(initialCommand(engine) == -1)
 			throw std::runtime_error("engine error!");
 		
-		ChessBoard board(window, moveLogger, sndManager, chessPiece);
+		ChessBoard board(window, /*moveLogger*/ textFader, sndManager, chessPiece);
 		board.setInitialPositions();
 		
 		Highlighter highlighter{};
 		
-		Game game(window, board, engine, moveLogger,
+		Game game(window, board, engine, moveLogger, textFader, 
 				  highlighter, scoreBar, sndManager,
 				  boardTexture, figuresTexture, bgTexture);
 		

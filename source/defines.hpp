@@ -5,9 +5,12 @@
  */ 
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
+
 // for debugging
-// #define DEBUG 1
-#undef DEBUG
+#define DEBUG 1
+// #undef DEBUG
 
 // for Linux, Windows Systems
 #define LINUX
@@ -26,5 +29,11 @@ const int OFFSET = 28;		// offset for piece
 
 const int TEXTLOGO_HEIGHT = 16;
 const int TEXTMOVE_HEIGHT = 26;
-const int TEXTCHECK_HEIGHT = 32;
+const int TEXT_HEIGHT1 = 32;
+const int TEXT_HEIGHT2 = 26;
 const int TEXTON_RIGHT = 24;
+
+const sf::Color DeepPink{0xFF, 0x14, 0x93};
+const sf::Color LimeGreen{0x32, 0xCD, 0x32};
+const sf::Color MediumSpringGreen{0x00, 0xFA, 0x9A};
+const sf::Color IndianRed{0xDD, 0x4C, 0x4C};
