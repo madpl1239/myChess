@@ -22,8 +22,6 @@ public:
 private:
 	sf::RectangleShape m_topBar;
 	sf::RectangleShape m_bottomBar;
-	
 	float m_boardHeight;
-	
 	const int m_width = 24;
 };

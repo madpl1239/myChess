@@ -650,6 +650,8 @@ void ChessBoard::saveGame(const std::string& filename)
 	file << "TURN " << m_currentTurn << "\n";
 
 	file.close();
+	
+	m_pieceFont.save("./captured.txt");
 }
 
 
@@ -715,6 +717,8 @@ void ChessBoard::loadGame(const std::string& filename)
 	m_currentTurn = currentTurn;
 
 	file.close();
+	
+	m_pieceFont.load("./captured.txt");
 }
 
 
