@@ -127,6 +127,85 @@ public:
 		return str;
 	}
 
+	void save(const std::string& filename)
+	{
+		std::ofstream file(filename);
+		if(!file)
+		{
+			std::cerr << "Error: Unable to open file for saving!\n";
+			
+			return;
+		}
+		
+		for(const auto& piece : capturedBlack)
+			file << wcharToString(piece.getString()[0]) << " ";
+		file << "\n";
+		
+		for(const auto& piece : capturedWhite)
+			file << wcharToString(piece.getString()[0]) << " ";
+		file << "\n";
+		
+		file.close();
+	}
+	
+	void load(const std::string& filename)
+	{
+		std::ifstream file(filename);
+		if(!file)
+		{
+			std::cerr << "Error: Unable to open file for loading!\n";
+			
+			return;
+		}
+		
+		capturedBlack.clear();
+		capturedWhite.clear();
+		
+		std::string line;
+		
+		if(std::getline(file, line))
+		{
+			std::istringstream iss(line);
+			std::string symbol;
+			while(iss >> symbol)
+			{
+				sf::Text piece;
+				piece.setFont(m_font);
+				piece.setCharacterSize(PIECEFONT_SIZE);
+				piece.setFillColor(sf::Color::Black);
+				piece.setString(stringToWchar(symbol));
+				
+				int index = capturedBlack.size();
+				int row = index / MAX_PIECES_PER_ROW;
+				int colPos = index % MAX_PIECES_PER_ROW;
+				piece.setPosition(START_X + colPos * SPACING, START_Y + 2 * LINE_HEIGHT + row * LINE_HEIGHT);
+				capturedBlack.push_back(piece);
+			}
+		}
+		
+		if(std::getline(file, line))
+		{
+			std::istringstream iss(line);
+			std::string symbol;
+			while(iss >> symbol)
+			{
+				sf::Text piece;
+				piece.setFont(m_font);
+				piece.setCharacterSize(PIECEFONT_SIZE);
+				piece.setFillColor(sf::Color::White);
+				piece.setString(stringToWchar(symbol));
+				
+				int index = capturedWhite.size();
+				int row = index / MAX_PIECES_PER_ROW;
+				int colPos = index % MAX_PIECES_PER_ROW;
+				piece.setPosition(START_X + colPos * SPACING, START_Y + row * LINE_HEIGHT);
+				capturedWhite.push_back(piece);
+			}
+		}
+		
+		file.close();
+	}
+	
 	void draw(sf::RenderWindow& window)
 	{
 		for(const auto& piece: capturedWhite)
@@ -137,6 +216,24 @@ public:
 	}
 
 private:
+	std::string wcharToString(wchar_t ch)
+	{
+		for(const auto& pair : m_pieceSymbols)
+		{
+			if(pair.second == ch)
+				return pair.first;
+    }
+		return "none_none";
+	}
+
+	wchar_t stringToWchar(const std::string& str)
+	{
+		if(m_pieceSymbols.find(str) != m_pieceSymbols.end())
+			return m_pieceSymbols[str];
+		
+		return m_pieceSymbols["none_none"];
+	}
+	
 	sf::Font m_font;
 	std::vector<sf::Text> capturedWhite;
 	std::vector<sf::Text> capturedBlack;
