@@ -130,8 +130,7 @@ public:
 	void save(const std::string& filename)
 	{
 		std::ofstream file(filename);
-		
-		if(not file)
+		if(!file)
 		{
 			std::cerr << "Error: Unable to open file for saving!\n";
 			
@@ -139,11 +138,11 @@ public:
 		}
 		
 		for(const auto& piece : capturedBlack)
-			file << piece.getString().toAnsiString() << " ";
+			file << wcharToString(piece.getString()[0]) << " ";
 		file << "\n";
 		
 		for(const auto& piece : capturedWhite)
-			file << piece.getString().toAnsiString() << " ";
+			file << wcharToString(piece.getString()[0]) << " ";
 		file << "\n";
 		
 		file.close();
@@ -152,8 +151,7 @@ public:
 	void load(const std::string& filename)
 	{
 		std::ifstream file(filename);
-		
-		if(not file)
+		if(!file)
 		{
 			std::cerr << "Error: Unable to open file for loading!\n";
 			
@@ -175,7 +173,7 @@ public:
 				piece.setFont(m_font);
 				piece.setCharacterSize(PIECEFONT_SIZE);
 				piece.setFillColor(sf::Color::Black);
-				piece.setString(symbol);
+				piece.setString(stringToWchar(symbol));
 				
 				int index = capturedBlack.size();
 				int row = index / MAX_PIECES_PER_ROW;
@@ -195,7 +193,7 @@ public:
 				piece.setFont(m_font);
 				piece.setCharacterSize(PIECEFONT_SIZE);
 				piece.setFillColor(sf::Color::White);
-				piece.setString(symbol);
+				piece.setString(stringToWchar(symbol));
 				
 				int index = capturedWhite.size();
 				int row = index / MAX_PIECES_PER_ROW;
@@ -218,6 +216,24 @@ public:
 	}
 
 private:
+	std::string wcharToString(wchar_t ch)
+	{
+		for(const auto& pair : m_pieceSymbols)
+		{
+			if(pair.second == ch)
+				return pair.first;
+    }
+		return "none_none";
+	}
+
+	wchar_t stringToWchar(const std::string& str)
+	{
+		if(m_pieceSymbols.find(str) != m_pieceSymbols.end())
+			return m_pieceSymbols[str];
+		
+		return m_pieceSymbols["none_none"];
+	}
+	
 	sf::Font m_font;
 	std::vector<sf::Text> capturedWhite;
 	std::vector<sf::Text> capturedBlack;
