@@ -13,7 +13,11 @@
 
 
 int initialCommand(Stockfish& engine);
+
 bool initialSounds(SoundManager& sndManager);
+
 std::string getNextMove(Stockfish& engine, std::string& position);
+
 std::string getNextMoveAfterFEN(Stockfish& engine, std::string& fen, std::string& position);
+
 float getEvaluation(std::string& resp, int& mateEvaluation);

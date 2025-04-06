@@ -199,7 +199,7 @@ private:
 		
 		else if(event.key.code == sf::Keyboard::S)
 		{
-			m_board.saveGame("./save_game.txt");
+			m_board.saveGame("./save_game.txt", m_engine);
 			m_textFader.showMessage("save game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
 									MediumSpringGreen, TEXT_HEIGHT2, 
 									sf::Text::Italic | sf::Text::Bold);
@@ -209,7 +209,7 @@ private:
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
-			m_board.loadGame("./save_game.txt");
+			m_board.loadGame("./save_game.txt", m_evaluation);
 			m_textFader.showMessage("load game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
 									MediumSpringGreen, TEXT_HEIGHT2, 
 									sf::Text::Italic | sf::Text::Bold);

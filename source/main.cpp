@@ -31,7 +31,7 @@ int main(void)
 		std::cout << "myChess testing version\n";
 		#endif
 		
-		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess - testing",
+		sf::RenderWindow window(sf::VideoMode(SIZE + 400, SIZE), "myChess v0.5.0",
 								sf::Style::Titlebar | sf::Style::Close);
 		
 		window.setPosition(sf::Vector2i(200, 200));
