@@ -49,6 +49,7 @@ public:
 	const sf::Vector2i& getEnPassantTarget() const;
 	const char getCurrentTurn() const;
 	const int getFullMoveNumber() const;
+	chessBoard_t& getBoard();
 	
 	// setters
 	void setCurrentTurn(char side);
@@ -66,7 +67,7 @@ private:
 	std::string pieceTypeToString(PieceType type) const;
 	char pieceTypeToChar(PieceType type) const;
 
-	std::vector<std::vector<Piece>> m_board;
+	chessBoard_t m_board;
 	sf::Vector2i m_enPassantTarget;
 	int m_fullMoveNumber;
 	char m_currentTurn;

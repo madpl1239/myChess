@@ -760,6 +760,12 @@ const int ChessBoard::getFullMoveNumber() const
 }
 
 
+chessBoard_t& ChessBoard::getBoard()
+{
+	return m_board;
+}
+
+
 void ChessBoard::setCurrentTurn(char side)
 {
 	m_currentTurn = side;

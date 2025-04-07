@@ -6,6 +6,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "piece.hpp"
 
 
 // for debugging
@@ -22,6 +23,8 @@
 #define ARIAL "./resources/arial.ttf"
 #define DIGITAL "./resources/digital-7mono.ttf"
 #define DEJAVUSANS "./resources/DejaVuSans.ttf"
+
+using chessBoard_t = std::vector<std::vector<Piece>>;
 
 const int SIZE = 504;		// size of chessBoard (504x504 pikseli)
 const int TILE_SIZE = 56;	// chess square size

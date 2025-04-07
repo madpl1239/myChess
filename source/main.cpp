@@ -20,6 +20,7 @@
 #include "game.hpp"
 #include "scoreBar.hpp"
 #include "chessFont.hpp"
+#include "pieceEditor.hpp"
 
 
 int main(void) 
@@ -74,9 +75,10 @@ int main(void)
 		board.setInitialPositions();
 		
 		Highlighter highlighter{};
+		PieceEditor editor(board);
 		
 		Game game(window, board, engine, moveLogger, textFader, 
-				  highlighter, scoreBar, sndManager,
+				  highlighter, scoreBar, sndManager, editor,
 				  boardTexture, figuresTexture, bgTexture);
 		
 		game.run();
