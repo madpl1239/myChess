@@ -3,8 +3,8 @@
  * 
  * 07-04-2025 by madpl
  */
-#include <iostream>
 #include "pieceEditor.hpp"
+#include <iostream>
 
 
 PieceEditor::PieceEditor(ChessBoard& board):
@@ -30,7 +30,7 @@ void PieceEditor::toggleEditor()
 
 sf::Vector2i PieceEditor::getBoardCoordinates(const sf::Vector2i& pixelPos)
 {
-	return sf::Vector2i(pixelPos.x / TILE_SIZE, pixelPos.y / TILE_SIZE);
+	return sf::Vector2i(std::round(pixelPos.x / TILE_SIZE), 7 - std::round(pixelPos.y / TILE_SIZE));
 }
 
 
@@ -50,7 +50,7 @@ void PieceEditor::handleEvent(const sf::Event& event, const sf::RenderWindow& wi
 
 	if(event.type == sf::Event::MouseButtonPressed and event.mouseButton.button == sf::Mouse::Left)
 	{
-		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window) - sf::Vector2i(OFFSET, OFFSET);
 		
 		int y = mousePos.y;
 		if(y > 504 and y < 720)
@@ -73,7 +73,7 @@ void PieceEditor::handleEvent(const sf::Event& event, const sf::RenderWindow& wi
 	if(event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::C)
 	{
 		m_selectedColor = (m_selectedColor == 'W') ? 'B' : 'W';
-	
+		
 		loadPieceIcons();
 	}
 }
