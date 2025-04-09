@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <string>
+#include <cmath>
 #include "defines.hpp"
 #include "chessBoard.hpp"
 #include "piece.hpp"
