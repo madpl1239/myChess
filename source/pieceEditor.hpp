@@ -29,7 +29,7 @@ private:
 	void toggleEditor();
 	sf::Vector2i getBoardCoordinates(const sf::Vector2i& pixelPos);
 	void placePiece(int row, int col);
-	void drawUI(sf::RenderWindow& window);
+	void drawSelectionBar(sf::RenderWindow& window);
 	void loadPieceIcons();
 	
 	ChessBoard& m_board;
