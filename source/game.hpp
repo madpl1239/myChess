@@ -14,6 +14,7 @@
 #include "highLighter.hpp"
 #include "sndManager.hpp"
 #include "scoreBar.hpp"
+#include "pieceEditor.hpp"
 
 
 class Game
@@ -21,7 +22,7 @@ class Game
 public:
 	Game(sf::RenderWindow& window, ChessBoard& board, Stockfish& engine,
 		 MoveLogger& moveLogger, TextFader& fader, Highlighter& highlighter, 
-		 ScoreBar& scoreBar, SoundManager& sndManager,
+		 ScoreBar& scoreBar, SoundManager& sndManager, PieceEditor& editor,
 		 sf::Texture& boardTexture, sf::Texture& figuresTexture, sf::Texture& bgTexture):
 	m_window(window),
 	m_board(board),
@@ -31,6 +32,7 @@ public:
 	m_highlighter(highlighter),
 	m_scoreBar(scoreBar),
 	m_sndManager(sndManager),
+	m_editor(editor),
 	m_boardTexture(boardTexture),
 	m_figuresTexture(figuresTexture),
 	m_bgTexture(bgTexture),
@@ -84,6 +86,7 @@ public:
 			m_scoreBar.draw(m_window);
 			m_moveLogger.draw(m_window);
 			m_textFader.draw(m_window);
+			m_editor.draw(m_window);
 			
 			m_window.display();
 		}
@@ -98,11 +101,16 @@ private:
 			if(event.type == sf::Event::Closed)
 				m_quit = true;
 			
-			else if(event.type == sf::Event::KeyPressed)
-				handleKeyPress(event);
+			m_editor.handleEvent(event, m_window);
 			
-			else if(event.type == sf::Event::MouseButtonPressed)
-				handleMousePress(event); // player move
+			if(not m_editor.isActive())
+			{
+				if(event.type == sf::Event::KeyPressed)
+					handleKeyPress(event);
+				
+				else if(event.type == sf::Event::MouseButtonPressed)
+					handleMousePress(event); // player move
+			}
 		}
 		
 		// engine move
@@ -199,7 +207,7 @@ private:
 		
 		else if(event.key.code == sf::Keyboard::S)
 		{
-			m_board.saveGame("./save_game.txt");
+			m_board.saveGame("./save_game.txt", m_engine);
 			m_textFader.showMessage("save game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
 									MediumSpringGreen, TEXT_HEIGHT2, 
 									sf::Text::Italic | sf::Text::Bold);
@@ -209,7 +217,7 @@ private:
 		
 		else if(event.key.code == sf::Keyboard::L)
 		{
-			m_board.loadGame("./save_game.txt");
+			m_board.loadGame("./save_game.txt", m_evaluation);
 			m_textFader.showMessage("load game", {SIZE + 10 + TEXTON_RIGHT, 10 + 430},
 									MediumSpringGreen, TEXT_HEIGHT2, 
 									sf::Text::Italic | sf::Text::Bold);
@@ -310,6 +318,7 @@ private:
 	Highlighter& m_highlighter;
 	ScoreBar& m_scoreBar;
 	SoundManager& m_sndManager;
+	PieceEditor& m_editor;
 	sf::Texture& m_boardTexture;
 	sf::Texture& m_figuresTexture;
 	sf::Texture& m_bgTexture;

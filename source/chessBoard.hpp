@@ -13,13 +13,15 @@
 #include "textFader.hpp"
 #include "sndManager.hpp"
 #include "chessFont.hpp"
+#include "utils.hpp"
 
 
 class ChessBoard
 {
 public:
-	ChessBoard(sf::RenderWindow& window, /*MoveLogger& logger*/
-			   TextFader& fader, SoundManager& sndManager, ChessFont& pieceFont);
+	ChessBoard(sf::RenderWindow& window, TextFader& fader,
+			   SoundManager& sndManager, ChessFont& pieceFont);
+	
 	~ChessBoard();
 
 	void setInitialPositions();
@@ -39,14 +41,15 @@ public:
 	
 	std::string generateFEN(char currentTurn);
 	
-	void saveGame(const std::string& filename);
-	void loadGame(const std::string& filename);
+	void saveGame(const std::string& filename, Stockfish& engine);
+	void loadGame(const std::string& filename, float& eval);
 	
 	// getters
 	const Piece& getPiece(int x, int y) const;
 	const sf::Vector2i& getEnPassantTarget() const;
 	const char getCurrentTurn() const;
 	const int getFullMoveNumber() const;
+	chessBoard_t& getBoard();
 	
 	// setters
 	void setCurrentTurn(char side);
@@ -64,7 +67,7 @@ private:
 	std::string pieceTypeToString(PieceType type) const;
 	char pieceTypeToChar(PieceType type) const;
 
-	std::vector<std::vector<Piece>> m_board;
+	chessBoard_t m_board;
 	sf::Vector2i m_enPassantTarget;
 	int m_fullMoveNumber;
 	char m_currentTurn;

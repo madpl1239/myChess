@@ -358,18 +358,24 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 	int dy = abs(endY - startY);
 	int direction = (movingPiece.m_color == 'W') ? 1 : -1;
 	
-	m_enPassantTarget = sf::Vector2i(-1, -1);
 	bool enPassantCapture = false;
 
 	// update en passant target before moving the piece
 	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
+	{
 		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
+		
+		#ifdef DEBUG
+		std::cout << "[DEBUG] enPassantTarget = " << m_enPassantTarget.x << ", "
+												  << m_enPassantTarget.y << "\n"; 
+		#endif
+	}
 	else
 		m_enPassantTarget = sf::Vector2i(-1, -1);
 
 	// check en passant capture validity
-	if(movingPiece.m_type == PieceType::PAWN and dx == 1 and dy == 1 and
-		sf::Vector2i(endX, endY) == m_enPassantTarget)
+	if((movingPiece.m_type == PieceType::PAWN) and (dx == 1) and (dy == 1) and
+		(sf::Vector2i(endX, endY) == m_enPassantTarget))
 	{
 		int capturedPawnY = endY - direction;
 		
@@ -377,6 +383,9 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 			m_board[capturedPawnY][endX].m_color != movingPiece.m_color)
 		{
 			enPassantCapture = true;
+			#ifdef DEBUG
+			std::cout << "[DEBUG] enPassantCapture = " << enPassantCapture << "\n"; 
+			#endif
 		}
 	}
 
@@ -390,31 +399,29 @@ void ChessBoard::movePiece(int startX, int startY, int endX, int endY)
 		m_pieceFont.addCapturedPiece(strPiece, color);
 	}
 	
-	// move piece to new position
-	m_board[endY][endX] = movingPiece;
-	m_board[startY][startX] = Piece();
-
-	// remove opponent's pawn if en passant occurred
-	if(enPassantCapture)
-	{
-		int capturedPawnY = endY - direction;
-		m_board[capturedPawnY][endX] = Piece();
-	}
-
-	// setting the en passant possibilities:
-	if(movingPiece.m_type == PieceType::PAWN and dy == 2)
-		m_enPassantTarget = sf::Vector2i(startX, startY + direction);
-	else
-		m_enPassantTarget = sf::Vector2i(-1, -1);
-	
 	// pawn promotion - default to Queen
 	if(movingPiece.m_type == PieceType::PAWN and (endY == 0 or endY == 7))
 	{
 		m_board[endY][endX] = Piece(PieceType::QUEEN, movingPiece.m_color);
+		m_board[startY][startX] = Piece();
 		
 		#ifdef DEBUG
 		std::cout << "[DEBUG] Pawn promoted to Queen at (" << endX << ", " << endY << ")\n";
 		#endif
+	}
+	
+	// remove opponent's pawn if en passant occurred
+	if(enPassantCapture)
+	{
+		int capturedPawnY = endY - direction;
+		m_board[capturedPawnY][endX] = movingPiece;
+		m_board[startY][startX] = Piece();
+	}
+	else
+	{
+		// move piece to new position
+		m_board[endY][endX] = movingPiece;
+		m_board[startY][startX] = Piece();
 	}
 
 	char currentPlayerColor = m_board[endY][endX].m_color;
@@ -622,7 +629,7 @@ std::string ChessBoard::generateFEN(char currentTurn)
 }
 
 
-void ChessBoard::saveGame(const std::string& filename)
+void ChessBoard::saveGame(const std::string& filename, Stockfish& engine)
 {
 	std::ofstream file(filename);
 
@@ -648,6 +655,10 @@ void ChessBoard::saveGame(const std::string& filename)
 
 	file << "ENPASSANT " << m_enPassantTarget.x << " " << m_enPassantTarget.y << "\n";
 	file << "TURN " << m_currentTurn << "\n";
+	
+	std::string resp{};
+	int mateEval = 0;
+	file << "EVALUATION " << -getEvaluation(engine.getFinalResponse(), mateEval) << "\n";
 
 	file.close();
 	
@@ -655,7 +666,7 @@ void ChessBoard::saveGame(const std::string& filename)
 }
 
 
-void ChessBoard::loadGame(const std::string& filename)
+void ChessBoard::loadGame(const std::string& filename, float& eval)
 {
 	std::ifstream file(filename);
 
@@ -687,6 +698,9 @@ void ChessBoard::loadGame(const std::string& filename)
 		
 		else if(type == "TURN") 
 			iss >> currentTurn;
+		
+		else if(type == "EVALUATION")
+			iss >> eval;
 		
 		else if(type == "*")
 			continue;
@@ -743,6 +757,12 @@ const char ChessBoard::getCurrentTurn() const
 const int ChessBoard::getFullMoveNumber() const
 {
 	return m_fullMoveNumber;
+}
+
+
+chessBoard_t& ChessBoard::getBoard()
+{
+	return m_board;
 }
 
 

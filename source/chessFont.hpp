@@ -49,11 +49,7 @@ public:
 			}
 		}
 		else
-			#ifdef DEBUG
-			std::cerr << "Error: Unknown chess piece!\n";
-			#else
-			;
-			#endif		
+			throw std::runtime_error("Error: Unknown chess piece!");
 	}
 	
 	std::string pieceTypeToSymbol(PieceType type, char col)
@@ -151,7 +147,11 @@ public:
 	void load(const std::string& filename)
 	{
 		std::ifstream file(filename);
+<<<<<<< HEAD
 		if(!file)
+=======
+		if(not file)
+>>>>>>> working
 		{
 			std::cerr << "Error: Unable to open file for loading!\n";
 			
@@ -162,11 +162,11 @@ public:
 		capturedWhite.clear();
 		
 		std::string line;
-		
 		if(std::getline(file, line))
 		{
 			std::istringstream iss(line);
 			std::string symbol;
+			
 			while(iss >> symbol)
 			{
 				sf::Text piece;
@@ -187,6 +187,7 @@ public:
 		{
 			std::istringstream iss(line);
 			std::string symbol;
+			
 			while(iss >> symbol)
 			{
 				sf::Text piece;
@@ -222,7 +223,12 @@ private:
 		{
 			if(pair.second == ch)
 				return pair.first;
+<<<<<<< HEAD
     }
+=======
+		}
+		
+>>>>>>> working
 		return "none_none";
 	}
 
