@@ -27,6 +27,7 @@
 using chessBoard_t = std::vector<std::vector<Piece>>;
 
 const int SIZE = 504;		// size of chessBoard (504x504 pikseli)
+const int SIZE2 = 450;
 const int TILE_SIZE = 56;	// chess square size
 const int OFFSET = 28;		// offset for piece
 
