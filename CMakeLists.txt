@@ -1,7 +1,7 @@
 # CMakeLists.txt for myChess
 # 12-01-2025 by madpl
 
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 4.0.1)
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 project(myChess)
 
