@@ -39,6 +39,20 @@ a mock-up, but we are working hard on this score bar. There is still a lot to do
 
 a pawn to a queen, the engine goes crazy and starts making moves on the wrong side - this is another big 
 
-bug to fix, which was revealed during the game. Work in progress. 
+bug to fix, which was revealed during the game. Work in progress.</br></br>
+
+
+**EDITOR - new option**</br>
+
+Last time we gave the editor of the pieces on the chessboard. Its operation is as follows:</br>
+pressing E - editor mode/game mode</br>
+Editor mode:</br>
+press C - change color figures</br>
+press N - clear figures at board</br></br>
+
+the pieces to be changed are selected with the mouse from the pieces field on the right. Then the</br>
+selected piece is placed on the chessboard also with the mouse - by selecting the field and pressing</br>
+the left mouse button.</br></br>
+
 
 *Best regards - team of myChess*.
